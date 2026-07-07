@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 주휴수당 계산기 | 알바 주휴수당 자동 계산 — 월급노트</title>
+<meta name="description" content="2026년 최저시급 10,320원 기준 주휴수당 계산기. 시급과 주 근무시간만 입력하면 주휴수당과 주급·월급 환산액을 바로 계산합니다.">
+<meta name="keywords" content="주휴수당 계산기, 2026 주휴수당, 알바 주휴수당, 주휴수당 지급기준, 최저시급 주휴수당">
+<meta property="og:title" content="2026 주휴수당 계산기">
+<meta property="og:description" content="주 15시간 이상 일하면 하루치 급여가 더 생깁니다. 내 주휴수당을 확인하세요.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=block" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/common.css">
+<script src="../assets/common.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"주휴수당은 누가 받을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"1주 소정근로시간이 15시간 이상이고, 근로계약서에 정한 근무일을 개근한 근로자라면 아르바이트를 포함해 누구나 받을 수 있습니다. 5인 미만 사업장에도 적용됩니다."}},
+    {"@type":"Question","name":"주휴수당을 시급에 포함해서 준다는데 괜찮은 건가요?","acceptedAnswer":{"@type":"Answer","text":"근로계약서에 주휴수당 포함 여부와 금액이 명확히 구분되어 있어야 유효합니다. 2026년 최저시급 10,320원에 주휴수당을 포함하면 시급 약 12,384원 이상이어야 최저임금 위반이 아닙니다."}},
+    {"@type":"Question","name":"결근하면 그 주 주휴수당은 못 받나요?","acceptedAnswer":{"@type":"Answer","text":"네. 주휴수당은 1주 소정근로일을 개근해야 발생합니다. 지각·조퇴는 개근으로 인정되지만, 결근이 있으면 해당 주의 주휴수당은 발생하지 않습니다."}},
+    {"@type":"Question","name":"사장님이 주휴수당을 안 주면 어떻게 하나요?","acceptedAnswer":{"@type":"Answer","text":"주휴수당 미지급은 임금체불입니다. 관할 고용노동청에 진정을 제기할 수 있으며(국번 없이 1350), 청구권 소멸시효는 3년입니다."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
+    <span class="yr">2026년 기준</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <nav class="calcnav" aria-label="계산기 종류 선택">
+    <a class="chip" href="../annual-leave/index.html">연차수당</a>
+    <a class="chip" href="../severance/index.html">퇴직금</a>
+    <a class="chip" href="../unemployment/index.html">실업급여</a>
+    <a class="chip on" href="index.html" aria-current="page">주휴수당</a>
+  </nav>
+
+  <div class="hero">
+    <h1>주휴수당 계산기</h1>
+    <p>1주 15시간 이상 일하고 개근했다면, 일하지 않는 하루에 대해서도 급여를 받아야 합니다. 시급과 주 근무시간만 입력하세요.</p>
+    <p class="basis">산정 기준 — 2026년 최저시급 <b>10,320원</b> · 주휴 포함 환산시급 <b>12,384원</b></p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>주휴수당 계산</h2><span>주급·월급 환산 포함</span></div>
+    <div class="card-b">
+      <div class="grid">
+        <div class="field">
+          <label for="in-hourly">시급 <span class="hint">2026년 최저시급 10,320원</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-hourly" inputmode="numeric" placeholder="10,320"><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="in-week">1주 총 근무시간 <span class="hint">휴게시간 제외</span></label>
+          <div class="inwrap"><input type="number" id="in-week" min="1" max="52" step="0.5" placeholder="20"><span class="unit">시간</span></div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="calcJuhyu()">주휴수당 계산하기</button>
+
+      <div class="result" id="res-jh" aria-live="polite">
+        <div class="slip">
+          <div class="stamp" aria-hidden="true">산출</div>
+          <h3>주휴수당 산출내역</h3>
+          <table>
+            <tr><td>1주 근무 급여</td><td id="j-base">-</td></tr>
+            <tr class="total"><td>1주 주휴수당</td><td id="j-pay">-</td></tr>
+            <tr><td>주휴 포함 주급</td><td id="j-week">-</td></tr>
+            <tr><td>주휴 포함 월 환산액 (4.345주)</td><td id="j-month">-</td></tr>
+          </table>
+        </div>
+        <button class="btn ghost" onclick="copyResult('#res-jh','주휴수당 산출내역')">계산 결과 복사하기</button>
+        <div class="note" id="jh-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 애드센스 광고 자리 ① -->
+  <div class="ad-slot">AD</div>
+
+  <div class="info">
+
+    <section>
+      <h2>주휴수당이란?</h2>
+      <p>근로기준법 제55조에 따라 사용자는 1주 동안 소정근로일을 개근한 근로자에게 유급휴일(주휴일)을 주어야 합니다. 이 유급휴일에 대한 급여가 주휴수당입니다. 1주 소정근로시간 15시간 이상이면 아르바이트, 단시간 근로자도 받을 수 있고, 5인 미만 사업장에도 적용됩니다.</p>
+      <div class="formula">
+        <b>주휴수당 = (1주 소정근로시간 ÷ 40) × 8시간 × 시급</b> (주 40시간 이상은 8시간 × 시급)
+      </div>
+      <p>예를 들어 시급 10,320원으로 주 20시간 일하면, 주휴수당은 (20÷40)×8×10,320 = 41,280원입니다. 주 40시간 근무자는 매주 82,560원(하루치)의 주휴수당이 발생합니다.</p>
+    </section>
+
+    <section>
+      <h2>주휴수당 발생 요건</h2>
+      <table>
+        <tr><th>요건</th><th>내용</th></tr>
+        <tr><td>근로시간</td><td>1주 소정근로시간 15시간 이상</td></tr>
+        <tr><td>개근</td><td>1주 소정근로일 개근 (지각·조퇴는 개근 인정, 결근은 불인정)</td></tr>
+        <tr><td>사업장 규모</td><td>제한 없음 (5인 미만 사업장도 적용)</td></tr>
+        <tr><td>참고</td><td>주휴수당을 반영한 2026년 최저 환산시급은 12,384원</td></tr>
+      </table>
+    </section>
+
+    <!-- 애드센스 광고 자리 ② -->
+    <div class="ad-slot">AD</div>
+
+    <section>
+      <h2>자주 묻는 질문</h2>
+      <details>
+        <summary>"시급에 주휴수당 포함"이라는데 괜찮은 건가요?</summary>
+        <div class="a">근로계약서에 기본시급과 주휴수당이 명확히 구분 기재되어 있어야 유효합니다. 2026년 기준으로 주휴수당 포함 시급이 12,384원(10,320 × 1.2) 미만이면 최저임금 위반 가능성이 있습니다.</div>
+      </details>
+      <details>
+        <summary>결근하면 그 주 주휴수당은 못 받나요?</summary>
+        <div class="a">네. 주휴수당은 1주 소정근로일을 개근해야 발생합니다. 지각·조퇴는 개근으로 인정되지만 결근이 있으면 해당 주의 주휴수당은 발생하지 않습니다.</div>
+      </details>
+      <details>
+        <summary>주 15시간을 어떤 주는 넘고 어떤 주는 안 넘어요.</summary>
+        <div class="a">이 경우 4주를 평균하여 1주 소정근로시간이 15시간 이상인지로 판단합니다. 근로계약서상 소정근로시간이 기준이므로, 계약서를 먼저 확인해 보세요.</div>
+      </details>
+      <details>
+        <summary>사장님이 주휴수당을 안 주면 어떻게 하나요?</summary>
+        <div class="a">주휴수당 미지급은 임금체불입니다. 재직 중이든 퇴사 후든 관할 고용노동청에 진정을 제기할 수 있으며(국번 없이 1350), 청구권 소멸시효는 3년입니다.</div>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="../index.html">홈</a>
+      <a href="../annual-leave/index.html">연차수당</a>
+      <a href="../severance/index.html">퇴직금</a>
+      <a href="../unemployment/index.html">실업급여</a>
+    </nav>
+    본 계산기는 근로기준법 및 2026년 고시 최저임금을 기준으로 한 참고용 도구입니다. 개별 사정에 따라 실제 금액과 차이가 있을 수 있으며, 법적 판단이 필요한 경우 고용노동부(☎1350) 또는 공인노무사와 상담하시기 바랍니다.<br>
+    © 2026 월급노트 · 문의: simsj0930@gmail.com
+  </div>
+</footer>
+
+<script>
+function calcJuhyu(){
+  const hourly = num('in-hourly');
+  const week = num('in-week');
+  const note = document.getElementById('jh-note');
+  if(!hourly || !week){ alert('시급과 주 근무시간을 입력해 주세요.'); return; }
+
+  if(week < 15){
+    alert('1주 소정근로시간이 15시간 미만이면 주휴수당이 발생하지 않습니다.');
+    return;
+  }
+
+  const juhyu = Math.min(week,40)/40 * 8 * hourly;   // 주휴수당
+  const basePay = hourly * week;                      // 1주 근무 급여
+  const weekTotal = basePay + juhyu;
+  const monthTotal = weekTotal * 4.345;
+
+  document.getElementById('j-base').textContent = fmt(basePay)+' 원 ('+week+'시간)';
+  document.getElementById('j-pay').textContent  = fmt(juhyu)+' 원';
+  document.getElementById('j-week').textContent = fmt(weekTotal)+' 원';
+  document.getElementById('j-month').textContent = fmt(monthTotal)+' 원';
+
+  if(hourly < MIN_WAGE_2026){
+    note.className = 'note warn';
+    note.textContent = '입력하신 시급('+fmt(hourly)+'원)이 2026년 최저시급 10,320원보다 낮습니다. 최저임금 위반에 해당하니 사업주에게 차액을 청구할 수 있습니다.';
+  } else {
+    note.className = 'note';
+    note.textContent = '소정근로일을 개근한 주에만 발생하며, 세전 금액 기준입니다. 연장·야간근로가 있다면 별도 가산수당(50%)이 추가됩니다.';
+  }
+  showResult('res-jh');
+}
+</script>
+</body>
+</html>

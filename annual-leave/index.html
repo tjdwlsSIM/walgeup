@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 연차수당 계산기 | 미사용 연차 수당 자동 계산 — 월급노트</title>
+<meta name="description" content="2026년 기준 연차수당 계산기. 월급 또는 시급을 입력하면 통상임금 기준 미사용 연차수당과 세후 실수령액을 즉시 계산합니다. 퇴직 정산 모드 지원.">
+<meta name="keywords" content="연차수당 계산기, 2026 연차수당, 미사용 연차, 통상임금 계산, 퇴직 연차 정산">
+<meta property="og:title" content="2026 연차수당 계산기">
+<meta property="og:description" content="월급·시급 입력으로 미사용 연차수당과 세후 실수령액을 바로 계산해 보세요.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=block" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/common.css">
+<script src="../assets/common.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"연차수당은 언제 지급되나요?","acceptedAnswer":{"@type":"Answer","text":"연차휴가가 소멸한 날 다음 임금 지급일에 지급하는 것이 원칙입니다. 퇴직 시에는 남은 연차 전부를 수당으로 정산해야 하며, 퇴직일로부터 14일 이내에 지급해야 합니다."}},
+    {"@type":"Question","name":"연차수당에도 세금이 붙나요?","acceptedAnswer":{"@type":"Answer","text":"네. 연차수당은 근로소득에 해당하여 소득세와 4대 보험료가 공제됩니다. 이 계산기는 세전 금액과 함께 2026년 요율 기준 세후 예상 실수령액을 제공합니다."}},
+    {"@type":"Question","name":"회사가 연차수당을 주지 않으면 어떻게 하나요?","acceptedAnswer":{"@type":"Answer","text":"연차수당 청구권의 소멸시효는 3년입니다. 미지급 시 관할 고용노동청에 임금체불 진정을 제기할 수 있으며, 국번 없이 1350으로 상담이 가능합니다."}},
+    {"@type":"Question","name":"연차촉진제도를 시행한 회사도 수당을 줘야 하나요?","acceptedAnswer":{"@type":"Answer","text":"회사가 근로기준법 제61조에 따른 연차사용촉진 절차를 적법하게 모두 이행했다면 미사용 연차에 대한 수당 지급 의무가 면제될 수 있습니다. 절차에 흠결이 있으면 지급 의무가 유지됩니다."}},
+    {"@type":"Question","name":"5인 미만 사업장도 연차가 발생하나요?","acceptedAnswer":{"@type":"Answer","text":"상시 근로자 5인 미만 사업장에는 근로기준법상 연차휴가 규정이 적용되지 않습니다. 다만 취업규칙이나 근로계약으로 연차를 부여하기로 정했다면 그에 따릅니다."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
+    <span class="yr">2026년 기준</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <nav class="calcnav" aria-label="계산기 종류 선택">
+    <a class="chip on" href="index.html" aria-current="page">연차수당</a>
+    <a class="chip" href="../severance/index.html">퇴직금</a>
+    <a class="chip" href="../unemployment/index.html">실업급여</a>
+    <a class="chip" href="../weekly-holiday/index.html">주휴수당</a>
+  </nav>
+
+  <div class="hero">
+    <h1>연차수당 계산기</h1>
+    <p>사용하지 못한 연차휴가, 수당으로 얼마를 받아야 할까요? 월급 또는 시급을 입력하면 통상임금 기준 연차수당을 바로 계산해 드립니다.</p>
+    <p class="basis">산정 기준 — 최저시급 <b>10,320원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)</p>
+  </div>
+
+  <!-- 계산기 1: 연차수당 -->
+  <div class="card">
+    <div class="card-h"><h2>연차수당 계산</h2><span>통상임금 기준</span></div>
+    <div class="card-b">
+      <div class="tabs" role="tablist" aria-label="급여 형태 선택">
+        <button role="tab" id="tab-m" aria-selected="true" onclick="setMode('m')">월급제</button>
+        <button role="tab" id="tab-h" aria-selected="false" onclick="setMode('h')">시급제</button>
+        <button role="tab" id="tab-r" aria-selected="false" onclick="setMode('r')">퇴직 정산</button>
+      </div>
+
+      <div class="grid">
+        <div class="field" id="f-salary">
+          <label for="in-salary">월 통상임금 <span class="hint">기본급 + 매월 고정수당</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-salary" inputmode="numeric" placeholder="2,600,000"><span class="unit">원</span></div>
+        </div>
+        <div class="field" id="f-hourly" style="display:none">
+          <label for="in-hourly">시급</label>
+          <div class="inwrap"><input type="text" class="money" id="in-hourly" inputmode="numeric" placeholder="10,320"><span class="unit">원</span></div>
+        </div>
+        <div class="field" id="f-week">
+          <label for="in-week">주 소정근로시간 <span class="hint">보통 40시간</span></label>
+          <div class="inwrap"><input type="number" id="in-week" min="1" max="40" value="40"><span class="unit">시간</span></div>
+        </div>
+        <div class="field" id="f-day" style="display:none">
+          <label for="in-day">1일 소정근로시간</label>
+          <div class="inwrap"><input type="number" id="in-day" min="1" max="8" value="8"><span class="unit">시간</span></div>
+        </div>
+        <div class="field" id="f-rhire" style="display:none">
+          <label for="in-rhire">입사일</label>
+          <div class="inwrap"><input type="date" id="in-rhire"></div>
+        </div>
+        <div class="field" id="f-rquit" style="display:none">
+          <label for="in-rquit">퇴사(예정)일</label>
+          <div class="inwrap"><input type="date" id="in-rquit"></div>
+        </div>
+        <div class="field" id="f-rused" style="display:none">
+          <label for="in-rused">지금까지 사용한 연차 <span class="hint">전체 재직기간 합계</span></label>
+          <div class="inwrap"><input type="number" id="in-rused" min="0" step="0.5" placeholder="10"><span class="unit">일</span></div>
+        </div>
+        <div class="field" id="f-days">
+          <label for="in-days">미사용 연차일수</label>
+          <div class="inwrap"><input type="number" id="in-days" min="0.5" step="0.5" placeholder="5"><span class="unit">일</span></div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="calcPay()">연차수당 계산하기</button>
+
+      <div class="result" id="res-pay" aria-live="polite">
+        <div class="slip">
+          <div class="stamp" aria-hidden="true">산출</div>
+          <h3>연차수당 산출내역</h3>
+          <table>
+            <tr><td>통상시급</td><td id="o-hourly">-</td></tr>
+            <tr><td>1일 통상임금</td><td id="o-daily">-</td></tr>
+            <tr class="r-only" style="display:none"><td>재직 중 총 발생 연차</td><td id="o-accrued">-</td></tr>
+            <tr class="r-only" style="display:none"><td>사용한 연차</td><td id="o-used">-</td></tr>
+            <tr><td id="o-days-label">미사용 연차일수</td><td id="o-days">-</td></tr>
+            <tr class="total"><td>지급받을 연차수당 (세전)</td><td id="o-total">-</td></tr>
+            <tr class="ded"><td>예상 공제액 (4대보험 + 소득세)</td><td id="o-deduct">-</td></tr>
+            <tr class="net"><td>세후 예상 실수령액</td><td id="o-net">-</td></tr>
+          </table>
+        </div>
+        <details class="brkdn">
+          <summary>공제 내역 자세히 보기</summary>
+          <div class="a">
+            <table>
+              <tr><td>국민연금 (4.75%)</td><td id="b-pension">-</td></tr>
+              <tr><td>건강보험 (3.595%)</td><td id="b-health">-</td></tr>
+              <tr><td>장기요양보험 (0.4724%)</td><td id="b-care">-</td></tr>
+              <tr><td>고용보험 (0.9%)</td><td id="b-emp">-</td></tr>
+              <tr><td>소득세 + 지방소득세 (추정)</td><td id="b-tax">-</td></tr>
+            </table>
+          </div>
+        </details>
+        <button class="btn ghost" onclick="copyResult('#res-pay','연차수당 산출내역')">계산 결과 복사하기</button>
+        <div class="note" id="pay-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 계산기 2: 연차 발생 개수 -->
+  <div class="card">
+    <div class="card-h"><h2>내 연차, 몇 개 생겼을까?</h2><span>입사일 기준</span></div>
+    <div class="card-b">
+      <div class="grid">
+        <div class="field">
+          <label for="in-hire">입사일</label>
+          <div class="inwrap"><input type="date" id="in-hire"></div>
+        </div>
+        <div class="field">
+          <label for="in-base">기준일 <span class="hint">보통 오늘</span></label>
+          <div class="inwrap"><input type="date" id="in-base"></div>
+        </div>
+      </div>
+      <button class="btn" onclick="calcDays()">발생 연차 계산하기</button>
+
+      <div class="result" id="res-days" aria-live="polite">
+        <div class="slip">
+          <div class="stamp" aria-hidden="true">산출</div>
+          <h3>연차 발생내역</h3>
+          <table>
+            <tr><td>근속기간</td><td id="d-tenure">-</td></tr>
+            <tr><td>적용 기준</td><td id="d-rule">-</td></tr>
+            <tr class="total"><td>발생 연차</td><td id="d-total">-</td></tr>
+          </table>
+        </div>
+        <div class="note" id="days-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 애드센스 광고 자리 ① -->
+  <div class="ad-slot">AD</div>
+
+  <div class="info">
+
+    <section>
+      <h2>연차수당이란?</h2>
+      <p>연차수당(연차휴가 미사용수당)은 근로기준법 제60조에 따라 발생한 연차유급휴가를 사용하지 못하고 소멸한 경우, 그 일수만큼 회사가 금전으로 보상하는 수당입니다. 상시 근로자 5인 이상 사업장에서 1주 15시간 이상 근무하는 근로자에게 적용됩니다.</p>
+      <p>연차수당은 통상임금 또는 평균임금을 기준으로 지급하며, 실무에서는 대부분 통상임금을 기준으로 계산합니다. 통상임금은 기본급에 매월 정기적·일률적으로 지급되는 고정수당(직책수당, 식대 등 조건 없이 전 직원에게 지급되는 항목)을 더한 금액입니다.</p>
+    </section>
+
+    <section>
+      <h2>연차수당 계산 방법</h2>
+      <div class="formula">
+        통상시급 = 월 통상임금 ÷ 209시간 (주 40시간 근무 기준)<br>
+        1일 통상임금 = 통상시급 × 8시간<br>
+        <b>연차수당 = 1일 통상임금 × 미사용 연차일수</b>
+      </div>
+      <p>예를 들어 월 통상임금이 260만 원이고 미사용 연차가 5일이라면, 통상시급은 약 12,440원, 1일 통상임금은 99,522원이며 연차수당은 약 497,608원이 됩니다. 주 40시간 미만 단시간 근로자는 소정근로시간에 비례하여 계산합니다.</p>
+    </section>
+
+    <section>
+      <h2>연차는 몇 개 발생하나요?</h2>
+      <table>
+        <tr><th>근속기간</th><th>발생 연차</th></tr>
+        <tr><td>1년 미만</td><td>1개월 개근 시 1일 (최대 11일)</td></tr>
+        <tr><td>1년 이상 (출근율 80% 이상)</td><td>기본 15일</td></tr>
+        <tr><td>3년 이상</td><td>최초 1년 초과 후 매 2년마다 1일 가산 (예: 3년차 16일, 5년차 17일)</td></tr>
+        <tr><td>상한</td><td>최대 25일</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>세후 실수령액은 어떻게 계산하나요?</h2>
+      <p>연차수당은 근로소득이므로 4대 보험료와 소득세가 공제됩니다. 이 계산기는 2026년 확정 요율을 적용해 실수령액을 추정합니다. 2026년은 연금개혁에 따라 국민연금 보험료율이 27년 만에 인상된 첫해입니다.</p>
+      <table>
+        <tr><th>항목</th><th>2026년 요율 (근로자 부담)</th><th>비고</th></tr>
+        <tr><td>국민연금</td><td>4.75%</td><td>전체 9.5% 중 절반 · 기준소득월액 상한 637만 원</td></tr>
+        <tr><td>건강보험</td><td>3.595%</td><td>전체 7.19% 중 절반</td></tr>
+        <tr><td>장기요양보험</td><td>0.4724%</td><td>전체 0.9448% 중 절반</td></tr>
+        <tr><td>고용보험</td><td>0.9%</td><td>실업급여 계정</td></tr>
+        <tr><td>소득세·지방소득세</td><td>연봉 구간별 6.6~49.5%</td><td>한계세율 기준 추정</td></tr>
+      </table>
+      <p>소득세는 부양가족 수와 비과세 항목에 따라 달라지며, 최종 세액은 연말정산에서 확정됩니다. 계산 결과는 참고용 추정치로 활용해 주세요.</p>
+    </section>
+
+    <!-- 애드센스 광고 자리 ② -->
+    <div class="ad-slot">AD</div>
+
+    <section>
+      <h2>자주 묻는 질문</h2>
+      <details>
+        <summary>연차수당은 언제 지급되나요?</summary>
+        <div class="a">연차휴가가 소멸한 날(발생일로부터 1년 경과) 다음 임금 지급일에 지급하는 것이 원칙입니다. 퇴직 시에는 남은 연차 전부를 수당으로 정산해야 하며, 퇴직일로부터 14일 이내에 지급해야 합니다.</div>
+      </details>
+      <details>
+        <summary>연차수당에도 세금이 붙나요?</summary>
+        <div class="a">네. 연차수당은 근로소득에 해당하여 소득세와 4대 보험료가 공제됩니다. 이 계산기는 세전 금액과 함께 2026년 요율 기준 세후 예상 실수령액을 함께 보여드립니다.</div>
+      </details>
+      <details>
+        <summary>회사가 연차수당을 주지 않으면 어떻게 하나요?</summary>
+        <div class="a">연차수당 청구권의 소멸시효는 3년입니다. 미지급 시 관할 고용노동청에 임금체불 진정을 제기할 수 있으며, 고용노동부 홈페이지나 국번 없이 1350으로 상담이 가능합니다.</div>
+      </details>
+      <details>
+        <summary>연차촉진제도를 시행한 회사도 수당을 줘야 하나요?</summary>
+        <div class="a">회사가 근로기준법 제61조에 따른 연차사용촉진 절차(서면 통보 등)를 적법하게 모두 이행했다면, 미사용 연차에 대한 수당 지급 의무가 면제될 수 있습니다. 절차에 흠결이 있으면 지급 의무가 유지됩니다.</div>
+      </details>
+      <details>
+        <summary>5인 미만 사업장도 연차가 발생하나요?</summary>
+        <div class="a">상시 근로자 5인 미만 사업장에는 근로기준법상 연차휴가 규정이 적용되지 않습니다. 다만 취업규칙이나 근로계약으로 연차를 부여하기로 정했다면 그에 따릅니다.</div>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="../index.html">홈</a>
+      <a href="../severance/index.html">퇴직금</a>
+      <a href="../unemployment/index.html">실업급여</a>
+      <a href="../weekly-holiday/index.html">주휴수당</a>
+    </nav>
+    본 계산기는 근로기준법 및 2026년 고시 최저임금(시급 10,320원)을 기준으로 한 참고용 도구입니다. 통상임금 산입 범위, 출근율, 연차촉진 여부 등 개별 사정에 따라 실제 금액과 차이가 있을 수 있으며, 법적 판단이 필요한 경우 고용노동부(☎1350) 또는 공인노무사와 상담하시기 바랍니다.<br>
+    © 2026 월급노트 · 문의: simsj0930@gmail.com
+  </div>
+</footer>
+
+<script>
+/* ── 이 페이지 전용 로직 ── */
+let mode = 'm';
+function setMode(m){
+  mode = m;
+  ['m','h','r'].forEach(t=>document.getElementById('tab-'+t).setAttribute('aria-selected', m===t));
+  document.getElementById('f-salary').style.display = (m==='m'||m==='r') ? '' : 'none';
+  document.getElementById('f-week').style.display   = (m==='m'||m==='r') ? '' : 'none';
+  document.getElementById('f-hourly').style.display = m==='h' ? '' : 'none';
+  document.getElementById('f-day').style.display    = m==='h' ? '' : 'none';
+  document.getElementById('f-days').style.display   = m==='r' ? 'none' : '';
+  ['f-rhire','f-rquit','f-rused'].forEach(id=>document.getElementById(id).style.display = m==='r' ? '' : 'none');
+  document.getElementById('res-pay').classList.remove('show');
+}
+
+/* 재직기간 누적 연차 계산 */
+function accruedLeave(hire, quit){
+  let years = quit.getFullYear() - hire.getFullYear();
+  const a = new Date(hire); a.setFullYear(hire.getFullYear()+years);
+  if(quit < a) years--;
+  let months = (quit.getFullYear()-hire.getFullYear())*12 + (quit.getMonth()-hire.getMonth());
+  const mA = new Date(hire); mA.setMonth(hire.getMonth()+months);
+  if(quit < mA) months--;
+  if(years < 1) return { total: Math.min(Math.max(months,0),11), years, months };
+  let total = 11;
+  for(let k=1;k<=years;k++) total += Math.min(15 + Math.floor((k-1)/2), 25);
+  return { total, years, months };
+}
+
+function calcPay(){
+  const note = document.getElementById('pay-note');
+  let hourly, dailyHours, days, extraNote = '';
+
+  document.querySelectorAll('.r-only').forEach(r=>r.style.display = mode==='r' ? '' : 'none');
+  document.getElementById('o-days-label').textContent = mode==='r' ? '정산 대상 잔여 연차' : '미사용 연차일수';
+
+  if(mode === 'h'){
+    hourly = num('in-hourly');
+    dailyHours = Math.min(Math.max(num('in-day')||8,1),8);
+    days = num('in-days');
+    if(!hourly || !days){ alert('시급과 미사용 연차일수를 입력해 주세요.'); return; }
+  } else {
+    const salary = num('in-salary');
+    let week = Math.min(Math.max(num('in-week')||40,1),40);
+    if(!salary){ alert('월 통상임금을 입력해 주세요.'); return; }
+    const juhyu = week >= 15 ? Math.min(week/5, 8) : 0;
+    const monthHours = Math.round((week + juhyu) * 4.345);
+    hourly = salary / monthHours;
+    dailyHours = Math.min(week/5, 8);
+
+    if(mode === 'm'){
+      days = num('in-days');
+      if(!days){ alert('미사용 연차일수를 입력해 주세요.'); return; }
+    } else {
+      const hire = document.getElementById('in-rhire').valueAsDate;
+      const quit = document.getElementById('in-rquit').valueAsDate;
+      const used = num('in-rused');
+      if(!hire || !quit || quit <= hire){ alert('입사일과 퇴사일을 확인해 주세요.'); return; }
+      const acc = accruedLeave(hire, quit);
+      days = Math.max(acc.total - used, 0);
+      document.getElementById('o-accrued').textContent = acc.total+' 일 (근속 '+(acc.years>=1 ? acc.years+'년 '+(acc.months-acc.years*12)+'개월' : acc.months+'개월')+')';
+      document.getElementById('o-used').textContent = used+' 일';
+      extraNote = ' 발생 연차는 입사일 기준·개근 가정 계산이며, 회계연도 기준 회사는 개수가 다를 수 있습니다. 퇴직 정산금은 퇴직일로부터 14일 이내에 지급되어야 합니다.';
+      if(days === 0){ extraNote = ' 계산상 잔여 연차가 없습니다. 사용 일수를 다시 확인해 보세요.' + extraNote; }
+    }
+  }
+
+  const daily = hourly * dailyHours;
+  const total = daily * days;
+
+  let monthlyForTax;
+  if(mode === 'h'){
+    const w = dailyHours*5, j = w >= 15 ? Math.min(w/5,8) : 0;
+    monthlyForTax = hourly * Math.round((w+j)*4.345);
+  } else {
+    monthlyForTax = num('in-salary');
+  }
+  const est = estimateNet(total, monthlyForTax);
+  document.getElementById('o-deduct').textContent = '− '+fmt(est.deduct)+' 원';
+  document.getElementById('o-net').textContent = fmt(est.net)+' 원';
+  document.getElementById('b-pension').textContent = est.pension ? fmt(est.pension)+' 원' : '0 원 (기준소득 상한 도달)';
+  document.getElementById('b-health').textContent = fmt(est.health)+' 원';
+  document.getElementById('b-care').textContent = fmt(est.care)+' 원';
+  document.getElementById('b-emp').textContent = fmt(est.emp)+' 원';
+  document.getElementById('b-tax').textContent = fmt(est.tax)+' 원';
+
+  document.getElementById('o-hourly').textContent = fmt(hourly)+' 원';
+  document.getElementById('o-daily').textContent  = fmt(daily)+' 원 ('+dailyHours+'시간)';
+  document.getElementById('o-days').textContent   = days+' 일';
+  document.getElementById('o-total').textContent  = fmt(total)+' 원';
+
+  if(hourly < MIN_WAGE_2026){
+    note.className = 'note warn';
+    note.textContent = '입력하신 급여로 계산한 통상시급('+fmt(hourly)+'원)이 2026년 최저시급 10,320원보다 낮습니다. 급여 항목이 누락되지 않았는지, 최저임금 위반이 아닌지 확인해 보세요.';
+  } else {
+    note.className = 'note';
+    note.textContent = '실수령액은 2026년 4대보험 요율(국민연금 9.5%·건강보험 7.19%)과 간이 세율로 계산한 추정치입니다. 부양가족 수·비과세 항목·연말정산에 따라 실제 금액과 다를 수 있습니다.' + (extraNote || '');
+  }
+  showResult('res-pay');
+}
+
+/* 발생 연차 계산 */
+document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('in-base').valueAsDate = new Date(); });
+function calcDays(){
+  const hire = document.getElementById('in-hire').valueAsDate;
+  const base = document.getElementById('in-base').valueAsDate;
+  if(!hire || !base || base < hire){ alert('입사일과 기준일을 확인해 주세요.'); return; }
+
+  let years = base.getFullYear() - hire.getFullYear();
+  const anniv = new Date(hire); anniv.setFullYear(hire.getFullYear()+years);
+  if(base < anniv) years--;
+
+  let months = (base.getFullYear()-hire.getFullYear())*12 + (base.getMonth()-hire.getMonth());
+  const mAnniv = new Date(hire); mAnniv.setMonth(hire.getMonth()+months);
+  if(base < mAnniv) months--;
+
+  let leave, rule;
+  if(years < 1){
+    leave = Math.min(Math.max(months,0), 11);
+    rule = '1년 미만 · 개근 월 1일';
+  } else {
+    leave = Math.min(15 + Math.floor((years-1)/2), 25);
+    rule = '출근율 80% 이상 가정 · 근속 가산 포함';
+  }
+
+  document.getElementById('d-tenure').textContent = years >= 1 ? years+'년 '+(months-years*12)+'개월' : months+'개월';
+  document.getElementById('d-rule').textContent = rule;
+  document.getElementById('d-total').textContent = leave+' 일';
+  document.getElementById('days-note').textContent = years < 1
+    ? '입사 1년 미만은 한 달을 개근할 때마다 연차 1일이 발생합니다(최대 11일). 결근한 달이 있다면 그만큼 차감하세요.'
+    : '연간 출근율이 80% 미만이거나 회계연도 기준으로 연차를 부여하는 회사라면 실제 개수와 다를 수 있습니다.';
+  showResult('res-days');
+}
+</script>
+</body>
+</html>

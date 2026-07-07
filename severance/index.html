@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 퇴직금 계산기 | 평균임금 기준 자동 계산 — 월급노트</title>
+<meta name="description" content="입사일·퇴사일과 최근 3개월 급여만 입력하면 평균임금 기준 퇴직금을 즉시 계산합니다. 상여금·연차수당 반영, 2026년 기준.">
+<meta name="keywords" content="퇴직금 계산기, 2026 퇴직금, 평균임금 계산, 퇴직금 지급기준, 퇴직금 계산방법">
+<meta property="og:title" content="2026 퇴직금 계산기">
+<meta property="og:description" content="입사일·퇴사일과 3개월 급여로 내 퇴직금을 바로 확인하세요.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=block" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/common.css">
+<script src="../assets/common.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"퇴직금은 누가 받을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"1주 15시간 이상 근무하며 1년 이상 계속 근로한 근로자라면 사업장 규모와 관계없이 퇴직금을 받을 수 있습니다. 아르바이트, 계약직도 요건을 충족하면 지급 대상입니다."}},
+    {"@type":"Question","name":"퇴직금은 언제까지 지급되어야 하나요?","acceptedAnswer":{"@type":"Answer","text":"퇴직일로부터 14일 이내에 지급해야 합니다. 미지급 시 지연이자(연 20%)가 발생하며, 고용노동청에 진정을 제기할 수 있습니다. 청구권 소멸시효는 3년입니다."}},
+    {"@type":"Question","name":"퇴직금에도 세금이 붙나요?","acceptedAnswer":{"@type":"Answer","text":"퇴직금은 근로소득이 아닌 퇴직소득으로 분류되어 별도의 퇴직소득세가 부과됩니다. 근속연수공제와 환산급여공제가 적용되어 일반 급여보다 세부담이 낮은 편입니다."}},
+    {"@type":"Question","name":"상여금과 연차수당도 퇴직금에 포함되나요?","acceptedAnswer":{"@type":"Answer","text":"퇴직 전 1년간 받은 상여금과 연차수당의 12분의 3(3개월분)이 평균임금에 포함됩니다. 이 계산기에 해당 금액을 입력하면 자동으로 반영됩니다."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
+    <span class="yr">2026년 기준</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <nav class="calcnav" aria-label="계산기 종류 선택">
+    <a class="chip" href="../annual-leave/index.html">연차수당</a>
+    <a class="chip on" href="index.html" aria-current="page">퇴직금</a>
+    <a class="chip" href="../unemployment/index.html">실업급여</a>
+    <a class="chip" href="../weekly-holiday/index.html">주휴수당</a>
+  </nav>
+
+  <div class="hero">
+    <h1>퇴직금 계산기</h1>
+    <p>입사일, 퇴사일과 최근 3개월 급여만 입력하면 근로자퇴직급여 보장법에 따른 평균임금 기준 퇴직금을 계산해 드립니다.</p>
+    <p class="basis">산정 기준 — <b>1일 평균임금 × 30일 × (재직일수 ÷ 365)</b></p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>퇴직금 계산</h2><span>평균임금 기준</span></div>
+    <div class="card-b">
+      <div class="grid">
+        <div class="field">
+          <label for="in-hire">입사일</label>
+          <div class="inwrap"><input type="date" id="in-hire"></div>
+        </div>
+        <div class="field">
+          <label for="in-quit">퇴사(예정)일 <span class="hint">마지막 근무 다음 날</span></label>
+          <div class="inwrap"><input type="date" id="in-quit"></div>
+        </div>
+        <div class="field">
+          <label for="in-wage3">퇴직 전 3개월 임금 총액 <span class="hint">세전 기준</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-wage3" inputmode="numeric" placeholder="9,000,000"><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="in-bonus">퇴직 전 1년간 상여금 <span class="hint">없으면 비워두세요</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-bonus" inputmode="numeric" placeholder="0"><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="in-leave">퇴직 전 1년간 연차수당 <span class="hint">없으면 비워두세요</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-leave" inputmode="numeric" placeholder="0"><span class="unit">원</span></div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="calcSeverance()">퇴직금 계산하기</button>
+
+      <div class="result" id="res-sev" aria-live="polite">
+        <div class="slip">
+          <div class="stamp" aria-hidden="true">산출</div>
+          <h3>퇴직금 산출내역</h3>
+          <table>
+            <tr><td>재직일수</td><td id="s-days">-</td></tr>
+            <tr><td>3개월 임금 총액 (상여·연차 반영)</td><td id="s-base">-</td></tr>
+            <tr><td>1일 평균임금</td><td id="s-avg">-</td></tr>
+            <tr class="total"><td>예상 퇴직금 (세전)</td><td id="s-total">-</td></tr>
+          </table>
+        </div>
+        <button class="btn ghost" onclick="copyResult('#res-sev','퇴직금 산출내역')">계산 결과 복사하기</button>
+        <div class="note" id="sev-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 애드센스 광고 자리 ① -->
+  <div class="ad-slot">AD</div>
+
+  <div class="info">
+
+    <section>
+      <h2>퇴직금 계산 방법</h2>
+      <div class="formula">
+        1일 평균임금 = (퇴직 전 3개월 임금 + 상여금×3/12 + 연차수당×3/12) ÷ 퇴직 전 3개월 총 일수<br>
+        <b>퇴직금 = 1일 평균임금 × 30일 × (재직일수 ÷ 365)</b>
+      </div>
+      <p>평균임금에는 기본급 외에 연장·야간·휴일근로수당 등 3개월간 실제로 받은 임금이 모두 포함됩니다. 퇴직 전 1년간 받은 상여금과 연차수당은 3개월분(12분의 3)만 산입합니다. 계산된 평균임금이 통상임금보다 낮으면 통상임금을 기준으로 계산해야 합니다.</p>
+    </section>
+
+    <section>
+      <h2>퇴직금 지급 요건</h2>
+      <table>
+        <tr><th>요건</th><th>내용</th></tr>
+        <tr><td>계속근로기간</td><td>1년 이상 (수습·인턴 기간도 계속 근로했다면 포함)</td></tr>
+        <tr><td>근로시간</td><td>1주 소정근로시간 15시간 이상</td></tr>
+        <tr><td>사업장 규모</td><td>제한 없음 (5인 미만 사업장, 아르바이트도 지급 대상)</td></tr>
+        <tr><td>지급 기한</td><td>퇴직일로부터 14일 이내 (미지급 시 연 20% 지연이자)</td></tr>
+      </table>
+    </section>
+
+    <!-- 애드센스 광고 자리 ② -->
+    <div class="ad-slot">AD</div>
+
+    <section>
+      <h2>자주 묻는 질문</h2>
+      <details>
+        <summary>퇴직금은 누가 받을 수 있나요?</summary>
+        <div class="a">1주 15시간 이상 근무하며 1년 이상 계속 근로한 근로자라면 사업장 규모와 관계없이 받을 수 있습니다. 아르바이트, 계약직도 요건을 충족하면 지급 대상입니다.</div>
+      </details>
+      <details>
+        <summary>퇴직금에도 세금이 붙나요?</summary>
+        <div class="a">퇴직금은 근로소득이 아닌 퇴직소득으로 분류되어 별도의 퇴직소득세가 부과됩니다. 근속연수공제와 환산급여공제가 적용되어 근속이 길수록 세부담이 낮아지는 구조라, 이 계산기의 결과(세전)와 실수령액의 차이는 일반 급여보다 작은 편입니다.</div>
+      </details>
+      <details>
+        <summary>DC형 퇴직연금 가입자도 이 계산이 맞나요?</summary>
+        <div class="a">이 계산기는 퇴직금제도(DB형 포함) 기준입니다. DC형 퇴직연금은 매년 연간 임금총액의 12분의 1 이상을 회사가 적립하고 운용 수익이 더해지는 방식이라 계산 구조가 다릅니다.</div>
+      </details>
+      <details>
+        <summary>회사가 퇴직금을 주지 않으면?</summary>
+        <div class="a">퇴직일로부터 14일이 지나면 임금체불에 해당합니다. 관할 고용노동청에 진정을 제기할 수 있으며(국번 없이 1350), 청구권 소멸시효는 3년입니다.</div>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="../index.html">홈</a>
+      <a href="../annual-leave/index.html">연차수당</a>
+      <a href="../unemployment/index.html">실업급여</a>
+      <a href="../weekly-holiday/index.html">주휴수당</a>
+    </nav>
+    본 계산기는 근로자퇴직급여 보장법을 기준으로 한 참고용 도구입니다. 평균임금 산입 범위 등 개별 사정에 따라 실제 금액과 차이가 있을 수 있으며, 법적 판단이 필요한 경우 고용노동부(☎1350) 또는 공인노무사와 상담하시기 바랍니다.<br>
+    © 2026 월급노트 · 문의: simsj0930@gmail.com
+  </div>
+</footer>
+
+<script>
+function calcSeverance(){
+  const hire = document.getElementById('in-hire').valueAsDate;
+  const quit = document.getElementById('in-quit').valueAsDate;
+  const wage3 = num('in-wage3');
+  const bonus = num('in-bonus');
+  const leavePay = num('in-leave');
+  const note = document.getElementById('sev-note');
+
+  if(!hire || !quit || quit <= hire){ alert('입사일과 퇴사일을 확인해 주세요.'); return; }
+  if(!wage3){ alert('퇴직 전 3개월 임금 총액을 입력해 주세요.'); return; }
+
+  const DAY = 86400000;
+  const tenureDays = Math.round((quit - hire) / DAY);          // 재직일수
+
+  if(tenureDays < 365){
+    alert('계속근로기간이 1년 미만이면 법정 퇴직금 지급 대상이 아닙니다.\n(재직일수: '+tenureDays+'일)');
+    return;
+  }
+
+  const from3 = new Date(quit); from3.setMonth(quit.getMonth()-3);
+  const days3 = Math.round((quit - from3) / DAY);              // 퇴직 전 3개월 총 일수 (89~92)
+
+  const base = wage3 + bonus*(3/12) + leavePay*(3/12);         // 평균임금 산정 기초
+  const avgDaily = base / days3;                                // 1일 평균임금
+  const total = avgDaily * 30 * (tenureDays / 365);             // 퇴직금
+
+  const yrs = Math.floor(tenureDays/365);
+  document.getElementById('s-days').textContent = fmt(tenureDays)+' 일 (약 '+yrs+'년)';
+  document.getElementById('s-base').textContent = fmt(base)+' 원 / '+days3+'일';
+  document.getElementById('s-avg').textContent  = fmt(avgDaily)+' 원';
+  document.getElementById('s-total').textContent = fmt(total)+' 원';
+
+  note.className = 'note';
+  note.textContent = '세전 금액입니다. 퇴직금에는 퇴직소득세(근속연수공제 적용)가 별도로 부과되며, 근속이 길수록 세부담이 낮아집니다. 계산된 1일 평균임금이 통상임금보다 낮다면 통상임금 기준으로 다시 계산해야 하며, 지급 기한은 퇴직일로부터 14일 이내입니다.';
+  showResult('res-sev');
+}
+</script>
+</body>
+</html>
