@@ -68,6 +68,9 @@ header{background:var(--doc);border-bottom:1px solid var(--line)}
 .inwrap input,.inwrap select{width:100%;font-family:var(--sans);font-size:16px;padding:11px 46px 11px 13px;border:1px solid var(--line);border-radius:4px;background:#FCFDFE;color:var(--ink);font-variant-numeric:tabular-nums}
 .inwrap select{appearance:none;padding-right:34px}
 .inwrap input:focus,.inwrap select:focus{outline:2px solid var(--navy);outline-offset:-1px;border-color:var(--navy)}
+/* iOS Safari에서 date 입력이 부모 폭을 넘치는 문제 보정 */
+.inwrap input[type="date"]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:48px;padding-right:13px}
+.inwrap input[type="date"]::-webkit-date-and-time-value{text-align:left}
 .inwrap .unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--sub);pointer-events:none}
 .btn{display:block;width:100%;margin-top:22px;font-family:var(--sans);font-size:16px;font-weight:700;color:#fff;background:var(--navy);border:none;border-radius:4px;padding:14px;cursor:pointer;letter-spacing:.02em}
 .btn:hover{background:var(--navy-d)}
