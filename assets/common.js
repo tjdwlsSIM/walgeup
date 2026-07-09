@@ -63,3 +63,57 @@ function estimateNet(bonus, monthly){
   const deduct  = pension + health + care + emp + tax;
   return { pension, health, care, emp, tax, deduct, net: bonus - deduct };
 }
+
+/* ── 계산 결과 URL 공유 ── */
+/* 계산 실행 시 입력값을 쿼리스트링에 기록: setShareParams({salary:2500000, week:40}) */
+function setShareParams(obj){
+  const p = new URLSearchParams();
+  Object.keys(obj).forEach(k => {
+    const v = obj[k];
+    if(v !== '' && v !== null && v !== undefined) p.set(k, v);
+  });
+  history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p.toString() : ''));
+}
+
+/* 쿼리스트링 값으로 입력창 채우기 (money 입력은 콤마 포맷, 체크박스는 1/0) */
+function fillInput(id, val){
+  const el = document.getElementById(id);
+  if(!el || val === null || val === '') return;
+  if(el.type === 'checkbox'){ el.checked = val === '1'; return; }
+  if(el.classList.contains('money')){
+    const raw = String(val).replace(/[^0-9]/g,'');
+    el.value = raw ? Number(raw).toLocaleString('ko-KR') : '';
+    return;
+  }
+  el.value = val;
+}
+
+/* 현재 URL(계산 결과 링크) 복사 */
+function copyLink(){
+  navigator.clipboard.writeText(location.href)
+    .then(()=>alert('결과 링크가 복사되었습니다. 이 주소를 열면 같은 계산 결과가 바로 표시됩니다.'))
+    .catch(()=>alert('복사에 실패했습니다. 주소창의 URL을 직접 복사해 주세요.'));
+}
+
+/* ── 헤더 연도 선택 메뉴 (UI만 — 실제 연도 전환 로직은 아직 없음) ──
+   [내년 확장 방법]
+   1) 이 파일에 RATES_2027, MIN_WAGE_2027 등 연도별 상수 세트를 추가
+   2) 각 페이지 헤더 .yrmenu의 '2027년' 항목에서 disabled를 제거하고,
+      클릭 시 ?year=2027 파라미터로 이동하거나 localStorage에 연도를 저장
+   3) 각 계산기에서 선택된 연도에 맞는 상수 세트를 골라 계산하도록 수정 */
+function toggleYearMenu(e){
+  e.stopPropagation();
+  const btn = e.currentTarget;
+  const menu = btn.parentElement.querySelector('.yrmenu');
+  if(!menu) return;
+  const willOpen = menu.hidden;
+  menu.hidden = !willOpen;
+  btn.setAttribute('aria-expanded', String(willOpen));
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('.yrmenu:not([hidden])').forEach(m => {
+    m.hidden = true;
+    const btn = m.parentElement.querySelector('button.yr');
+    if(btn) btn.setAttribute('aria-expanded', 'false');
+  });
+});

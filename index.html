@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>월급노트 — 2026 연차수당·퇴직금·실업급여·주휴수당 계산기</title>
-<meta name="description" content="2026년 최신 기준으로 만든 노동·급여 계산기 모음. 연차수당, 퇴직금, 실업급여, 주휴수당을 무료로 바로 계산하세요.">
+<title>월급노트 — 2026 연차수당·퇴직금·실업급여·연봉 실수령액 계산기</title>
+<meta name="description" content="2026년 최신 기준으로 만든 노동·급여 계산기 모음. 연차수당, 퇴직금, 실업급여, 주휴수당, 연봉 실수령액, 4대보험, 최저임금을 무료로 바로 계산하세요.">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,13 +15,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/common.css">
+<script src="assets/common.js"></script>
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
     <a class="brand" href="index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -28,7 +30,7 @@
 
   <div class="hero">
     <h1>일하는 사람의 계산기</h1>
-    <p>연차수당, 퇴직금, 실업급여, 주휴수당 — 매년 바뀌는 노동 관련 금액을 2026년 최신 기준으로 바로 계산하세요. 회원가입 없이 무료입니다.</p>
+    <p>연차수당, 퇴직금, 실업급여, 주휴수당부터 연봉 실수령액, 4대보험, 최저임금까지 — 매년 바뀌는 노동 관련 금액을 2026년 최신 기준으로 바로 계산하세요. 회원가입 없이 무료입니다.</p>
   </div>
 
   <div class="cards">
@@ -50,6 +52,21 @@
     <a class="cardlink" href="weekly-holiday/index.html">
       <h3>주휴수당 계산기</h3>
       <p>알바·단시간 근로자 필수. 주 15시간 이상이면 하루치 급여가 더 생깁니다.</p>
+      <span class="go">계산하기 →</span>
+    </a>
+    <a class="cardlink" href="salary/index.html">
+      <h3>연봉 실수령액 계산기</h3>
+      <p>연봉에서 4대보험·소득세를 뺀 세후 월 실수령액을 2026년 요율로 계산.</p>
+      <span class="go">계산하기 →</span>
+    </a>
+    <a class="cardlink" href="insurance/index.html">
+      <h3>4대보험 계산기</h3>
+      <p>국민연금·건강보험·고용보험 — 근로자와 사업주 부담금을 항목별로 확인.</p>
+      <span class="go">계산하기 →</span>
+    </a>
+    <a class="cardlink" href="minimum-wage/index.html">
+      <h3>최저임금 위반 체크기</h3>
+      <p>내 시급이 최저임금 10,320원 기준에 맞는지, 주휴 포함 계약까지 판정.</p>
       <span class="go">계산하기 →</span>
     </a>
   </div>
@@ -90,6 +107,9 @@
       <a href="severance/index.html">퇴직금</a>
       <a href="unemployment/index.html">실업급여</a>
       <a href="weekly-holiday/index.html">주휴수당</a>
+      <a href="salary/index.html">연봉 실수령액</a>
+      <a href="insurance/index.html">4대보험</a>
+      <a href="minimum-wage/index.html">최저임금</a>
       <a href="guides/index.html">가이드</a>
       <a href="privacy/index.html">개인정보처리방침</a>
       <a href="about/index.html">사이트 소개</a>

@@ -8,6 +8,7 @@
 <meta property="og:title" content="노동법·급여 가이드 — 월급노트">
 <meta property="og:description" content="연차수당, 퇴직금, 실업급여, 주휴수당 — 일하는 사람에게 필요한 돈 이야기를 쉽게 정리했습니다.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/guides/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,13 +18,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/common.css">
+<script src="../assets/common.js"></script>
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
     <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -60,6 +62,21 @@
       <p>수급 요건 확인부터 이직확인서, 고용24 구직등록, 실업인정까지 — 신청 순서를 단계별로 안내합니다.</p>
       <span class="go">읽어보기 →</span>
     </a>
+    <a class="cardlink" href="salary-3000/index.html">
+      <h3>연봉 3,000만 원 실수령액은 얼마일까?</h3>
+      <p>2026년 4대보험 요율과 소득세 누진세율로 직접 계산한 공제 내역과 월 실수령액을 표로 정리했습니다.</p>
+      <span class="go">읽어보기 →</span>
+    </a>
+    <a class="cardlink" href="salary-250-annual-leave/index.html">
+      <h3>월급 250만 원 직장인, 연차수당은 얼마?</h3>
+      <p>통상시급(250만 ÷ 209시간)부터 1일 통상임금, 미사용 일수별 연차수당까지 단계별 계산 예시.</p>
+      <span class="go">읽어보기 →</span>
+    </a>
+    <a class="cardlink" href="minimum-wage-monthly/index.html">
+      <h3>2026 최저시급으로 주 40시간 일하면 월급은?</h3>
+      <p>10,320 × 209 = 2,156,880원. 209시간이 나오는 이유와 주휴수당 개념을 함께 풀었습니다.</p>
+      <span class="go">읽어보기 →</span>
+    </a>
   </div>
 
   <!-- 애드센스 광고 자리 -->
@@ -68,7 +85,7 @@
   <div class="info">
     <section>
       <h2>가이드와 계산기를 함께 활용하세요</h2>
-      <p>가이드에서 개념과 조건을 확인하셨다면, 계산기에서 내 금액을 바로 계산해 볼 수 있습니다. <a href="../annual-leave/index.html">연차수당 계산기</a>, <a href="../severance/index.html">퇴직금 계산기</a>, <a href="../unemployment/index.html">실업급여 계산기</a>, <a href="../weekly-holiday/index.html">주휴수당 계산기</a> 모두 회원가입 없이 무료로 이용하실 수 있습니다.</p>
+      <p>가이드에서 개념과 조건을 확인하셨다면, 계산기에서 내 금액을 바로 계산해 볼 수 있습니다. <a href="../annual-leave/index.html">연차수당 계산기</a>, <a href="../severance/index.html">퇴직금 계산기</a>, <a href="../unemployment/index.html">실업급여 계산기</a>, <a href="../weekly-holiday/index.html">주휴수당 계산기</a>, <a href="../salary/index.html">연봉 실수령액 계산기</a>, <a href="../insurance/index.html">4대보험 계산기</a>, <a href="../minimum-wage/index.html">최저임금 위반 체크기</a> 모두 회원가입 없이 무료로 이용하실 수 있습니다.</p>
     </section>
   </div>
 </main>
@@ -81,6 +98,9 @@
       <a href="../severance/index.html">퇴직금</a>
       <a href="../unemployment/index.html">실업급여</a>
       <a href="../weekly-holiday/index.html">주휴수당</a>
+      <a href="../salary/index.html">연봉 실수령액</a>
+      <a href="../insurance/index.html">4대보험</a>
+      <a href="../minimum-wage/index.html">최저임금</a>
       <a href="index.html">가이드</a>
       <a href="../privacy/index.html">개인정보처리방침</a>
       <a href="../about/index.html">사이트 소개</a>

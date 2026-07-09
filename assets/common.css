@@ -19,6 +19,17 @@ header{background:var(--doc);border-bottom:1px solid var(--line)}
 .brand small{font-family:var(--sans);font-weight:500;color:var(--sub);font-size:12px;margin-left:8px}
 .yr{font-size:12px;color:var(--navy);border:1px solid var(--navy);border-radius:3px;padding:2px 8px;letter-spacing:.06em}
 
+/* 연도 선택 드롭다운 (헤더 배지) */
+.yrsel{position:relative}
+button.yr{background:var(--doc);font-family:var(--sans);cursor:pointer}
+button.yr:hover{background:var(--ok-bg)}
+.yrmenu{position:absolute;right:0;top:calc(100% + 6px);min-width:160px;background:var(--doc);border:1px solid var(--line);border-radius:4px;box-shadow:0 4px 14px rgba(29,38,52,.14);padding:4px;z-index:30}
+.yrmenu button{display:block;width:100%;text-align:left;font-family:var(--sans);font-size:13px;padding:8px 10px;border:none;border-radius:3px;background:none;color:var(--ink);cursor:pointer}
+.yrmenu button:hover{background:var(--ok-bg)}
+.yrmenu button.on{color:var(--navy);font-weight:700}
+.yrmenu button:disabled{color:#9AA3B0;cursor:default}
+.yrmenu button:disabled:hover{background:none}
+
 /* 계산기 선택 바 */
 .calcnav{display:flex;gap:8px;flex-wrap:wrap;padding-top:24px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:var(--doc);color:var(--sub);text-decoration:none;cursor:pointer}
@@ -102,6 +113,11 @@ header{background:var(--doc);border-bottom:1px solid var(--line)}
 .stamp{position:absolute;right:22px;top:14px;width:58px;height:58px;border:2.5px solid var(--stamp);border-radius:50%;color:var(--stamp);font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:.1em;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);opacity:.88;background:radial-gradient(circle,rgba(190,59,47,.06),transparent 70%)}
 .note{margin-top:14px;font-size:13px;color:var(--sub);padding:12px 14px;border-radius:4px;background:var(--ok-bg)}
 .note.warn{background:var(--warn-bg);color:#8C3A30}
+.note.ok{background:#EDF6EE;color:#2F6B3C}
+
+/* 결과 하단 버튼 두 개 나란히 (결과 복사 + 링크 복사) */
+.btnrow{display:flex;gap:10px}
+.btnrow .btn{flex:1}
 .brkdn{margin-top:10px}
 .brkdn .a table{width:100%;border-collapse:collapse;font-size:13.5px}
 .brkdn .a td{padding:6px 2px;border-bottom:1px solid var(--line);color:#38404E}

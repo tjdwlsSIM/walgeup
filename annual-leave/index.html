@@ -9,6 +9,7 @@
 <meta property="og:title" content="2026 연차수당 계산기">
 <meta property="og:description" content="월급·시급 입력으로 미사용 연차수당과 세후 실수령액을 바로 계산해 보세요.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/annual-leave/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +39,7 @@
 <header>
   <div class="wrap hd">
     <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -49,6 +50,9 @@
     <a class="chip" href="../severance/index.html">퇴직금</a>
     <a class="chip" href="../unemployment/index.html">실업급여</a>
     <a class="chip" href="../weekly-holiday/index.html">주휴수당</a>
+    <a class="chip" href="../salary/index.html">연봉 실수령액</a>
+    <a class="chip" href="../insurance/index.html">4대보험</a>
+    <a class="chip" href="../minimum-wage/index.html">최저임금</a>
   </nav>
 
   <div class="hero">
@@ -131,7 +135,10 @@
             </table>
           </div>
         </details>
-        <button class="btn ghost" onclick="copyResult('#res-pay','연차수당 산출내역')">계산 결과 복사하기</button>
+        <div class="btnrow">
+          <button class="btn ghost" onclick="copyResult('#res-pay','연차수당 산출내역')">계산 결과 복사하기</button>
+          <button class="btn ghost" onclick="copyLink()">결과 링크 복사</button>
+        </div>
         <div class="note" id="pay-note"></div>
       </div>
     </div>
@@ -358,6 +365,21 @@ function calcPay(){
     note.className = 'note';
     note.textContent = '실수령액은 2026년 4대보험 요율(국민연금 9.5%·건강보험 7.19%)과 간이 세율로 계산한 추정치입니다. 부양가족 수·비과세 항목·연말정산에 따라 실제 금액과 다를 수 있습니다.' + (extraNote || '');
   }
+
+  /* 입력값을 URL에 반영 (결과 링크 공유용) */
+  const share = { m: mode };
+  if(mode === 'h'){
+    share.hourly = num('in-hourly'); share.day = num('in-day') || 8; share.days = num('in-days');
+  } else {
+    share.salary = num('in-salary'); share.week = num('in-week') || 40;
+    if(mode === 'm'){ share.days = num('in-days'); }
+    else {
+      share.rhire = document.getElementById('in-rhire').value;
+      share.rquit = document.getElementById('in-rquit').value;
+      share.rused = num('in-rused');
+    }
+  }
+  setShareParams(share);
   showResult('res-pay');
 }
 
@@ -391,8 +413,24 @@ function calcDays(){
   document.getElementById('days-note').textContent = years < 1
     ? '입사 1년 미만은 한 달을 개근할 때마다 연차 1일이 발생합니다(최대 11일). 결근한 달이 있다면 그만큼 차감하세요.'
     : '연간 출근율이 80% 미만이거나 회계연도 기준으로 연차를 부여하는 회사라면 실제 개수와 다를 수 있습니다.';
+
+  setShareParams({ calc: 'days', hire: document.getElementById('in-hire').value, base: document.getElementById('in-base').value });
   showResult('res-days');
 }
+
+/* 공유된 링크로 접속 시 자동 계산 */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const q = new URLSearchParams(location.search);
+  if(q.get('calc') === 'days'){
+    fillInput('in-hire', q.get('hire'));
+    fillInput('in-base', q.get('base'));
+    calcDays();
+  } else if(['m','h','r'].includes(q.get('m'))){
+    setMode(q.get('m'));
+    ['salary','week','hourly','day','days','rhire','rquit','rused'].forEach(k => fillInput('in-'+k, q.get(k)));
+    calcPay();
+  }
+});
 </script>
 </body>
 </html>

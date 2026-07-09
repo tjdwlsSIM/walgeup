@@ -9,6 +9,7 @@
 <meta property="og:title" content="2026 퇴직금 계산기">
 <meta property="og:description" content="입사일·퇴사일과 3개월 급여로 내 퇴직금을 바로 확인하세요.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/severance/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +38,7 @@
 <header>
   <div class="wrap hd">
     <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -48,6 +49,9 @@
     <a class="chip on" href="index.html" aria-current="page">퇴직금</a>
     <a class="chip" href="../unemployment/index.html">실업급여</a>
     <a class="chip" href="../weekly-holiday/index.html">주휴수당</a>
+    <a class="chip" href="../salary/index.html">연봉 실수령액</a>
+    <a class="chip" href="../insurance/index.html">4대보험</a>
+    <a class="chip" href="../minimum-wage/index.html">최저임금</a>
   </nav>
 
   <div class="hero">
@@ -95,7 +99,10 @@
             <tr class="total"><td>예상 퇴직금 (세전)</td><td id="s-total">-</td></tr>
           </table>
         </div>
-        <button class="btn ghost" onclick="copyResult('#res-sev','퇴직금 산출내역')">계산 결과 복사하기</button>
+        <div class="btnrow">
+          <button class="btn ghost" onclick="copyResult('#res-sev','퇴직금 산출내역')">계산 결과 복사하기</button>
+          <button class="btn ghost" onclick="copyLink()">결과 링크 복사</button>
+        </div>
         <div class="note" id="sev-note"></div>
       </div>
     </div>
@@ -203,8 +210,27 @@ function calcSeverance(){
 
   note.className = 'note';
   note.textContent = '세전 금액입니다. 퇴직금에는 퇴직소득세(근속연수공제 적용)가 별도로 부과되며, 근속이 길수록 세부담이 낮아집니다. 계산된 1일 평균임금이 통상임금보다 낮다면 통상임금 기준으로 다시 계산해야 하며, 지급 기한은 퇴직일로부터 14일 이내입니다.';
+
+  setShareParams({
+    hire: document.getElementById('in-hire').value,
+    quit: document.getElementById('in-quit').value,
+    wage3, bonus, leave: leavePay
+  });
   showResult('res-sev');
 }
+
+/* 공유된 링크로 접속 시 자동 계산 */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const q = new URLSearchParams(location.search);
+  if(q.has('hire') && q.has('quit') && q.has('wage3')){
+    fillInput('in-hire', q.get('hire'));
+    fillInput('in-quit', q.get('quit'));
+    fillInput('in-wage3', q.get('wage3'));
+    fillInput('in-bonus', q.get('bonus'));
+    fillInput('in-leave', q.get('leave'));
+    calcSeverance();
+  }
+});
 </script>
 </body>
 </html>

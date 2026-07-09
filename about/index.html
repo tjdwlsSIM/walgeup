@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>사이트 소개 — 월급노트</title>
 <meta name="description" content="월급노트는 연차수당, 퇴직금, 실업급여, 주휴수당을 매년 바뀌는 최신 기준으로 계산할 수 있는 무료 노동·급여 계산기 사이트입니다.">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/about/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,13 +15,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="stylesheet" href="../assets/common.css">
+<script src="../assets/common.js"></script>
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
     <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -73,6 +75,9 @@
       <a href="../severance/index.html">퇴직금</a>
       <a href="../unemployment/index.html">실업급여</a>
       <a href="../weekly-holiday/index.html">주휴수당</a>
+      <a href="../salary/index.html">연봉 실수령액</a>
+      <a href="../insurance/index.html">4대보험</a>
+      <a href="../minimum-wage/index.html">최저임금</a>
       <a href="../guides/index.html">가이드</a>
       <a href="../privacy/index.html">개인정보처리방침</a>
       <a href="index.html">사이트 소개</a>

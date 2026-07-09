@@ -9,6 +9,7 @@
 <meta property="og:title" content="2026 실업급여 계산기">
 <meta property="og:description" content="7년 만에 인상된 2026년 상·하한액 기준으로 내 실업급여를 바로 계산하세요.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://walgeup-note.tlatjdwls21c.workers.dev/unemployment/">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +38,7 @@
 <header>
   <div class="wrap hd">
     <a class="brand" href="../index.html">월급노트<small>일하는 사람의 계산기</small></a>
-    <span class="yr">2026년 기준</span>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
   </div>
 </header>
 
@@ -48,6 +49,9 @@
     <a class="chip" href="../severance/index.html">퇴직금</a>
     <a class="chip on" href="index.html" aria-current="page">실업급여</a>
     <a class="chip" href="../weekly-holiday/index.html">주휴수당</a>
+    <a class="chip" href="../salary/index.html">연봉 실수령액</a>
+    <a class="chip" href="../insurance/index.html">4대보험</a>
+    <a class="chip" href="../minimum-wage/index.html">최저임금</a>
   </nav>
 
   <div class="hero">
@@ -101,7 +105,10 @@
             <tr class="total"><td>총 예상 수급액</td><td id="u-total">-</td></tr>
           </table>
         </div>
-        <button class="btn ghost" onclick="copyResult('#res-un','실업급여 산출내역')">계산 결과 복사하기</button>
+        <div class="btnrow">
+          <button class="btn ghost" onclick="copyResult('#res-un','실업급여 산출내역')">계산 결과 복사하기</button>
+          <button class="btn ghost" onclick="copyLink()">결과 링크 복사</button>
+        </div>
         <div class="note" id="un-note"></div>
       </div>
     </div>
@@ -203,8 +210,21 @@ function calcUnemp(){
 
   note.className = 'note';
   note.textContent = '2026년 1월 1일 이후 퇴사자 기준이며, 비자발적 이직 등 수급 요건을 충족해야 합니다. 이직일로부터 12개월이 지나면 잔여 급여가 소멸되니 퇴사 후 바로 신청하세요. 최근 5년 내 3회 이상 수급한 경우 감액될 수 있습니다.';
+
+  setShareParams({ wage, age, period: idx });
   showResult('res-un');
 }
+
+/* 공유된 링크로 접속 시 자동 계산 */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const q = new URLSearchParams(location.search);
+  if(q.has('wage')){
+    fillInput('in-wage', q.get('wage'));
+    fillInput('in-age', q.get('age'));
+    fillInput('in-period', q.get('period'));
+    calcUnemp();
+  }
+});
 </script>
 </body>
 </html>
