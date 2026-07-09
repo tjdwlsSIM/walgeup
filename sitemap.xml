@@ -30,6 +30,36 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://walgeup-note.pages.dev/guides/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://walgeup-note.pages.dev/guides/2026-changes/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://walgeup-note.pages.dev/guides/resignation-checklist/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://walgeup-note.pages.dev/guides/parttime-rights/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://walgeup-note.pages.dev/guides/tongsang-imgeum/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://walgeup-note.pages.dev/guides/unemployment-guide/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://walgeup-note.pages.dev/about/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
