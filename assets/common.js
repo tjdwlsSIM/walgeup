@@ -51,6 +51,19 @@ function marginalRate(base){                 // 과세표준별 한계세율
   if(base <= 1e9)  return .42;
   return .45;
 }
+
+/* ── 종합소득세 기본세율 산출세액 (누진공제 방식, 이 수치는 변경 금지) ──
+   연봉 실수령액 계산기와 퇴직금 계산기(퇴직소득세)가 함께 사용 */
+function basicIncomeTax(base){
+  if(base <= 14000000)   return base * 0.06;
+  if(base <= 50000000)   return base * 0.15 - 1260000;
+  if(base <= 88000000)   return base * 0.24 - 5760000;
+  if(base <= 150000000)  return base * 0.35 - 15440000;
+  if(base <= 300000000)  return base * 0.38 - 19940000;
+  if(base <= 500000000)  return base * 0.40 - 25940000;
+  if(base <= 1000000000) return base * 0.42 - 35940000;
+  return base * 0.45 - 65940000;
+}
 function estimateNet(bonus, monthly){
   const R = RATES_2026;
   const pension = monthly >= R.pensionCap ? 0 : Math.round(bonus*R.pension);
@@ -117,3 +130,42 @@ document.addEventListener('click', () => {
     if(btn) btn.setAttribute('aria-expanded', 'false');
   });
 });
+
+/* ── 계산 결과 이미지 저장 ──
+   html2canvas는 버튼을 처음 누를 때 동적으로 로드 (초기 로딩에 영향 없음) */
+let h2cLoading = null;
+function loadHtml2Canvas(){
+  if(window.html2canvas) return Promise.resolve();
+  if(!h2cLoading){
+    h2cLoading = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = resolve;
+      s.onerror = () => { h2cLoading = null; reject(new Error('html2canvas 로드 실패')); };
+      document.head.appendChild(s);
+    });
+  }
+  return h2cLoading;
+}
+
+/* 결과 명세서(.slip)를 2배 해상도 PNG로 저장: saveSlipImage('#res-pay .slip', '월급노트-연차수당.png') */
+function saveSlipImage(slipSelector, filename){
+  const slip = document.querySelector(slipSelector);
+  if(!slip) return;
+  loadHtml2Canvas().then(() => {
+    // 캡처 직전 출처 워터마크를 붙였다가 캡처 후 제거
+    const mark = document.createElement('div');
+    mark.textContent = 'walgeupnote.com';
+    mark.style.cssText = 'margin-top:10px;text-align:right;font-size:11px;color:#9AA3B0;letter-spacing:.08em';
+    slip.appendChild(mark);
+    return html2canvas(slip, { scale: 2, backgroundColor: '#FDFDFB' })
+      .then(canvas => {
+        mark.remove();
+        const a = document.createElement('a');
+        a.download = filename;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+      })
+      .catch(err => { mark.remove(); throw err; });
+  }).catch(() => alert('이미지 저장에 실패했습니다. 화면 캡처를 이용해 주세요.'));
+}

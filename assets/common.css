@@ -115,9 +115,9 @@ button.yr:hover{background:var(--ok-bg)}
 .note.warn{background:var(--warn-bg);color:#8C3A30}
 .note.ok{background:#EDF6EE;color:#2F6B3C}
 
-/* 결과 하단 버튼 두 개 나란히 (결과 복사 + 링크 복사) */
-.btnrow{display:flex;gap:10px}
-.btnrow .btn{flex:1}
+/* 결과 하단 버튼 나란히 (결과 복사 + 링크 복사 + 이미지 저장) */
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btnrow .btn{flex:1 1 160px}
 .brkdn{margin-top:10px}
 .brkdn .a table{width:100%;border-collapse:collapse;font-size:13.5px}
 .brkdn .a td{padding:6px 2px;border-bottom:1px solid var(--line);color:#38404E}
