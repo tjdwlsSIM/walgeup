@@ -63,6 +63,18 @@ button.yr:hover{background:var(--ok-bg)}
 .cardlink p{font-size:13.5px;color:var(--sub);line-height:1.55}
 .cardlink .go{display:inline-block;margin-top:12px;font-size:13px;font-weight:600;color:var(--navy)}
 
+/* 계산기 카드 색 띠 — 종류별 구분 (색 띠 쪽 위 모서리는 radius 0) */
+.cardlink.c-green,.cardlink.c-navy,.cardlink.c-amber,.cardlink.c-red{border-top-left-radius:0;border-top-right-radius:0}
+.cardlink.c-green { border-top: 3px solid #1D9E75; }   /* 받을 돈 */
+.cardlink.c-navy  { border-top: 3px solid #2C4A73; }   /* 내 급여 */
+.cardlink.c-amber { border-top: 3px solid #BA7517; }   /* 지원금 */
+.cardlink.c-red   { border-top: 3px solid #BE3B2F; }   /* 경고/판정 */
+/* hover 시 전체 테두리는 남색 강조를 유지하되 상단 색 띠는 각자의 색 유지 */
+.cardlink.c-green:hover{border-top-color:#1D9E75}
+.cardlink.c-navy:hover{border-top-color:#2C4A73}
+.cardlink.c-amber:hover{border-top-color:#BA7517}
+.cardlink.c-red:hover{border-top-color:#BE3B2F}
+
 /* 탭 */
 .tabs{display:flex;gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden;width:fit-content;margin-bottom:20px}
 .tabs button{font-family:var(--sans);font-size:14px;font-weight:600;padding:9px 22px;border:none;background:var(--doc);color:var(--sub);cursor:pointer}
