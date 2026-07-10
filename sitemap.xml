@@ -1,102 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  도메인 변경 시: 아래 모든 <loc>의 https://walgeup-note.tlatjdwls21c.workers.dev 부분을
+  도메인 변경 시: 아래 모든 <loc>의 https://walgeupnote.com 부분을
   새 도메인으로 일괄 치환하세요. (robots.txt의 Sitemap 주소와 각 페이지의
   <link rel="canonical"> 주소도 함께 변경)
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/</loc>
+    <loc>https://walgeupnote.com/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/annual-leave/</loc>
+    <loc>https://walgeupnote.com/annual-leave/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/severance/</loc>
+    <loc>https://walgeupnote.com/severance/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/unemployment/</loc>
+    <loc>https://walgeupnote.com/unemployment/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/weekly-holiday/</loc>
+    <loc>https://walgeupnote.com/weekly-holiday/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/salary/</loc>
+    <loc>https://walgeupnote.com/salary/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/insurance/</loc>
+    <loc>https://walgeupnote.com/insurance/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/minimum-wage/</loc>
+    <loc>https://walgeupnote.com/minimum-wage/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/</loc>
+    <loc>https://walgeupnote.com/guides/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/2026-changes/</loc>
+    <loc>https://walgeupnote.com/guides/2026-changes/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/resignation-checklist/</loc>
+    <loc>https://walgeupnote.com/guides/resignation-checklist/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/parttime-rights/</loc>
+    <loc>https://walgeupnote.com/guides/parttime-rights/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/tongsang-imgeum/</loc>
+    <loc>https://walgeupnote.com/guides/tongsang-imgeum/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/unemployment-guide/</loc>
+    <loc>https://walgeupnote.com/guides/unemployment-guide/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/salary-3000/</loc>
+    <loc>https://walgeupnote.com/guides/salary-3000/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/salary-250-annual-leave/</loc>
+    <loc>https://walgeupnote.com/guides/salary-250-annual-leave/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/guides/minimum-wage-monthly/</loc>
+    <loc>https://walgeupnote.com/guides/minimum-wage-monthly/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/about/</loc>
+    <loc>https://walgeupnote.com/about/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://walgeup-note.tlatjdwls21c.workers.dev/privacy/</loc>
+    <loc>https://walgeupnote.com/privacy/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
