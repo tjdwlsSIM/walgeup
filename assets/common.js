@@ -148,6 +148,114 @@ function loadHtml2Canvas(){
   return h2cLoading;
 }
 
+/* ── 가이드 목록: 검색 + 페이지네이션 (guides/index.html에서만 동작) ──
+   · 카드는 HTML에 전부 출력돼 있고(JS 없이도 전체 노출), 여기서 화면 표시만 제어
+   · 검색 중에는 페이지네이션을 숨기고 일치 카드 전부 표시
+   · 페이지 상태는 URL 해시(#page=2)로 남겨 뒤로가기가 동작 */
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('guide-list');
+  if(!list) return;
+  const input = document.getElementById('guide-search');
+  const pager = document.getElementById('guide-pager');
+  const empty = document.getElementById('guide-empty');
+  const reset = document.getElementById('guide-empty-reset');
+  const cards = [...list.querySelectorAll('.cardlink')];
+  const PER = 8;
+  let page = 1;
+
+  const pageCount = () => Math.max(1, Math.ceil(cards.length / PER));
+  const query = () => (input ? input.value.trim().toLowerCase() : '');
+
+  function readHash(){
+    const m = location.hash.match(/page=(\d+)/);
+    const p = m ? parseInt(m[1], 10) : 1;
+    return Math.min(Math.max(1, p), pageCount());
+  }
+
+  function scrollTop(){
+    const anchor = (input && input.closest('.guide-search')) || list;
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* 검색 모드: 페이저 숨기고 제목·설명에 검색어가 포함된 카드만 표시 */
+  function showSearch(q){
+    pager.hidden = true;
+    let matched = 0;
+    cards.forEach(c => {
+      const hit = c.textContent.toLowerCase().includes(q);
+      c.style.display = hit ? '' : 'none';
+      if(hit) matched++;
+    });
+    empty.hidden = matched > 0;
+  }
+
+  /* 페이지네이션 모드: 현재 페이지의 8개만 표시 */
+  function showPage(){
+    empty.hidden = true;
+    const pc = pageCount();
+    if(page > pc) page = pc;
+    if(pc <= 1){                     // 8개 이하면 페이저 자체를 감춤
+      pager.hidden = true;
+      cards.forEach(c => c.style.display = '');
+      return;
+    }
+    pager.hidden = false;
+    const start = (page - 1) * PER;
+    cards.forEach((c, i) => {
+      c.style.display = (i >= start && i < start + PER) ? '' : 'none';
+    });
+    buildPager(pc);
+  }
+
+  function buildPager(pc){
+    pager.textContent = '';
+    const mk = (label, target, current, disabled) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      if(disabled) b.disabled = true;
+      if(current){ b.className = 'on'; b.setAttribute('aria-current', 'page'); }
+      if(!disabled) b.addEventListener('click', () => goTo(target));
+      return b;
+    };
+    pager.appendChild(mk('« 이전', page - 1, false, page <= 1));
+    for(let i = 1; i <= pc; i++) pager.appendChild(mk(String(i), i, i === page, false));
+    pager.appendChild(mk('다음 »', page + 1, false, page >= pc));
+  }
+
+  function goTo(p){
+    p = Math.min(Math.max(1, p), pageCount());
+    const url = location.pathname + location.search + (p > 1 ? '#page=' + p : '');
+    history.pushState(null, '', url);
+    page = p;
+    showPage();
+    scrollTop();
+  }
+
+  if(input){
+    input.addEventListener('input', () => {
+      const q = query();
+      if(q) showSearch(q);
+      else showPage();               // 비우면 원래 페이지네이션 상태로 복귀
+    });
+  }
+  if(reset){
+    reset.addEventListener('click', () => {
+      if(input){ input.value = ''; input.focus(); }
+      showPage();
+    });
+  }
+  window.addEventListener('popstate', () => {   // 뒤로/앞으로 가기
+    if(input) input.value = '';
+    page = readHash();
+    showPage();
+    scrollTop();
+  });
+
+  page = readHash();
+  showPage();
+});
+
 /* 결과 명세서(.slip)를 2배 해상도 PNG로 저장: saveSlipImage('#res-pay .slip', '월급노트-연차수당.png') */
 function saveSlipImage(slipSelector, filename){
   const slip = document.querySelector(slipSelector);

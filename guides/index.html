@@ -37,7 +37,13 @@
     <p>연차수당, 퇴직금, 실업급여, 주휴수당 — 일하는 사람이라면 알아야 할 돈 이야기를 계산기와 함께 볼 수 있도록 정리했습니다. 모든 글은 2026년 고시 기준을 반영합니다.</p>
   </div>
 
-  <div class="cards">
+  <div class="guide-search" role="search">
+    <label for="guide-search" class="visually-hidden">가이드 검색</label>
+    <input type="search" id="guide-search" autocomplete="off" spellcheck="false"
+           placeholder="가이드 검색 (예: 퇴직금, 알바, 실업급여)">
+  </div>
+
+  <div class="cards" id="guide-list">
     <a class="cardlink" href="/guides/2026-changes/">
       <h3>2026년 달라지는 노동법·급여 총정리</h3>
       <p>최저임금 10,320원, 국민연금 9.5%, 실업급여 상한 68,100원 — 올해 바뀐 숫자들을 한 번에 확인하세요.</p>
@@ -84,6 +90,13 @@
       <span class="go">읽어보기 →</span>
     </a>
   </div>
+
+  <p class="guide-empty" id="guide-empty" hidden>
+    검색 결과가 없습니다.
+    <button type="button" id="guide-empty-reset">검색어 지우기</button>
+  </p>
+
+  <nav class="pager" id="guide-pager" aria-label="가이드 목록 페이지" hidden></nav>
 
   <!-- 애드센스 광고 자리 -->
   <div class="ad-slot">AD</div>
