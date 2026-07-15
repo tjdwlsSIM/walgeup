@@ -27,7 +27,9 @@
   "mainEntity": [
     {"@type":"Question","name":"2026년 4대보험 요율은 무엇이 달라졌나요?","acceptedAnswer":{"@type":"Answer","text":"연금개혁에 따라 국민연금 보험료율이 27년 만에 9.5%(근로자 4.75%)로 인상된 첫해입니다. 건강보험은 7.19%(근로자 3.595%), 장기요양보험은 0.9448%(근로자 0.4724%), 고용보험 실업급여 계정은 1.8%(근로자 0.9%)입니다."}},
     {"@type":"Question","name":"산재보험료는 왜 계산에 없나요?","acceptedAnswer":{"@type":"Answer","text":"산재보험은 업종별로 요율이 다르게 고시되며, 근로자 부담 없이 전액 사업주가 부담합니다. 그래서 이 계산기의 근로자 공제액에는 포함되지 않으며, 사업장의 정확한 요율은 근로복지공단에서 확인할 수 있습니다."}},
-    {"@type":"Question","name":"4대보험은 누구나 가입해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"근로자를 1명 이상 고용한 사업장은 원칙적으로 4대보험 가입 대상입니다. 다만 1개월 미만 초단기 근로 등 일부 예외가 있으며, 주 15시간 미만 단시간 근로자는 고용보험 등 일부 보험의 적용 기준이 다를 수 있습니다."}}
+    {"@type":"Question","name":"4대보험은 누구나 가입해야 하나요?","acceptedAnswer":{"@type":"Answer","text":"근로자를 1명 이상 고용한 사업장은 원칙적으로 4대보험 가입 대상입니다. 다만 1개월 미만 초단기 근로 등 일부 예외가 있으며, 주 15시간 미만 단시간 근로자는 고용보험 등 일부 보험의 적용 기준이 다를 수 있습니다."}},
+    {"@type":"Question","name":"매년 4월 건강보험 연말정산으로 추가 납부가 나오는 이유는?","acceptedAnswer":{"@type":"Answer","text":"건강보험료는 전년도 보수를 기준으로 매달 미리 부과했다가, 실제 보수가 확정되면 그 차액을 정산합니다. 이 정산이 보통 4월에 이뤄지는데, 승진·성과급 등으로 전년도 실제 보수가 그 전에 낸 기준보다 많았다면 차액만큼 추가 납부가 발생합니다. 반대로 보수가 줄었다면 환급될 수도 있습니다."}},
+    {"@type":"Question","name":"국민연금은 소득이 높아도 계속 오르나요?","acceptedAnswer":{"@type":"Answer","text":"아닙니다. 국민연금 보험료는 기준소득월액에 요율을 곱해 정하는데, 기준소득월액에는 상한(2026년 637만 원)이 있습니다. 보수월액이 상한을 넘으면 초과분에는 보험료가 붙지 않아, 근로자 부담 국민연금은 637만 원 × 4.75%에서 더 오르지 않습니다. 반대로 하한(39만 원) 미만이면 39만 원을 기준으로 부과됩니다."}}
   ]
 }
 </script>
@@ -71,10 +73,23 @@
   <div class="card">
     <div class="card-h"><h2>4대보험 계산</h2><span>근로자·사업주 부담</span></div>
     <div class="card-b">
+      <div class="tabs" role="tablist" aria-label="급여 입력 방식 선택">
+        <button role="tab" id="tab-m" aria-selected="true" onclick="setInsMode('m')">월급</button>
+        <button role="tab" id="tab-y" aria-selected="false" onclick="setInsMode('y')">연봉</button>
+      </div>
+
       <div class="grid">
-        <div class="field">
+        <div class="field" id="f-salary">
           <label for="in-salary">월 급여 <span class="hint">세전 기준</span></label>
           <div class="inwrap"><input type="text" class="money" id="in-salary" inputmode="numeric" placeholder="2,500,000"><span class="unit">원</span></div>
+        </div>
+        <div class="field" id="f-annual" style="display:none">
+          <label for="in-annual">연봉 <span class="hint">세전 · 12로 나눠 월급 환산</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-annual" inputmode="numeric" placeholder="30,000,000"><span class="unit">원</span></div>
+        </div>
+        <div class="field">
+          <label for="in-nontax">비과세액 (월) <span class="hint">식대 등 · 기본 20만원</span></label>
+          <div class="inwrap"><input type="text" class="money" id="in-nontax" inputmode="numeric" value="200,000"><span class="unit">원</span></div>
         </div>
       </div>
 
@@ -86,6 +101,7 @@
           <h3>4대보험 부담내역</h3>
           <table>
             <tr><td>월 급여 (세전)</td><td id="i-gross">-</td></tr>
+            <tr><td>보험료 산정 기준액 (비과세 제외)</td><td id="i-base">-</td></tr>
             <tr class="total"><td>근로자 부담 합계</td><td id="i-worker">-</td></tr>
             <tr class="ded"><td>사업주 부담 합계</td><td id="i-employer">-</td></tr>
             <tr class="net"><td>보험료 공제 후 월 급여</td><td id="i-net">-</td></tr>
@@ -135,6 +151,16 @@
       <p>산재보험은 업종별 재해 위험도에 따라 요율이 다르게 고시되며, 근로자 부담 없이 전액 사업주가 부담합니다. 그래서 근로자의 급여에서 공제되는 항목이 아니며, 이 계산기의 표에도 포함하지 않았습니다. 사업장에 적용되는 정확한 요율은 근로복지공단에서 확인할 수 있습니다.</p>
     </section>
 
+    <section>
+      <h2>비과세액이 4대보험에 미치는 영향</h2>
+      <p>4대보험료는 월급 전체가 아니라 <b>비과세액을 뺀 보수월액</b>을 기준으로 부과됩니다. 대표적인 비과세 항목은 식대(월 20만 원 한도)이며, 그 밖에 자가운전보조금·출산보육수당 등이 요건을 충족하면 비과세로 처리됩니다.</p>
+      <div class="formula">
+        보험료 산정 기준액(보수월액) = 월 급여 − 비과세액<br>
+        <b>4대보험료 = 보수월액 × 각 보험 요율</b>
+      </div>
+      <p>예를 들어 월급 300만 원에 식대 20만 원이 비과세라면, 보험료는 300만 원이 아니라 280만 원을 기준으로 계산됩니다. 비과세액이 클수록 보수월액이 낮아져 당장의 보험료 부담은 줄지만, 국민연금은 납입 기준소득이 낮아져 나중에 받을 연금액에도 영향을 줄 수 있습니다. 위 계산기에서 비과세액을 조정하면 산정 기준액과 보험료가 어떻게 바뀌는지 바로 확인할 수 있습니다.</p>
+    </section>
+
     <!-- 애드센스 광고 자리 ② -->
     <div class="ad-slot">AD</div>
 
@@ -151,6 +177,14 @@
       <details>
         <summary>4대보험은 누구나 가입해야 하나요?</summary>
         <div class="a">근로자를 1명 이상 고용한 사업장은 원칙적으로 4대보험 가입 대상입니다. 다만 1개월 미만 초단기 근로 등 일부 예외가 있으며, 주 15시간 미만 단시간 근로자는 고용보험 등 일부 보험의 적용 기준이 다를 수 있습니다.</div>
+      </details>
+      <details>
+        <summary>매년 4월 건강보험 연말정산으로 추가 납부가 나오는 이유는?</summary>
+        <div class="a">건강보험료는 전년도 보수를 기준으로 매달 미리 부과했다가, 실제 보수가 확정되면 그 차액을 정산합니다. 이 정산이 보통 4월에 이뤄지는데, 승진·성과급 등으로 전년도 실제 보수가 그 전에 낸 기준보다 많았다면 차액만큼 추가 납부가 발생합니다. 반대로 보수가 줄었다면 환급될 수도 있습니다. 매달 낸 보험료가 잘못된 것이 아니라, 확정 보수에 맞춰 사후 정산하는 구조 때문입니다.</div>
+      </details>
+      <details>
+        <summary>국민연금은 소득이 높아도 계속 오르나요?</summary>
+        <div class="a">아닙니다. 국민연금 보험료는 기준소득월액에 요율을 곱해 정하는데, 기준소득월액에는 상한(2026년 637만 원)이 있습니다. 보수월액이 상한을 넘으면 초과분에는 보험료가 붙지 않아, 근로자 부담 국민연금은 637만 원 × 4.75%에서 더 오르지 않습니다. 반대로 하한(39만 원) 미만이면 39만 원을 기준으로 부과됩니다.</div>
       </details>
     </section>
 
@@ -177,47 +211,78 @@
 </footer>
 
 <script>
+let insMode = 'm';   // m: 월급 / y: 연봉
+
+function setInsMode(m){
+  insMode = m;
+  document.getElementById('tab-m').setAttribute('aria-selected', String(m==='m'));
+  document.getElementById('tab-y').setAttribute('aria-selected', String(m==='y'));
+  document.getElementById('f-salary').style.display = m==='m' ? '' : 'none';
+  document.getElementById('f-annual').style.display = m==='y' ? '' : 'none';
+  document.getElementById('res-ins').classList.remove('show');
+}
+
 function calcIns(){
-  const salary = num('in-salary');
-  if(!salary){ alert('월 급여를 입력해 주세요.'); return; }
+  /* 1) 월 급여 확보 (연봉 모드는 ÷12) */
+  let monthly;
+  if(insMode === 'm'){
+    monthly = num('in-salary');
+    if(!monthly){ alert('월 급여를 입력해 주세요.'); return; }
+  } else {
+    const annual = num('in-annual');
+    if(!annual){ alert('연봉을 입력해 주세요.'); return; }
+    monthly = Math.round(annual / 12);
+  }
 
-  const R = RATES_2026;
-  const pBase = Math.min(salary, R.pensionCap);        // 국민연금 기준소득월액 상한
-  const pW = Math.round(pBase * R.pension),  pE = Math.round(pBase * R.pension);
-  const hW = Math.round(salary * R.health),  hE = Math.round(salary * R.health);
-  const cW = Math.round(salary * R.care),    cE = Math.round(salary * R.care);
-  const eW = Math.round(salary * R.emp),     eE = Math.round(salary * (R.emp + 0.0025)); // 사업주는 고용안정·직업능력 0.25% 추가
-
-  const sumW = pW + hW + cW + eW;
-  const sumE = pE + hE + cE + eE;
+  /* 2) 비과세 제외한 보수월액을 기준으로 보험료 산정 */
+  const nontax = num('in-nontax');
+  const base = Math.max(monthly - nontax, 0);
+  const r = insurancePremiums(base);                 // common.js 공통 함수
 
   const set = (id, v) => document.getElementById(id).textContent = fmt(v)+' 원';
-  set('c-p-w', pW); set('c-p-e', pE); set('c-p-t', pW + pE);
-  set('c-h-w', hW); set('c-h-e', hE); set('c-h-t', hW + hE);
-  set('c-c-w', cW); set('c-c-e', cE); set('c-c-t', cW + cE);
-  set('c-e-w', eW); set('c-e-e', eE); set('c-e-t', eW + eE);
-  set('c-s-w', sumW); set('c-s-e', sumE); set('c-s-t', sumW + sumE);
+  set('c-p-w', r.p.w);  set('c-p-e', r.p.e);   set('c-p-t', r.p.w + r.p.e);
+  set('c-h-w', r.h.w);  set('c-h-e', r.h.e);   set('c-h-t', r.h.w + r.h.e);
+  set('c-c-w', r.c.w);  set('c-c-e', r.c.e);   set('c-c-t', r.c.w + r.c.e);
+  set('c-e-w', r.em.w); set('c-e-e', r.em.e);  set('c-e-t', r.em.w + r.em.e);
+  set('c-s-w', r.sumW); set('c-s-e', r.sumE);  set('c-s-t', r.sumW + r.sumE);
 
-  document.getElementById('i-gross').textContent    = fmt(salary)+' 원';
-  document.getElementById('i-worker').textContent   = '− '+fmt(sumW)+' 원';
-  document.getElementById('i-employer').textContent = fmt(sumE)+' 원';
-  document.getElementById('i-net').textContent      = fmt(salary - sumW)+' 원';
+  document.getElementById('i-gross').textContent    = fmt(monthly)+' 원';
+  document.getElementById('i-base').textContent     = fmt(base)+' 원'
+    + (r.pensionCapApplied ? ' (국민연금 '+r.pensionCapApplied+' 적용)' : '');
+  document.getElementById('i-worker').textContent   = '− '+fmt(r.sumW)+' 원';
+  document.getElementById('i-employer').textContent = fmt(r.sumE)+' 원';
+  document.getElementById('i-net').textContent      = fmt(monthly - r.sumW)+' 원';
 
   const note = document.getElementById('ins-note');
   note.className = 'note';
-  note.textContent = '산재보험은 업종별로 요율이 다르며 전액 사업주 부담이라 이 표에는 포함하지 않았습니다. 실제 보험료는 보수월액 산정 방식과 사업장 규모에 따라 달라질 수 있으며, 소득세는 별도입니다(연봉 실수령액 계산기 참고).';
+  let txt = '4대보험은 비과세를 제외한 보수월액(' + fmt(base) + '원) 기준으로 부과됩니다. ';
+  if(r.pensionCapApplied === '상한'){
+    txt += '산정 기준액이 국민연금 기준소득월액 상한(6,370,000원)을 넘어 국민연금은 637만원 기준으로 계산되었습니다. ';
+  } else if(r.pensionCapApplied === '하한'){
+    txt += '산정 기준액이 국민연금 기준소득월액 하한(390,000원) 미만이라 국민연금은 39만원 기준으로 계산되었습니다. ';
+  }
+  txt += '산재보험은 업종별로 요율이 다르며 전액 사업주 부담이라 이 표에는 포함하지 않았습니다. 실제 보험료는 보수월액 산정 방식과 사업장 규모에 따라 달라질 수 있으며, 소득세는 별도입니다(연봉 실수령액 계산기 참고).';
+  note.textContent = txt;
 
-  setShareParams({ salary });
+  setShareParams({
+    imode: insMode,
+    salary: insMode==='m' ? monthly : '',
+    annual: insMode==='y' ? num('in-annual') : '',
+    nontax
+  });
   showResult('res-ins');
 }
 
-/* 공유된 링크로 접속 시 자동 계산 */
+/* 공유된 링크로 접속 시 모드 복원 후 자동 계산 (imode 없는 기존 링크는 월급 모드) */
 document.addEventListener('DOMContentLoaded', ()=>{
   const q = new URLSearchParams(location.search);
-  if(q.has('salary')){
-    fillInput('in-salary', q.get('salary'));
-    calcIns();
-  }
+  const mode = q.get('imode') || (q.has('salary') ? 'm' : '');
+  if(!mode) return;
+  setInsMode(mode);
+  if(mode === 'm') fillInput('in-salary', q.get('salary'));
+  else fillInput('in-annual', q.get('annual'));
+  if(q.has('nontax')) fillInput('in-nontax', q.get('nontax'));
+  calcIns();
 });
 </script>
 </body>

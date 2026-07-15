@@ -68,8 +68,11 @@ function showResult(id){
   el.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-/* ── 세후 실수령액 추정 (근로소득) — 2026년 4대보험 요율 + 소득세 한계세율 근사 ── */
-const RATES_2026 = { pension:.0475, health:.03595, care:.004724, emp:.009, pensionCap:6370000 };
+/* ── 세후 실수령액 추정 (근로소득) — 2026년 4대보험 요율 + 소득세 한계세율 근사 ──
+   pensionCap/Floor: 국민연금 기준소득월액 상한 637만 / 하한 39만
+   empEmployerExtra: 고용안정·직업능력개발 사업 보험료(사업주만, 150인 미만 0.25%) */
+const RATES_2026 = { pension:.0475, health:.03595, care:.004724, emp:.009,
+  pensionCap:6370000, pensionFloor:390000, empEmployerExtra:.0025 };
 function laborIncomeDeduction(g){            // 근로소득공제(연)
   if(g <= 5e6)  return g*.7;
   if(g <= 15e6) return 3.5e6 + (g-5e6)*.4;
@@ -111,6 +114,29 @@ function estimateNet(bonus, monthly){
   const tax     = Math.round(bonus * marginalRate(taxBase) * 1.1);   // 지방소득세 10% 포함
   const deduct  = pension + health + care + emp + tax;
   return { pension, health, care, emp, tax, deduct, net: bonus - deduct };
+}
+
+/* ── 4대보험 근로자·사업주 부담 계산 (2026년 요율) ─────────────────
+   보험료는 비과세를 제외한 보수월액(base) 기준으로 부과.
+   국민연금만 기준소득월액 상·하한(39만~637만)을 적용.
+   (건강보험도 상한이 있으나 매우 높아 이번 계산에서는 제외)
+   반환: 항목별 {w:근로자, e:사업주} + 합계 + 국민연금 캡 적용 표시 */
+function insurancePremiums(base){
+  const R = RATES_2026;
+  let pBase = base, pCap = '';
+  if(pBase > R.pensionCap){ pBase = R.pensionCap; pCap = '상한'; }
+  else if(pBase < R.pensionFloor){ pBase = R.pensionFloor; pCap = '하한'; }
+  const p  = { w: Math.round(pBase * R.pension), e: Math.round(pBase * R.pension) };
+  const h  = { w: Math.round(base * R.health),   e: Math.round(base * R.health) };
+  const c  = { w: Math.round(base * R.care),     e: Math.round(base * R.care) };
+  const em = { w: Math.round(base * R.emp),      e: Math.round(base * (R.emp + R.empEmployerExtra)) };
+  return {
+    p, h, c, em,
+    sumW: p.w + h.w + c.w + em.w,
+    sumE: p.e + h.e + c.e + em.e,
+    pensionBase: pBase,
+    pensionCapApplied: pCap        // '' | '상한' | '하한'
+  };
 }
 
 /* ── 최저임금 역산 (월급·주급 → 시급) ─────────────────────────────
