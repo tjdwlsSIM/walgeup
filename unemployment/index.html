@@ -90,7 +90,7 @@
         <!-- 나이: 생년월일 자동 계산 (기본) / 직접 선택 폴백 -->
         <div class="field" id="f-birth">
           <label for="in-birth">생년월일 <span class="hint">퇴사일 기준 만 나이 자동 계산</span></label>
-          <div class="inwrap"><input type="date" id="in-birth"></div>
+          <div class="inwrap"><input type="date" id="in-birth" min="1920-01-01" max="2035-12-31"></div>
         </div>
         <div class="field" id="f-age" style="display:none">
           <label for="in-age">퇴사 시 만 나이</label>
@@ -105,7 +105,7 @@
         <!-- 퇴사일: 나이 자동계산 또는 가입기간 자동계산 시 사용 (공유) -->
         <div class="field" id="f-quit">
           <label for="in-quit">퇴사(예정)일</label>
-          <div class="inwrap"><input type="date" id="in-quit"></div>
+          <div class="inwrap"><input type="date" id="in-quit" min="1970-01-01" max="2035-12-31"></div>
         </div>
 
         <!-- 가입기간: 직접 선택 (기본) / 입사일로 자동 계산 -->
@@ -123,7 +123,7 @@
         </div>
         <div class="field" id="f-phire" style="display:none">
           <label for="in-phire">입사일 <span class="hint">현 직장 기준</span></label>
-          <div class="inwrap"><input type="date" id="in-phire"></div>
+          <div class="inwrap"><input type="date" id="in-phire" min="1970-01-01" max="2035-12-31"></div>
         </div>
 
         <div class="toggle-row">
@@ -299,19 +299,27 @@ function calcUnemp(){
   }
 
   /* 퇴사일 — 자동 모드(나이/가입기간)에서 필요 */
-  const quitVal = document.getElementById('in-quit').value;
+  const quitEl = document.getElementById('in-quit');
   const needQuit = (ageMode==='auto' || periodMode==='auto');
-  if(needQuit && !quitVal){ alert('퇴사(예정)일을 입력해 주세요.'); return; }
-  const quit = quitVal ? new Date(quitVal) : null;
+  let quit = null;
+  if(needQuit){
+    if(!quitEl.value){ alert('퇴사(예정)일을 입력해 주세요.'); return; }
+    const r = checkDate(quitEl, { name:'퇴사(예정)일', min:'1970-01-01', max:'2035-12-31' });
+    if(r.error){ alert(r.error); return; }
+    quit = r.date;
+  }
 
   /* 2) 나이 그룹 판정 */
   let group, ageVal = null;
   if(ageMode === 'auto'){
-    const birthVal = document.getElementById('in-birth').value;
-    if(!birthVal){ alert('생년월일을 입력해 주세요. (모르면 아래에서 나이 직접 선택)'); return; }
-    const birth = new Date(birthVal);
+    const birthEl = document.getElementById('in-birth');
+    if(!birthEl.value){ alert('생년월일을 입력해 주세요. (모르면 아래에서 나이 직접 선택)'); return; }
+    const rb = checkDate(birthEl, { name:'생년월일', min:'1920-01-01', max: todayISO() });
+    if(rb.error){ alert(rb.error); return; }
+    const birth = rb.date;
     if(birth >= quit){ alert('생년월일이 퇴사일보다 이후일 수 없습니다.'); return; }
     ageVal = ageAt(birth, quit);
+    if(ageVal < 15 || ageVal > 100){ alert('생년월일을 확인해 주세요. (계산된 만 나이 '+ageVal+'세)'); return; }
     group = ageGroupOf(ageVal);
   } else {
     group = document.getElementById('in-age').value;
@@ -320,10 +328,12 @@ function calcUnemp(){
   /* 3) 가입기간 구간 판정 */
   let idx;
   if(periodMode === 'auto'){
-    const hireVal = document.getElementById('in-phire').value;
-    if(!hireVal){ alert('입사일을 입력해 주세요. (모르면 가입기간 직접 선택)'); return; }
-    const hire = new Date(hireVal);
-    if(hire >= quit){ alert('입사일이 퇴사일보다 이후일 수 없습니다.'); return; }
+    const hireEl = document.getElementById('in-phire');
+    if(!hireEl.value){ alert('입사일을 입력해 주세요. (모르면 가입기간 직접 선택)'); return; }
+    const rh = checkDate(hireEl, { name:'입사일', min:'1970-01-01', max:'2035-12-31' });
+    if(rh.error){ alert(rh.error); return; }
+    const hire = rh.date;
+    if(hire >= quit){ alert('입사일이 퇴사일보다 늦습니다. 날짜를 다시 확인해 주세요.'); return; }
     idx = coveragePeriodIndex(hire, quit);
   } else {
     idx = Number(document.getElementById('in-period').value);
@@ -359,13 +369,14 @@ function calcUnemp(){
     pmode: periodMode,
     phire: periodMode==='auto' ? document.getElementById('in-phire').value : '',
     period: periodMode==='manual' ? idx : '',
-    quit: needQuit ? quitVal : ''
+    quit: needQuit ? quitEl.value : ''
   });
   showResult('res-un');
 }
 
 /* 공유된 링크로 접속 시 모드·입력 복원 후 자동 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('in-birth').max = todayISO();   // 생년월일은 미래일 수 없음
   const q = new URLSearchParams(location.search);
   // 구버전 링크(wage/age/period, 모드 없음) 호환: 3개월 총액 + 나이 직접 + 가입기간 직접
   const legacy = !q.has('wmode') && q.has('wage');

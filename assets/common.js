@@ -13,6 +13,42 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* ── 날짜 입력 검증 ───────────────────────────────────────────
+   date 입력을 파싱해 로컬 자정 기준 Date로 반환. 형식 오류·존재하지
+   않는 날짜(예: 2026-02-31)·연도 4자리(1900~2100) 범위 밖이면 null. */
+function parseDateInput(el){
+  const v = (typeof el === 'string') ? el : (el && el.value);
+  if(!v) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v).trim());
+  if(!m) return null;
+  const y = +m[1], mo = +m[2], da = +m[3];
+  if(y < 1900 || y > 2100) return null;                 // 연도 4자리·상식 범위
+  const d = new Date(y, mo - 1, da);
+  if(d.getFullYear() !== y || d.getMonth() !== mo - 1 || d.getDate() !== da) return null;  // 실존 날짜 확인
+  return d;
+}
+
+/* date 입력 검증(+min/max). 반환 {date} 또는 {error}.
+   error가 있으면 호출부에서 alert 후 중단.
+   opts 예: { name:'입사일', min:'1970-01-01', max:'2035-12-31' } */
+function checkDate(el, opts){
+  opts = opts || {};
+  const name = opts.name || '날짜';
+  const d = parseDateInput(el);
+  if(!d) return { error: name + '를 다시 확인해 주세요. (연도 4자리, 예: 2026-07-15)' };
+  const mn = opts.min && parseDateInput(opts.min);
+  const mx = opts.max && parseDateInput(opts.max);
+  if(mn && d < mn) return { error: name + '이(가) 너무 이른 날짜입니다. (' + opts.min + ' 이후로 입력해 주세요)' };
+  if(mx && d > mx) return { error: name + '이(가) 너무 늦은 날짜입니다. (' + opts.max + ' 이전으로 입력해 주세요)' };
+  return { date: d };
+}
+
+/* 오늘 날짜 YYYY-MM-DD (date 입력 max 동적 설정용) */
+function todayISO(){
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
 /* 결과 명세서 복사: copyResult('#res-pay', '연차수당 산출내역') */
 function copyResult(sel, title){
   const rows = [...document.querySelectorAll(sel+' .slip tr')]

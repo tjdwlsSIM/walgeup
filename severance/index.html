@@ -67,11 +67,11 @@
       <div class="grid">
         <div class="field">
           <label for="in-hire">입사일</label>
-          <div class="inwrap"><input type="date" id="in-hire"></div>
+          <div class="inwrap"><input type="date" id="in-hire" min="1970-01-01" max="2035-12-31"></div>
         </div>
         <div class="field">
           <label for="in-quit">퇴사(예정)일 <span class="hint">마지막 근무 다음 날</span></label>
-          <div class="inwrap"><input type="date" id="in-quit"></div>
+          <div class="inwrap"><input type="date" id="in-quit" min="1970-01-01" max="2035-12-31"></div>
         </div>
         <div class="field">
           <label for="in-wage3">퇴직 전 3개월 임금 총액 <span class="hint">세전 기준</span></label>
@@ -214,14 +214,20 @@ function convertedDeduction(g){        // 환산급여공제
 }
 
 function calcSeverance(){
-  const hire = document.getElementById('in-hire').valueAsDate;
-  const quit = document.getElementById('in-quit').valueAsDate;
+  const hireEl = document.getElementById('in-hire');
+  const quitEl = document.getElementById('in-quit');
   const wage3 = num('in-wage3');
   const bonus = num('in-bonus');
   const leavePay = num('in-leave');
   const note = document.getElementById('sev-note');
 
-  if(!hire || !quit || quit <= hire){ alert('입사일과 퇴사일을 확인해 주세요.'); return; }
+  if(!hireEl.value || !quitEl.value){ alert('입사일과 퇴사(예정)일을 입력해 주세요.'); return; }
+  const rh = checkDate(hireEl, { name:'입사일', min:'1970-01-01', max:'2035-12-31' });
+  if(rh.error){ alert(rh.error); return; }
+  const rq = checkDate(quitEl, { name:'퇴사(예정)일', min:'1970-01-01', max:'2035-12-31' });
+  if(rq.error){ alert(rq.error); return; }
+  const hire = rh.date, quit = rq.date;
+  if(quit <= hire){ alert('입사일이 퇴사일보다 늦습니다. 날짜를 다시 확인해 주세요.'); return; }
   if(!wage3){ alert('퇴직 전 3개월 임금 총액을 입력해 주세요.'); return; }
 
   const DAY = 86400000;

@@ -91,11 +91,11 @@
         </div>
         <div class="field" id="f-rhire" style="display:none">
           <label for="in-rhire">입사일</label>
-          <div class="inwrap"><input type="date" id="in-rhire"></div>
+          <div class="inwrap"><input type="date" id="in-rhire" min="1970-01-01" max="2035-12-31"></div>
         </div>
         <div class="field" id="f-rquit" style="display:none">
           <label for="in-rquit">퇴사(예정)일</label>
-          <div class="inwrap"><input type="date" id="in-rquit"></div>
+          <div class="inwrap"><input type="date" id="in-rquit" min="1970-01-01" max="2035-12-31"></div>
         </div>
         <div class="field" id="f-rused" style="display:none">
           <label for="in-rused">지금까지 사용한 연차 <span class="hint">전체 재직기간 합계</span></label>
@@ -153,11 +153,11 @@
       <div class="grid">
         <div class="field">
           <label for="in-hire">입사일</label>
-          <div class="inwrap"><input type="date" id="in-hire"></div>
+          <div class="inwrap"><input type="date" id="in-hire" min="1970-01-01" max="2035-12-31"></div>
         </div>
         <div class="field">
           <label for="in-base">기준일 <span class="hint">보통 오늘</span></label>
-          <div class="inwrap"><input type="date" id="in-base"></div>
+          <div class="inwrap"><input type="date" id="in-base" min="1970-01-01" max="2035-12-31"></div>
         </div>
       </div>
       <button class="btn" onclick="calcDays()">발생 연차 계산하기</button>
@@ -326,10 +326,16 @@ function calcPay(){
       days = num('in-days');
       if(!days){ alert('미사용 연차일수를 입력해 주세요.'); return; }
     } else {
-      const hire = document.getElementById('in-rhire').valueAsDate;
-      const quit = document.getElementById('in-rquit').valueAsDate;
+      const hireEl = document.getElementById('in-rhire');
+      const quitEl = document.getElementById('in-rquit');
       const used = num('in-rused');
-      if(!hire || !quit || quit <= hire){ alert('입사일과 퇴사일을 확인해 주세요.'); return; }
+      if(!hireEl.value || !quitEl.value){ alert('입사일과 퇴사(예정)일을 입력해 주세요.'); return; }
+      const rh = checkDate(hireEl, { name:'입사일', min:'1970-01-01', max:'2035-12-31' });
+      if(rh.error){ alert(rh.error); return; }
+      const rq = checkDate(quitEl, { name:'퇴사(예정)일', min:'1970-01-01', max:'2035-12-31' });
+      if(rq.error){ alert(rq.error); return; }
+      const hire = rh.date, quit = rq.date;
+      if(quit <= hire){ alert('입사일이 퇴사일보다 늦습니다. 날짜를 다시 확인해 주세요.'); return; }
       const acc = accruedLeave(hire, quit);
       days = Math.max(acc.total - used, 0);
       document.getElementById('o-accrued').textContent = acc.total+' 일 (근속 '+(acc.years>=1 ? acc.years+'년 '+(acc.months-acc.years*12)+'개월' : acc.months+'개월')+')';
@@ -391,9 +397,15 @@ function calcPay(){
 /* 발생 연차 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('in-base').valueAsDate = new Date(); });
 function calcDays(){
-  const hire = document.getElementById('in-hire').valueAsDate;
-  const base = document.getElementById('in-base').valueAsDate;
-  if(!hire || !base || base < hire){ alert('입사일과 기준일을 확인해 주세요.'); return; }
+  const hireEl = document.getElementById('in-hire');
+  const baseEl = document.getElementById('in-base');
+  if(!hireEl.value || !baseEl.value){ alert('입사일과 기준일을 입력해 주세요.'); return; }
+  const rh = checkDate(hireEl, { name:'입사일', min:'1970-01-01', max:'2035-12-31' });
+  if(rh.error){ alert(rh.error); return; }
+  const rb = checkDate(baseEl, { name:'기준일', min:'1970-01-01', max:'2035-12-31' });
+  if(rb.error){ alert(rb.error); return; }
+  const hire = rh.date, base = rb.date;
+  if(base < hire){ alert('기준일이 입사일보다 빠릅니다. 날짜를 다시 확인해 주세요.'); return; }
 
   let years = base.getFullYear() - hire.getFullYear();
   const anniv = new Date(hire); anniv.setFullYear(hire.getFullYear()+years);
