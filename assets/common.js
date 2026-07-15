@@ -111,6 +111,24 @@ function hourlyFromWeekly(weekly, weekHours, includesHoliday){
   return paid > 0 ? weekly / paid : 0;
 }
 
+/* ── 불규칙 근무(알바·시프트) 평균 주 근무시간 ────────────────────
+   주마다 근로시간이 다를 때, 주휴수당·최저임금 판단은 보통
+   '4주 평균' 또는 '해당 기간 총합'으로 봅니다. (검증 가능한 순수 함수) */
+/* 주별 근무시간 배열 → 평균 주 근무시간 (빈 칸은 호출부에서 걸러 넣음) */
+function avgWeeklyHours(weeks){
+  const vals = weeks.map(Number).filter(v => !isNaN(v));
+  if(!vals.length) return 0;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+/* 기간 총 근무시간 ÷ 주 수 → 평균 주 근무시간 */
+function avgWeeklyFromTotal(totalHours, weeks){
+  return weeks > 0 ? totalHours / weeks : 0;
+}
+/* 주휴수당 = (1주 소정근로시간 ÷ 40, 최대 1) × 8시간 × 시급 */
+function juhyuPay(weekHours, hourly){
+  return Math.min(weekHours, 40) / 40 * 8 * hourly;
+}
+
 /* ── 실업급여(구직급여) 계산 ─────────────────────────────────────
    상·하한액과 소정급여일수는 2026년 기준(변경 금지). 검증 가능한 순수 함수 */
 const UI_MAX_2026 = 68100;   // 1일 상한액 (2026.1.1 이후 이직)
