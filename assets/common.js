@@ -111,6 +111,50 @@ function hourlyFromWeekly(weekly, weekHours, includesHoliday){
   return paid > 0 ? weekly / paid : 0;
 }
 
+/* ── 실업급여(구직급여) 계산 ─────────────────────────────────────
+   상·하한액과 소정급여일수는 2026년 기준(변경 금지). 검증 가능한 순수 함수 */
+const UI_MAX_2026 = 68100;   // 1일 상한액 (2026.1.1 이후 이직)
+const UI_MIN_2026 = 66048;   // 1일 하한액 (최저시급 80% × 8시간)
+const BENEFIT_DAYS = { u50:[120,150,180,210,240], o50:[120,180,210,240,270] };
+const PERIOD_LABELS = ['1년 미만','1년 이상 ~ 3년 미만','3년 이상 ~ 5년 미만','5년 이상 ~ 10년 미만','10년 이상'];
+
+/* 퇴직 전 3개월 임금 총액 → 1일 평균임금·구직급여(평균임금 60%, 상·하한 적용)
+   반환: { avg, daily, capped }  capped: ''|'상한액 적용'|'하한액 적용' */
+function jobseekerDaily(threeMonthWage){
+  const avg = threeMonthWage / 91;                 // 3개월 ≈ 91일
+  let daily = avg * 0.6, capped = '';
+  if(daily > UI_MAX_2026){ daily = UI_MAX_2026; capped = '상한액 적용'; }
+  else if(daily < UI_MIN_2026){ daily = UI_MIN_2026; capped = '하한액 적용'; }
+  return { avg, daily, capped };
+}
+
+/* 나이 그룹·가입기간 구간 → 소정급여일수 */
+function benefitDays(ageGroup, periodIdx){
+  return BENEFIT_DAYS[ageGroup][periodIdx];
+}
+
+/* 두 날짜 기준 만 나이 (기준일에 생일이 지났는지 반영) */
+function ageAt(birth, base){
+  let age = base.getFullYear() - birth.getFullYear();
+  const m = base.getMonth() - birth.getMonth();
+  if(m < 0 || (m === 0 && base.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+/* 만 나이 → 나이 그룹 (50세 이상이면 o50) */
+function ageGroupOf(age){ return age >= 50 ? 'o50' : 'u50'; }
+
+/* 입사일·퇴사일 → 고용보험 가입기간 구간 인덱스
+   구간: [0]1년 미만 [1]1~3년 [2]3~5년 [3]5~10년 [4]10년 이상 (소정급여일수표와 동일) */
+function coveragePeriodIndex(hire, quit){
+  const years = (quit - hire) / (365.25 * 24 * 3600 * 1000);
+  if(years < 1) return 0;
+  if(years < 3) return 1;
+  if(years < 5) return 2;
+  if(years < 10) return 3;
+  return 4;
+}
+
 /* ── 계산 결과 URL 공유 ── */
 /* 계산 실행 시 입력값을 쿼리스트링에 기록: setShareParams({salary:2500000, week:40}) */
 function setShareParams(obj){
