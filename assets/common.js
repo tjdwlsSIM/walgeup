@@ -77,6 +77,40 @@ function estimateNet(bonus, monthly){
   return { pension, health, care, emp, tax, deduct, net: bonus - deduct };
 }
 
+/* ── 최저임금 역산 (월급·주급 → 시급) ─────────────────────────────
+   가장 흔한 오해가 '월급 ÷ 실근로시간'인데, 법정 월 근로시간에는
+   유급 주휴시간이 포함돼야 정확합니다. 아래 함수들은 그 주휴시간을
+   더한 유급 시간으로 나눠 시급을 역산합니다. (검증 가능한 순수 함수) */
+const WEEKS_PER_MONTH = 4.345;                 // 365 ÷ 12 ÷ 7 ≈ 4.345주
+
+/* 주 소정근로시간에 대한 유급 주휴시간
+   · 주 15시간 미만이면 주휴수당이 발생하지 않아 0
+   · 그 이상이면 (주 소정근로시간 ÷ 5), 최대 8시간 */
+function weeklyHolidayHours(weekHours){
+  if(weekHours < 15) return 0;
+  return Math.min(weekHours / 5, 8);
+}
+
+/* 월 환산 유급 근로시간 = (주 소정근로시간 + 주휴시간) × 4.345, 정수로 반올림
+   검증: 주 40시간 → 주휴 8시간 → (40+8)×4.345 = 208.56 → 209시간 */
+function monthlyPaidHours(weekHours){
+  return Math.round((weekHours + weeklyHolidayHours(weekHours)) * WEEKS_PER_MONTH);
+}
+
+/* 월급 → 시급 역산. 검증: 2,156,880 ÷ 209 = 10,320원 */
+function hourlyFromMonthly(monthly, weekHours){
+  const h = monthlyPaidHours(weekHours);
+  return h > 0 ? monthly / h : 0;
+}
+
+/* 주급 → 시급 역산
+   · includesHoliday=false: 순수 근로시간분만 지급 → 주급 ÷ 주 근로시간
+   · includesHoliday=true : 주급에 주휴수당 포함 → 주급 ÷ (근로시간 + 주휴시간) */
+function hourlyFromWeekly(weekly, weekHours, includesHoliday){
+  const paid = includesHoliday ? weekHours + weeklyHolidayHours(weekHours) : weekHours;
+  return paid > 0 ? weekly / paid : 0;
+}
+
 /* ── 계산 결과 URL 공유 ── */
 /* 계산 실행 시 입력값을 쿼리스트링에 기록: setShareParams({salary:2500000, week:40}) */
 function setShareParams(obj){
