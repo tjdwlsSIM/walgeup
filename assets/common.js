@@ -159,6 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const pager = document.getElementById('guide-pager');
   const empty = document.getElementById('guide-empty');
   const reset = document.getElementById('guide-empty-reset');
+  const clearBtn = document.getElementById('guide-search-clear');
+  const goBtn = document.getElementById('guide-search-go');
   const cards = [...list.querySelectorAll('.cardlink')];
   const PER = 8;
   let page = 1;
@@ -232,21 +234,43 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollTop();
   }
 
+  /* 입력값 유무에 따라 지우기(X) 버튼 표시/숨김 */
+  function syncClear(){
+    if(clearBtn) clearBtn.hidden = !(input && input.value.length);
+  }
+  /* 검색어를 비우고 전체 목록으로 복귀 */
+  function clearSearch(focus){
+    if(input){ input.value = ''; if(focus) input.focus(); }
+    syncClear();
+    showPage();
+  }
+
   if(input){
     input.addEventListener('input', () => {
       const q = query();
       if(q) showSearch(q);
       else showPage();               // 비우면 원래 페이지네이션 상태로 복귀
+      syncClear();
     });
+    /* 모바일 키보드의 '검색/완료'(Enter)로 키보드 내림 (form이 아니므로 직접 blur) */
+    input.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+    });
+    syncClear();
+  }
+  if(clearBtn){
+    clearBtn.addEventListener('click', () => clearSearch(true));
+  }
+  if(goBtn){
+    /* 검색은 입력 즉시 실시간 반영되므로, 이 버튼은 모바일 키보드 내림 용도 */
+    goBtn.addEventListener('click', () => { if(input) input.blur(); });
   }
   if(reset){
-    reset.addEventListener('click', () => {
-      if(input){ input.value = ''; input.focus(); }
-      showPage();
-    });
+    reset.addEventListener('click', () => clearSearch(true));
   }
   window.addEventListener('popstate', () => {   // 뒤로/앞으로 가기
     if(input) input.value = '';
+    syncClear();
     page = readHash();
     showPage();
     scrollTop();
