@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 퇴직금 계산기 | 평균임금 기준 자동 계산 — 월급노트</title>
-<meta name="description" content="입사일·퇴사일과 최근 3개월 급여만 입력하면 평균임금 기준 퇴직금을 즉시 계산합니다. 상여금·연차수당 반영, 2026년 기준.">
+<title>퇴직금 계산기 | 평균임금 기준 자동 계산 — 월급노트</title>
+<meta name="description" content="입사일·퇴사일과 최근 3개월 급여만 입력하면 평균임금 기준 퇴직금을 즉시 계산합니다. 상여금·연차수당 반영.">
 <meta name="keywords" content="퇴직금 계산기, 2026 퇴직금, 평균임금 계산, 퇴직금 지급기준, 퇴직금 계산방법">
-<meta property="og:title" content="2026 퇴직금 계산기">
+<meta property="og:title" content="퇴직금 계산기">
 <meta property="og:description" content="입사일·퇴사일과 3개월 급여로 내 퇴직금을 바로 확인하세요.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://walgeupnote.com/severance/">
@@ -274,7 +274,8 @@ function calcSeverance(){
   document.getElementById('t-local').textContent   = fmt(localTax)+' 원';
 
   note.className = 'note';
-  note.textContent = '퇴직소득세는 간이 계산으로, 이연퇴직소득(IRP 계좌로 이체 시 과세이연) 등 개별 사정에 따라 실제 세액과 달라질 수 있습니다. 계산된 1일 평균임금이 통상임금보다 낮다면 통상임금 기준으로 다시 계산해야 하며, 지급 기한은 퇴직일로부터 14일 이내입니다.';
+  note.textContent = '퇴직소득세는 간이 계산으로, 이연퇴직소득(IRP 계좌로 이체 시 과세이연) 등 개별 사정에 따라 실제 세액과 달라질 수 있습니다. 계산된 1일 평균임금이 통상임금보다 낮다면 통상임금 기준으로 다시 계산해야 하며, 지급 기한은 퇴직일로부터 14일 이내입니다.'
+    + unconfirmedNote('퇴직소득세율');
 
   setShareParams({
     hire: document.getElementById('in-hire').value,
@@ -283,6 +284,11 @@ function calcSeverance(){
   });
   showResult('res-sev');
 }
+
+/* 연도 전환 시 — 결과가 떠 있으면 재계산(퇴직소득세율은 2026년 값 유지, 미발표 주석만 갱신) */
+window.onYearChange = function(){
+  if(document.getElementById('res-sev').classList.contains('show')) calcSeverance();
+};
 
 /* 공유된 링크로 접속 시 자동 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{

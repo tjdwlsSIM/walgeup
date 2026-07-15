@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 연차수당 계산기 | 미사용 연차 수당 자동 계산 — 월급노트</title>
-<meta name="description" content="2026년 기준 연차수당 계산기. 월급 또는 시급을 입력하면 통상임금 기준 미사용 연차수당과 세후 실수령액을 즉시 계산합니다. 퇴직 정산 모드 지원.">
+<title>연차수당 계산기 | 미사용 연차 수당 자동 계산 — 월급노트</title>
+<meta name="description" content="연차수당 계산기. 월급 또는 시급을 입력하면 통상임금 기준 미사용 연차수당과 세후 실수령액을 즉시 계산합니다. 퇴직 정산 모드 지원.">
 <meta name="keywords" content="연차수당 계산기, 2026 연차수당, 미사용 연차, 통상임금 계산, 퇴직 연차 정산">
-<meta property="og:title" content="2026 연차수당 계산기">
+<meta property="og:title" content="연차수당 계산기">
 <meta property="og:description" content="월급·시급 입력으로 미사용 연차수당과 세후 실수령액을 바로 계산해 보세요.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://walgeupnote.com/annual-leave/">
@@ -59,7 +59,7 @@
   <div class="hero">
     <h1>연차수당 계산기</h1>
     <p>사용하지 못한 연차휴가, 수당으로 얼마를 받아야 할까요? 월급 또는 시급을 입력하면 통상임금 기준 연차수당을 바로 계산해 드립니다.</p>
-    <p class="basis">산정 기준 — 최저시급 <b>10,320원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)</p>
+    <p class="basis" id="al-basis">산정 기준 — 최저시급 <b>10,320원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)</p>
   </div>
 
   <!-- 계산기 1: 연차수당 -->
@@ -369,12 +369,12 @@ function calcPay(){
   document.getElementById('o-days').textContent   = days+' 일';
   document.getElementById('o-total').textContent  = fmt(total)+' 원';
 
-  if(hourly < MIN_WAGE_2026){
+  if(hourly < yearData().minWage){
     note.className = 'note warn';
-    note.textContent = '입력하신 급여로 계산한 통상시급('+fmt(hourly)+'원)이 2026년 최저시급 10,320원보다 낮습니다. 급여 항목이 누락되지 않았는지, 최저임금 위반이 아닌지 확인해 보세요.';
+    note.textContent = '입력하신 급여로 계산한 통상시급('+fmt(hourly)+'원)이 '+getYear()+'년 최저시급 '+fmt(yearData().minWage)+'원보다 낮습니다. 급여 항목이 누락되지 않았는지, 최저임금 위반이 아닌지 확인해 보세요.';
   } else {
     note.className = 'note';
-    note.textContent = '실수령액은 2026년 4대보험 요율(국민연금 9.5%·건강보험 7.19%)과 간이 세율로 계산한 추정치입니다. 부양가족 수·비과세 항목·연말정산에 따라 실제 금액과 다를 수 있습니다.' + (extraNote || '');
+    note.textContent = '실수령액은 2026년 4대보험 요율(국민연금 9.5%·건강보험 7.19%)과 간이 세율로 계산한 추정치입니다. 부양가족 수·비과세 항목·연말정산에 따라 실제 금액과 다를 수 있습니다.' + unconfirmedNote('4대보험 요율·소득세율') + (extraNote || '');
   }
 
   /* 입력값을 URL에 반영 (결과 링크 공유용) */
@@ -434,6 +434,15 @@ function calcDays(){
   setShareParams({ calc: 'days', hire: document.getElementById('in-hire').value, base: document.getElementById('in-base').value });
   showResult('res-days');
 }
+
+/* 연도 전환 시 — 최저시급 기준 문구 갱신 + 연차수당 결과가 떠 있으면 재계산
+   (발생 연차 계산은 연도 수치와 무관하므로 재계산하지 않음) */
+window.onYearChange = function(y){
+  const Y = YEAR_DATA[y];
+  const basis = document.getElementById('al-basis');
+  if(basis) basis.innerHTML = '산정 기준 — 최저시급 <b>'+fmt(Y.minWage)+'원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)';
+  if(document.getElementById('res-pay').classList.contains('show')) calcPay();
+};
 
 /* 공유된 링크로 접속 시 자동 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{

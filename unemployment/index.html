@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 실업급여 계산기 | 상한 68,100원 반영 수급액 계산 — 월급노트</title>
-<meta name="description" content="2026년 인상된 실업급여 상한액 68,100원·하한액 66,048원을 반영한 계산기. 나이와 고용보험 가입기간으로 소정급여일수와 총 수급액을 확인하세요.">
+<title>실업급여 계산기 | 상한·하한 반영 수급액 계산 — 월급노트</title>
+<meta name="description" content="실업급여 상한액 68,100원·하한액 66,048원을 반영한 계산기. 나이와 고용보험 가입기간으로 소정급여일수와 총 수급액을 확인하세요. (연도 전환 지원)">
 <meta name="keywords" content="실업급여 계산기, 2026 실업급여, 구직급여, 실업급여 상한액, 소정급여일수">
-<meta property="og:title" content="2026 실업급여 계산기">
+<meta property="og:title" content="실업급여 계산기">
 <meta property="og:description" content="7년 만에 인상된 2026년 상·하한액 기준으로 내 실업급여를 바로 계산하세요.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://walgeupnote.com/unemployment/">
@@ -64,7 +64,7 @@
   <div class="hero">
     <h1>실업급여 계산기</h1>
     <p>퇴직 전 평균임금과 고용보험 가입기간으로 구직급여(실업급여) 예상 수급액을 계산합니다. 7년 만에 인상된 2026년 상·하한액을 반영했습니다.</p>
-    <p class="basis">2026년 기준 — 1일 상한 <b>68,100원</b> · 1일 하한 <b>66,048원</b> (2026.1.1&nbsp;이후&nbsp;퇴사자)</p>
+    <p class="basis" id="un-basis">2026년 기준 — 1일 상한 <b>68,100원</b> · 1일 하한 <b>66,048원</b> (2026.1.1&nbsp;이후&nbsp;퇴사자)</p>
   </div>
 
   <div class="card">
@@ -357,7 +357,8 @@ function calcUnemp(){
   document.getElementById('u-total').textContent = fmt(total)+' 원';
 
   note.className = 'note';
-  note.textContent = '2026년 1월 1일 이후 퇴사자 기준이며, 비자발적 이직 등 수급 요건을 충족해야 합니다. 이직일로부터 12개월이 지나면 잔여 급여가 소멸되니 퇴사 후 바로 신청하세요. 최근 5년 내 3회 이상 수급한 경우 감액될 수 있습니다.';
+  note.textContent = getYear()+'년 1월 1일 이후 퇴사자 기준이며, 비자발적 이직 등 수급 요건을 충족해야 합니다. 이직일로부터 12개월이 지나면 잔여 급여가 소멸되니 퇴사 후 바로 신청하세요. 최근 5년 내 3회 이상 수급한 경우 감액될 수 있습니다.'
+    + unconfirmedNote('실업급여 1일 상한액');
 
   setShareParams({
     wmode: wageMode,
@@ -373,6 +374,14 @@ function calcUnemp(){
   });
   showResult('res-un');
 }
+
+/* 연도 전환 시 — 상·하한 기준 문구 갱신 + 결과가 떠 있으면 재계산 */
+window.onYearChange = function(y){
+  const Y = YEAR_DATA[y];
+  const basis = document.getElementById('un-basis');
+  if(basis) basis.innerHTML = y+'년 기준 — 1일 상한 <b>'+fmt(Y.uiMax)+'원</b> · 1일 하한 <b>'+fmt(Y.uiMin)+'원</b> ('+y+'.1.1&nbsp;이후&nbsp;퇴사자)';
+  if(document.getElementById('res-un').classList.contains('show')) calcUnemp();
+};
 
 /* 공유된 링크로 접속 시 모드·입력 복원 후 자동 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{

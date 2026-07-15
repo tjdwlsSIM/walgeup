@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 주휴수당 계산기 | 알바 주휴수당 자동 계산 — 월급노트</title>
-<meta name="description" content="2026년 최저시급 10,320원 기준 주휴수당 계산기. 시급과 주 근무시간만 입력하면 주휴수당과 주급·월급 환산액을 바로 계산합니다.">
+<title>주휴수당 계산기 | 알바 주휴수당 자동 계산 — 월급노트</title>
+<meta name="description" content="최저시급 10,320원 기준 주휴수당 계산기. 시급과 주 근무시간만 입력하면 주휴수당과 주급·월급 환산액을 바로 계산합니다. (연도 전환 지원)">
 <meta name="keywords" content="주휴수당 계산기, 2026 주휴수당, 알바 주휴수당, 주휴수당 지급기준, 최저시급 주휴수당">
-<meta property="og:title" content="2026 주휴수당 계산기">
+<meta property="og:title" content="주휴수당 계산기">
 <meta property="og:description" content="주 15시간 이상 일하면 하루치 급여가 더 생깁니다. 내 주휴수당을 확인하세요.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://walgeupnote.com/weekly-holiday/">
@@ -68,7 +68,7 @@
   <div class="hero">
     <h1>주휴수당 계산기</h1>
     <p>1주 15시간 이상 일하고 개근했다면, 일하지 않는 하루에 대해서도 급여를 받아야 합니다. 시급과 주 근무시간만 입력하세요.</p>
-    <p class="basis">산정 기준 — 2026년 최저시급 <b>10,320원</b> · 주휴 포함 환산시급 <b>12,384원</b></p>
+    <p class="basis" id="jh-basis">산정 기준 — 2026년 최저시급 <b>10,320원</b> · 주휴 포함 환산시급 <b>12,384원</b></p>
   </div>
 
   <div class="card">
@@ -304,9 +304,9 @@ function calcJuhyu(){
   document.getElementById('j-week').textContent  = fmt(weekTotal)+' 원';
   document.getElementById('j-month').textContent = fmt(monthTotal)+' 원';
 
-  if(hourly < MIN_WAGE_2026){
+  if(hourly < yearData().minWage){
     note.className = 'note warn';
-    note.textContent = '입력하신 시급('+fmt(hourly)+'원)이 2026년 최저시급 10,320원보다 낮습니다. 최저임금 위반에 해당하니 사업주에게 차액을 청구할 수 있습니다.';
+    note.textContent = '입력하신 시급('+fmt(hourly)+'원)이 '+getYear()+'년 최저시급 '+fmt(yearData().minWage)+'원보다 낮습니다. 최저임금 위반에 해당하니 사업주에게 차액을 청구할 수 있습니다.';
   } else if(irregular){
     note.className = 'note';
     note.textContent = '4주 평균 주 '+round1(week)+'시간으로 주휴수당이 발생합니다. 4주 평균이 일반적인 판단 기준이지만, 주마다 편차가 크거나 소정근로시간이 계약서에 별도로 정해져 있으면 실제와 다를 수 있습니다. 세전 금액 기준입니다.';
@@ -331,6 +331,14 @@ function saveJhShare(hourly, week){
       th:num('in-tot-hours'), tw:num('in-tot-weeks') });
   }
 }
+
+/* 연도 전환 시 — 기준 문구 갱신 + 결과가 떠 있으면 재계산 */
+window.onYearChange = function(y){
+  const Y = YEAR_DATA[y];
+  const basis = document.getElementById('jh-basis');
+  if(basis) basis.innerHTML = '산정 기준 — '+y+'년 최저시급 <b>'+fmt(Y.minWage)+'원</b> · 주휴 포함 환산시급 <b>'+fmt(Y.minWageWithHoliday)+'원</b>';
+  if(document.getElementById('res-jh').classList.contains('show')) calcJuhyu();
+};
 
 /* 공유된 링크로 접속 시 모드 복원 후 자동 계산 */
 document.addEventListener('DOMContentLoaded', ()=>{

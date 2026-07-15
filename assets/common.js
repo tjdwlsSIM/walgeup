@@ -1,5 +1,33 @@
 /* 월급노트 공통 스크립트 — 모든 계산기 페이지에서 사용하는 함수 */
-const MIN_WAGE_2026 = 10320;                 // 2026년 최저시급
+const MIN_WAGE_2026 = 10320;                 // 2026년 최저시급 (기존 참조 호환용)
+
+/* ── 연도별 기준 수치 (헤더 드롭다운으로 전환) ─────────────────────
+   2027년: 최저임금·주휴 포함 환산시급·실업급여 1일 하한액은 확정치.
+   4대보험 요율·소득세율·실업급여 1일 상한액은 2027년 미발표 →
+   2026년 값을 그대로 사용하고 결과에 그 사실을 주석으로 표시. */
+const YEAR_DATA = {
+  2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100 },
+  2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100 }
+};
+const YEAR_DEFAULT = 2026;
+
+/* 현재 선택 연도 (sessionStorage 유지, 기본 2026). 2027만 예외 허용 */
+function getYear(){
+  try{ return Number(sessionStorage.getItem('wgn-year')) === 2027 ? 2027 : YEAR_DEFAULT; }
+  catch(e){ return YEAR_DEFAULT; }
+}
+function setYear(y){
+  y = Number(y) === 2027 ? 2027 : YEAR_DEFAULT;
+  try{ sessionStorage.setItem('wgn-year', String(y)); }catch(e){}
+  return y;
+}
+/* 현재 연도의 기준 수치 묶음 */
+function yearData(){ return YEAR_DATA[getYear()]; }
+/* 2027년 선택 시, 미발표라 2026년 값을 쓴 항목 안내(문장 끝에 덧붙임). 2026년이면 빈 문자열 */
+function unconfirmedNote(items){
+  return getYear() === 2027 ? ' ' + items + '은 2027년 기준이 아직 발표되지 않아 2026년 값을 적용했습니다.' : '';
+}
+
 const fmt = n => Math.round(n).toLocaleString('ko-KR');
 const num = id => Number(document.getElementById(id).value.replace(/[^0-9.]/g,'')) || 0;
 
@@ -193,18 +221,19 @@ function juhyuPay(weekHours, hourly){
 
 /* ── 실업급여(구직급여) 계산 ─────────────────────────────────────
    상·하한액과 소정급여일수는 2026년 기준(변경 금지). 검증 가능한 순수 함수 */
-const UI_MAX_2026 = 68100;   // 1일 상한액 (2026.1.1 이후 이직)
-const UI_MIN_2026 = 66048;   // 1일 하한액 (최저시급 80% × 8시간)
+const UI_MAX_2026 = 68100;   // 1일 상한액 (2026.1.1 이후 이직) — 기존 참조 호환용
+const UI_MIN_2026 = 66048;   // 1일 하한액 (최저시급 80% × 8시간) — 기존 참조 호환용
 const BENEFIT_DAYS = { u50:[120,150,180,210,240], o50:[120,180,210,240,270] };
 const PERIOD_LABELS = ['1년 미만','1년 이상 ~ 3년 미만','3년 이상 ~ 5년 미만','5년 이상 ~ 10년 미만','10년 이상'];
 
 /* 퇴직 전 3개월 임금 총액 → 1일 평균임금·구직급여(평균임금 60%, 상·하한 적용)
    반환: { avg, daily, capped }  capped: ''|'상한액 적용'|'하한액 적용' */
 function jobseekerDaily(threeMonthWage){
-  const avg = threeMonthWage / 91;                 // 3개월 ≈ 91일
+  const Y = yearData();                             // 선택 연도의 상·하한액
+  const avg = threeMonthWage / 91;                  // 3개월 ≈ 91일
   let daily = avg * 0.6, capped = '';
-  if(daily > UI_MAX_2026){ daily = UI_MAX_2026; capped = '상한액 적용'; }
-  else if(daily < UI_MIN_2026){ daily = UI_MIN_2026; capped = '하한액 적용'; }
+  if(daily > Y.uiMax){ daily = Y.uiMax; capped = '상한액 적용'; }
+  else if(daily < Y.uiMin){ daily = Y.uiMin; capped = '하한액 적용'; }
   return { avg, daily, capped };
 }
 
@@ -266,12 +295,11 @@ function copyLink(){
     .catch(()=>alert('복사에 실패했습니다. 주소창의 URL을 직접 복사해 주세요.'));
 }
 
-/* ── 헤더 연도 선택 메뉴 (UI만 — 실제 연도 전환 로직은 아직 없음) ──
-   [내년 확장 방법]
-   1) 이 파일에 RATES_2027, MIN_WAGE_2027 등 연도별 상수 세트를 추가
-   2) 각 페이지 헤더 .yrmenu의 '2027년' 항목에서 disabled를 제거하고,
-      클릭 시 ?year=2027 파라미터로 이동하거나 localStorage에 연도를 저장
-   3) 각 계산기에서 선택된 연도에 맞는 상수 세트를 골라 계산하도록 수정 */
+/* ── 헤더 연도 선택 (2026 / 2027 전환) ─────────────────────────────
+   메뉴 마크업은 페이지마다 조금씩 다르므로, 로드 시 common.js가
+   .yrmenu 내용을 다시 그려 두 개의 선택 버튼과 핸들러를 붙입니다.
+   연도 선택 → sessionStorage 저장 → 라벨·안내바 갱신 → 페이지의
+   window.onYearChange(year) 호출(있으면)로 정적 문구·재계산 반영. */
 function toggleYearMenu(e){
   e.stopPropagation();
   const btn = e.currentTarget;
@@ -287,6 +315,70 @@ document.addEventListener('click', () => {
     const btn = m.parentElement.querySelector('button.yr');
     if(btn) btn.setAttribute('aria-expanded', 'false');
   });
+});
+
+/* 드롭다운 메뉴를 [2026년][2027년] 두 버튼으로 재구성 */
+function buildYearMenu(sel){
+  const menu = sel.querySelector('.yrmenu');
+  if(!menu) return;
+  menu.textContent = '';
+  [2026, 2027].forEach(yr => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.year = String(yr);
+    b.textContent = yr === 2026 ? '2026년 (현재)' : '2027년 (예정)';
+    b.addEventListener('click', e => { e.stopPropagation(); applyYear(yr); });
+    menu.appendChild(b);
+  });
+}
+
+/* 라벨·선택표시·상단 안내바를 현재 연도에 맞게 갱신 */
+function updateYearUI(){
+  const y = getYear();
+  document.querySelectorAll('.yrsel').forEach(sel => {
+    const btn = sel.querySelector('button.yr');
+    if(btn) btn.textContent = y + '년 기준 ▾';
+    sel.querySelectorAll('.yrmenu button').forEach(b => {
+      b.classList.toggle('on', Number(b.dataset.year) === y);
+    });
+  });
+  /* 2027년 선택 시에만 헤더 아래 안내바 표시 (미발표 항목 안내 겸용) */
+  let bar = document.getElementById('year-bar');
+  if(y === 2027){
+    if(!bar){
+      bar = document.createElement('div');
+      bar.id = 'year-bar';
+      bar.style.cssText = 'background:#FBF1EF;color:#213A5C;font-size:12.5px;line-height:1.55;'
+        + 'text-align:center;padding:8px 16px;border-bottom:1px solid #E7D9D6;word-break:keep-all';
+      const hdr = document.querySelector('header');
+      if(hdr && hdr.parentNode) hdr.parentNode.insertBefore(bar, hdr.nextSibling);
+    }
+    bar.textContent = '2027년 기준 적용 중 — 2027년 1월 1일 시행 예정입니다. '
+      + '최저임금·실업급여 하한액은 확정치이며, 4대보험 요율·소득세율·실업급여 상한액은 '
+      + '2027년 미발표로 2026년 값이 적용됩니다.';
+    bar.hidden = false;
+  } else if(bar){
+    bar.hidden = true;
+  }
+}
+
+/* 연도 적용: 저장 → 메뉴 닫기 → UI 갱신 → 페이지 훅 호출 */
+function applyYear(yr){
+  setYear(yr);
+  document.querySelectorAll('.yrmenu:not([hidden])').forEach(m => {
+    m.hidden = true;
+    const btn = m.parentElement.querySelector('button.yr');
+    if(btn) btn.setAttribute('aria-expanded', 'false');
+  });
+  updateYearUI();
+  if(typeof window.onYearChange === 'function') window.onYearChange(getYear());
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.yrsel').forEach(buildYearMenu);
+  updateYearUI();
+  /* 저장된 연도가 2027이면 로드 시점에도 정적 문구를 맞춰 둠(결과 없으면 재계산은 생략) */
+  if(typeof window.onYearChange === 'function') window.onYearChange(getYear());
 });
 
 /* ── 계산 결과 이미지 저장 ──

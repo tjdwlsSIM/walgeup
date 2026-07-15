@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 4대보험 계산기 | 국민연금·건강보험 근로자·사업주 부담금 — 월급노트</title>
-<meta name="description" content="2026년 요율 기준 4대보험 계산기. 월 급여만 입력하면 국민연금·건강보험·장기요양·고용보험의 근로자 부담과 사업주 부담을 항목별로 계산합니다.">
+<title>4대보험 계산기 | 국민연금·건강보험 근로자·사업주 부담금 — 월급노트</title>
+<meta name="description" content="4대보험 계산기. 월 급여만 입력하면 국민연금·건강보험·장기요양·고용보험의 근로자 부담과 사업주 부담을 항목별로 계산합니다.">
 <meta name="keywords" content="4대보험 계산기, 2026 4대보험 요율, 국민연금 계산, 건강보험료 계산, 고용보험료">
-<meta property="og:title" content="2026 4대보험 계산기">
+<meta property="og:title" content="4대보험 계산기">
 <meta property="og:description" content="내 월급에서 4대보험이 얼마나 빠질까? 근로자·사업주 부담을 한 번에 확인하세요.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://walgeupnote.com/insurance/">
@@ -262,7 +262,7 @@ function calcIns(){
     txt += '산정 기준액이 국민연금 기준소득월액 하한(390,000원) 미만이라 국민연금은 39만원 기준으로 계산되었습니다. ';
   }
   txt += '산재보험은 업종별로 요율이 다르며 전액 사업주 부담이라 이 표에는 포함하지 않았습니다. 실제 보험료는 보수월액 산정 방식과 사업장 규모에 따라 달라질 수 있으며, 소득세는 별도입니다(연봉 실수령액 계산기 참고).';
-  note.textContent = txt;
+  note.textContent = txt + unconfirmedNote('4대보험 요율');
 
   setShareParams({
     imode: insMode,
@@ -272,6 +272,11 @@ function calcIns(){
   });
   showResult('res-ins');
 }
+
+/* 연도 전환 시 — 결과가 떠 있으면 재계산(요율은 2026년 값 유지, 미발표 주석만 갱신) */
+window.onYearChange = function(){
+  if(document.getElementById('res-ins').classList.contains('show')) calcIns();
+};
 
 /* 공유된 링크로 접속 시 모드 복원 후 자동 계산 (imode 없는 기존 링크는 월급 모드) */
 document.addEventListener('DOMContentLoaded', ()=>{
