@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# 도메인 변경 시 아래 주소도 함께 변경하세요.
 Sitemap: https://walgeupnote.com/sitemap.xml
