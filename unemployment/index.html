@@ -382,7 +382,11 @@ function calcUnemp(){
 window.onYearChange = function(y){
   const Y = YEAR_DATA[y];
   const basis = document.getElementById('un-basis');
-  if(basis) basis.innerHTML = y+'년 기준 — 1일 상한 <b>'+fmt(Y.uiMax)+'원</b> · 1일 하한 <b>'+fmt(Y.uiMin)+'원</b> ('+y+'.1.1&nbsp;이후&nbsp;퇴사자)';
+  if(basis){
+    /* 2027년은 실업급여 1일 상한액이 미발표 → 숫자 대신 '미발표' 표기(하한은 확정치) */
+    const uiMaxTxt = y === 2027 ? '1일 상한 <b>미발표</b>' : '1일 상한 <b>'+fmt(Y.uiMax)+'원</b>';
+    basis.innerHTML = y+'년 기준 — '+uiMaxTxt+' · 1일 하한 <b>'+fmt(Y.uiMin)+'원</b> ('+y+'.1.1&nbsp;이후&nbsp;퇴사자)';
+  }
   if(document.getElementById('res-un').classList.contains('show')) calcUnemp();
 };
 

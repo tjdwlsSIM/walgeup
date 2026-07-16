@@ -62,7 +62,7 @@
       <div class="yrsel yrsel-title"><button type="button" class="yr yr-lg" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)"><span class="yr-label">2026년 기준</span><svg class="yr-caret" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4.5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="yrmenu" hidden></div></div>
     </div>
     <p>사용하지 못한 연차휴가, 수당으로 얼마를 받아야 할까요? 월급 또는 시급을 입력하면 통상임금 기준 연차수당을 바로 계산해 드립니다.</p>
-    <p class="basis" id="al-basis">산정 기준 — 최저시급 <b>10,320원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)</p>
+    <p class="basis" id="al-basis">산정 기준 — 2026년 최저시급 <b>10,320원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)</p>
   </div>
 
   <!-- 계산기 1: 연차수당 -->
@@ -443,7 +443,7 @@ function calcDays(){
 window.onYearChange = function(y){
   const Y = YEAR_DATA[y];
   const basis = document.getElementById('al-basis');
-  if(basis) basis.innerHTML = '산정 기준 — 최저시급 <b>'+fmt(Y.minWage)+'원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)';
+  if(basis) basis.innerHTML = '산정 기준 — '+y+'년 최저시급 <b>'+fmt(Y.minWage)+'원</b> · 통상임금 월 <b>209시간</b>(주&nbsp;40시간)';
   if(document.getElementById('res-pay').classList.contains('show')) calcPay();
 };
 
