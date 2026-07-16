@@ -93,9 +93,13 @@ button.yr:hover{background:var(--ok-bg)}
 .inwrap select{appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5l4 4 4-4' fill='none' stroke='%235C6675' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:12px}
 .inwrap input:focus,.inwrap select:focus{outline:2px solid var(--navy);outline-offset:-1px;border-color:var(--navy)}
 .inwrap select:focus{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5l4 4 4-4' fill='none' stroke='%232C4A73' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
-/* iOS Safari에서 date 입력이 부모 폭을 넘치는 문제 보정 */
-.inwrap input[type="date"]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:48px;padding-right:13px}
+/* iOS Safari 폭 넘침 보정 + 모든 기기 공통 달력 아이콘(background-image SVG).
+   iOS 사파리/모바일 크롬은 기본 달력 아이콘을 표시하지 않으므로 직접 그려 넣음 */
+.inwrap input[type="date"]{-webkit-appearance:none;appearance:none;position:relative;display:block;min-width:0;max-width:100%;min-height:48px;padding-right:42px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235C6675' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='16' rx='2'/%3E%3Cpath d='M3.5 9.5h17M8 3.5v3M16 3.5v3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;background-size:18px}
 .inwrap input[type="date"]::-webkit-date-and-time-value{text-align:left}
+/* 데스크톱 웹킷 기본 아이콘은 투명 처리(중복 방지)하되, 오른쪽 아이콘 영역에
+   겹쳐 두어 눌렀을 때 날짜 선택기가 열리는 클릭 영역은 유지 */
+.inwrap input[type="date"]::-webkit-calendar-picker-indicator{position:absolute;right:0;top:0;width:42px;height:100%;margin:0;padding:0;opacity:0;cursor:pointer}
 .inwrap .unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:13.5px;color:var(--sub);pointer-events:none}
 .btn{display:block;width:100%;margin-top:22px;font-family:var(--sans);font-size:16px;font-weight:700;color:#fff;background:var(--navy);border:none;border-radius:4px;padding:14px;cursor:pointer;letter-spacing:.02em}
 .btn:hover{background:var(--navy-d)}
