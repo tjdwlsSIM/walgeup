@@ -156,6 +156,10 @@ button.yr:hover{background:var(--ok-bg)}
 .info table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0;background:var(--doc)}
 .info th,.info td{border:1px solid var(--line);padding:10px 12px;text-align:left}
 .info th{background:#EDF1F6;font-weight:600}
+/* 열이 많은 표(4열 비교 등)를 좁은 화면에서 가로 스크롤 처리 */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0}
+.table-scroll table{margin:0;min-width:560px}
+.table-scroll td,.table-scroll th{word-break:keep-all}
 .formula{font-family:var(--sans);background:var(--doc);border:1px solid var(--line);border-left:3px solid var(--navy);padding:14px 16px;margin:12px 0;font-size:14.5px}
 details{background:var(--doc);border:1px solid var(--line);border-radius:4px;margin-bottom:10px}
 details summary{cursor:pointer;padding:14px 16px;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
