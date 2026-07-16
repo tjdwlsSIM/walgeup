@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<!-- 연도 갱신 필요 지점: FAQ JSON-LD·산정 기준(.basis)·정보 섹션·FAQ 본문·면책 문구에 2026년 요율(국민연금 9.5% 등) 서술이 하드코딩됨 — 새 요율 고시 시 함께 갱신 -->
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4대보험 계산기 | 국민연금·건강보험 근로자·사업주 부담금 — 월급노트</title>
 <meta name="description" content="4대보험 계산기. 월 급여만 입력하면 국민연금·건강보험·장기요양·고용보험의 근로자 부담과 사업주 부담을 항목별로 계산합니다.">
@@ -41,6 +43,17 @@
 .cmp th{background:#EDF1F6;font-weight:600;text-align:center}
 .cmp tr.sum td{font-weight:700;background:#FAFBFD}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "4대보험 계산기",
+  "url": "https://walgeupnote.com/insurance/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {"@type": "Offer", "price": 0, "priceCurrency": "KRW"}
+}
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9046947251634562" crossorigin="anonymous"></script>
 </head>
 <body>

@@ -396,6 +396,12 @@ function updatePlaceholders(){
     const val = fmt(MINPH_FORMULAS[key](Y));
     document.querySelectorAll('input[data-minph="' + key + '"]').forEach(el => { el.placeholder = val; });
   });
+  /* 라벨 힌트 연동: <span class="hint" data-minhint="wage">를
+     "{연도}년 최저시급 {금액}원"으로 갱신 (예: 주휴수당 계산기의 시급 라벨).
+     placeholder와 같은 두 시점(DOMContentLoaded·applyYear)에 함께 실행됩니다. */
+  document.querySelectorAll('[data-minhint="wage"]').forEach(el => {
+    el.textContent = getYear() + '년 최저시급 ' + fmt(Y.minWage) + '원';
+  });
 }
 
 /* 연도 적용: 저장 → 메뉴 닫기 → UI·예시값 갱신 → 페이지 훅 호출 */
