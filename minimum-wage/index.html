@@ -81,7 +81,7 @@
         <!-- 모드 h: 시급 직접 입력 -->
         <div class="field" id="f-wage">
           <label for="in-wage">내 시급 <span class="hint">계약서·급여명세서 기준</span></label>
-          <div class="inwrap"><input type="text" class="money" id="in-wage" inputmode="numeric" placeholder="10,320"><span class="unit">원</span></div>
+          <div class="inwrap"><input type="text" class="money" id="in-wage" inputmode="numeric" placeholder="10,320" data-minph="wage"><span class="unit">원</span></div>
         </div>
         <div class="field" id="f-incl">
           <label for="in-incl">주휴수당 포함 여부</label>
@@ -91,7 +91,7 @@
         <!-- 모드 m: 월급 → 시급 역산 -->
         <div class="field" id="f-monthly" style="display:none">
           <label for="in-monthly">월 급여 (세전) <span class="hint">주휴수당 포함 월급</span></label>
-          <div class="inwrap"><input type="text" class="money" id="in-monthly" inputmode="numeric" placeholder="2,156,880"><span class="unit">원</span></div>
+          <div class="inwrap"><input type="text" class="money" id="in-monthly" inputmode="numeric" placeholder="2,156,880" data-minph="monthly"><span class="unit">원</span></div>
         </div>
         <div class="field" id="f-mweek" style="display:none">
           <label for="in-mweek">주 소정근로시간 <span class="hint">보통 40시간</span></label>
@@ -101,7 +101,7 @@
         <!-- 모드 w: 주급 → 시급 역산 -->
         <div class="field" id="f-weekly" style="display:none">
           <label for="in-weekly">주 급여 (세전)</label>
-          <div class="inwrap"><input type="text" class="money" id="in-weekly" inputmode="numeric" placeholder="495,360"><span class="unit">원</span></div>
+          <div class="inwrap"><input type="text" class="money" id="in-weekly" inputmode="numeric" placeholder="495,360" data-minph="weekly"><span class="unit">원</span></div>
         </div>
         <div class="field" id="f-wweek" style="display:none">
           <label for="in-wweek">주 근로시간 <span class="hint">주휴시간 제외한 실근로시간</span></label>

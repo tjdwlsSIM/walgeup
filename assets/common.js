@@ -362,7 +362,30 @@ function updateYearUI(){
   }
 }
 
-/* 연도 적용: 저장 → 메뉴 닫기 → UI 갱신 → 페이지 훅 호출 */
+/* ── 입력창 예시값(placeholder) 연도 동기화 ─────────────────────────
+   최저임금에서 도출되는 예시만 대상. value가 아니라 placeholder 속성만
+   바꾸므로 사용자가 입력한 실제 값은 건드리지 않습니다.
+   data-minph 값 → 계산식 매핑(아래 MINPH_FORMULAS). 새 파생 예시가 생기면
+   여기 한 줄만 추가하면 됩니다.
+   · wage    → 최저시급          (10,320 / 10,700)
+   · monthly → 최저월급          (2,156,880 / 2,236,300)
+   · weekly  → 주휴 포함 주급(주40h) = 최저시급 × 48 (495,360 / 513,600)
+   최저임금과 무관한 예시(부양가족·근무시간·연봉 등)에는 이 속성을 붙이지
+   않으므로 그대로 유지됩니다. */
+const MINPH_FORMULAS = {
+  wage:    Y => Y.minWage,
+  monthly: Y => Y.minMonthly,
+  weekly:  Y => Y.minWage * 48   // 주 40시간(40) + 유급 주휴(8) = 48시간
+};
+function updatePlaceholders(){
+  const Y = yearData();
+  Object.keys(MINPH_FORMULAS).forEach(key => {
+    const val = fmt(MINPH_FORMULAS[key](Y));
+    document.querySelectorAll('input[data-minph="' + key + '"]').forEach(el => { el.placeholder = val; });
+  });
+}
+
+/* 연도 적용: 저장 → 메뉴 닫기 → UI·예시값 갱신 → 페이지 훅 호출 */
 function applyYear(yr){
   setYear(yr);
   document.querySelectorAll('.yrmenu:not([hidden])').forEach(m => {
@@ -371,12 +394,14 @@ function applyYear(yr){
     if(btn) btn.setAttribute('aria-expanded', 'false');
   });
   updateYearUI();
+  updatePlaceholders();
   if(typeof window.onYearChange === 'function') window.onYearChange(getYear());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.yrsel').forEach(buildYearMenu);
   updateYearUI();
+  updatePlaceholders();
   /* 저장된 연도가 2027이면 로드 시점에도 정적 문구를 맞춰 둠(결과 없으면 재계산은 생략) */
   if(typeof window.onYearChange === 'function') window.onYearChange(getYear());
 });
