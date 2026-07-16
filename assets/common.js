@@ -306,6 +306,13 @@ function toggleYearMenu(e){
   const menu = btn.parentElement.querySelector('.yrmenu');
   if(!menu) return;
   const willOpen = menu.hidden;
+  /* 헤더·제목 옆 버튼이 함께 있을 수 있으므로, 열기 전에 다른 열린 메뉴는 닫음 */
+  document.querySelectorAll('.yrmenu:not([hidden])').forEach(m => {
+    if(m === menu) return;
+    m.hidden = true;
+    const b = m.parentElement.querySelector('button.yr');
+    if(b) b.setAttribute('aria-expanded', 'false');
+  });
   menu.hidden = !willOpen;
   btn.setAttribute('aria-expanded', String(willOpen));
 }
@@ -337,7 +344,13 @@ function updateYearUI(){
   const y = getYear();
   document.querySelectorAll('.yrsel').forEach(sel => {
     const btn = sel.querySelector('button.yr');
-    if(btn) btn.textContent = y + '년 기준 ▾';
+    if(btn){
+      /* 제목 옆 버튼은 .yr-label 스팬 + SVG 화살표 구조 → 라벨 텍스트만 갱신해
+         화살표를 보존. 헤더 배지는 스팬이 없어 기존처럼 통째로 갱신(▾ 텍스트) */
+      const label = btn.querySelector('.yr-label');
+      if(label) label.textContent = y + '년 기준';
+      else btn.textContent = y + '년 기준 ▾';
+    }
     sel.querySelectorAll('.yrmenu button').forEach(b => {
       b.classList.toggle('on', Number(b.dataset.year) === y);
     });
