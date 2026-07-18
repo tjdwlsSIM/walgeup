@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2027년 최저시급 10,700원, 내 월급은 얼마나 오를까? — 월급노트</title>
+<meta name="description" content="2027 최저임금 월급, 근무 형태별로 직접 계산했습니다. 주 40시간 2,236,300원(+79,420원), 주 20시간 약 1,115,796원, 주 15시간 약 836,847원. 2027 최저시급 실수령액 확인 포인트까지 정리.">
+<meta property="og:title" content="2027년 최저시급 10,700원, 내 월급은 얼마나 오를까?">
+<meta property="og:description" content="주 40시간·20시간·15시간 근무별 2026→2027 월급 인상액을 계산식으로 직접 산출했습니다. 주휴 포함 환산시급 12,840원의 의미까지.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://walgeupnote.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="canonical" href="https://walgeupnote.com/guides/minimum-wage-2027-monthly/">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=block" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../../assets/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/common.css">
+<script src="../../assets/common.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"2027년 최저시급으로 주 20시간 일하면 월급은 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"주 20시간 근무 시 주휴시간 4시간이 더해져 유급 시간은 주 24시간입니다. 10,700원 × 24시간 × 4.345주로 계산하면 월 약 1,115,796원입니다. 2026년 같은 조건의 약 1,076,170원보다 월 약 39,626원 오릅니다."}},
+    {"@type":"Question","name":"주휴수당 포함 환산시급 12,840원은 무슨 의미인가요?","acceptedAnswer":{"@type":"Answer","text":"주휴수당 조건을 채우면 실제 시간당 최저 기준은 최저시급의 1.2배가 됩니다. 2027년에는 10,700원 × 1.2 = 12,840원입니다. '시급에 주휴수당 포함'으로 계약했다면 그 시급이 12,840원 미만일 때 최저임금 위반 가능성이 있습니다."}},
+    {"@type":"Question","name":"2027년 최저월급의 실수령액은 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"이 글의 금액은 모두 세전 기준입니다. 실수령액은 4대보험료와 소득세를 공제한 뒤 정해지는데, 2027년 건강보험료율 등 공제 기준은 아직 발표 전입니다. 정확한 실수령액은 2027년 요율 발표 후 연봉 실수령액 계산기에서 확인하는 것이 정확합니다."}}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"홈","item":"https://walgeupnote.com/"},
+    {"@type":"ListItem","position":2,"name":"노동법·급여 가이드","item":"https://walgeupnote.com/guides/"},
+    {"@type":"ListItem","position":3,"name":"2027년 최저시급 10,700원, 내 월급은 얼마나 오를까?","item":"https://walgeupnote.com/guides/minimum-wage-2027-monthly/"}
+  ]
+}
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9046947251634562" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <a class="brand" href="/">월급노트<small>일하는 사람의 계산기</small></a>
+    <div class="yrsel"><button type="button" class="yr" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)">2026년 기준 ▾</button><div class="yrmenu" hidden><button type="button" class="on">2026년 (현재)</button><button type="button" disabled>2027년 — 준비 중</button></div></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <nav class="calcnav" aria-label="가이드 탐색">
+    <a class="chip" href="/guides/">← 가이드 목록</a>
+  </nav>
+
+  <div class="hero">
+    <h1>2027년 최저시급 10,700원, 내 월급은 얼마나 오를까?</h1>
+    <p>2027년 최저시급이 10,700원으로 확정되면서 "그래서 내 월급은 얼마가 되는지"가 가장 궁금해집니다. 이 글에서는 주 40시간 풀타임부터 주 20시간·15시간 파트타임까지, 근무 형태별로 2026년과 2027년 월급을 같은 계산식으로 직접 산출해 비교했습니다. 확정 수치와 결정 배경이 궁금하다면 <a href="/guides/minimum-wage-2027/">2027년 최저임금 확정 정리 글</a>을 먼저 읽어 보세요.</p>
+  </div>
+
+  <div class="info">
+
+    <section>
+      <h2>근무 형태별 월급 비교: 2026년 → 2027년</h2>
+      <p>아래 표는 최저시급으로 일할 때 근무 형태별 월급(세전)을 비교한 것입니다. 파트타임 금액은 주휴수당을 포함해 <b>시급 × (주 근로시간 + 주휴시간) × 4.345주</b> 계산식으로 산출했으며, 주휴시간은 주 근로시간 ÷ 5(최대 8시간)입니다.</p>
+      <table>
+        <tr><th>근무 형태</th><th>2026년 (시급 10,320원)</th><th>2027년 (시급 10,700원)</th><th>인상액</th></tr>
+        <tr><td>주 40시간 풀타임 (월 209시간)</td><td>2,156,880원</td><td><b>2,236,300원</b></td><td>+79,420원</td></tr>
+        <tr><td>주 20시간 파트타임</td><td>약 1,076,170원</td><td><b>약 1,115,796원</b></td><td>약 +39,626원</td></tr>
+        <tr><td>주 15시간 파트타임</td><td>약 807,127원</td><td><b>약 836,847원</b></td><td>약 +29,720원</td></tr>
+      </table>
+      <p>파트타임 계산 과정을 풀어 보면 이렇습니다. 주 20시간 근무라면 주휴시간은 20 ÷ 5 = 4시간이므로 유급 시간은 주 24시간이고, 월급은 10,700원 × 24시간 × 4.345주 = 약 1,115,796원입니다. 주 15시간이라면 주휴시간 3시간을 더한 주 18시간 기준으로 10,700원 × 18시간 × 4.345주 = 약 836,847원입니다.</p>
+      <p>단, 주휴수당은 1주 소정근로시간이 15시간 이상이고 그 주의 소정근로일을 개근했을 때 발생합니다. 내 근무시간에 맞는 정확한 주휴수당은 <a href="/weekly-holiday/">주휴수당 계산기</a>에서 확인할 수 있습니다.</p>
+    </section>
+
+    <!-- 애드센스 광고 자리 -->
+    <div class="ad-slot">AD</div>
+
+    <section>
+      <h2>주휴수당까지 넣으면 실제 최저 환산시급은 12,840원</h2>
+      <p>주휴수당 조건을 채우는 근로자라면, 실제로 받아야 하는 시간당 최저 기준은 최저시급의 1.2배가 됩니다. 2027년 기준으로 계산하면 다음과 같습니다.</p>
+      <div class="formula">
+        2026년 주휴 포함 최저 환산시급 &nbsp;12,384원<br>
+        2027년 주휴 포함 최저 환산시급 &nbsp;<b>12,840원</b> &nbsp;(10,700원 × 1.2)
+      </div>
+      <p>이 숫자가 중요한 이유는 <b>"시급에 주휴수당 포함"</b>이라는 계약 때문입니다. 이런 계약 자체는 가능하지만, 그 시급이 2027년에 12,840원 미만이라면 주휴수당을 빼고 남는 실제 시급이 최저시급 10,700원에 미달해 최저임금 위반 가능성이 있습니다. 내 시급이 새 기준에 맞는지는 <a href="/minimum-wage/">최저임금 위반 체크기</a>에서 바로 확인해 보세요.</p>
+    </section>
+
+    <section>
+      <h2>세후 실수령액은 공제 후에 정해집니다</h2>
+      <p>위 표의 금액은 모두 <b>세전</b> 기준입니다. 실제 통장에 들어오는 실수령액은 국민연금·건강보험·장기요양·고용보험 등 4대보험료와 소득세·지방소득세를 공제한 뒤의 금액이므로 이보다 적습니다.</p>
+      <p>다만 2027년에 적용될 건강보험료율 등 공제 요율과 실업급여 상한액은 아직 발표되지 않았습니다. 그래서 지금 시점에 "2027년 최저월급 실수령액"을 특정 금액으로 단정할 수는 없습니다. 요율이 발표되면 <a href="/salary/">연봉 실수령액 계산기</a>에서 새 기준으로 공제 내역과 실수령액을 확인하실 수 있고, 보험료 항목별 부담이 궁금하다면 <a href="/insurance/">4대보험 계산기</a>도 함께 참고해 보세요.</p>
+    </section>
+
+    <section>
+      <h2>함께 오르는 것: 실업급여 1일 하한액</h2>
+      <p>실업급여 하한액은 최저임금에 연동되기 때문에, 최저임금이 오르면 함께 조정됩니다. 2027년 실업급여 1일 하한액은 2026년 <b>66,048원</b>에서 <b>68,480원</b>으로 인상됩니다. 최저임금 수준으로 일하다 실업급여를 받게 되는 경우, 받을 수 있는 하한선이 그만큼 높아지는 셈입니다.</p>
+    </section>
+
+    <section>
+      <h2>적용 시점: 2027년 1월 1일부터</h2>
+      <p>새 최저시급 10,700원은 <b>2027년 1월 1일</b>부터 전 사업장에 적용됩니다. 현재는 최저임금위원회 의결이 완료된 단계이며, 법적 확정 절차인 고용노동부 장관 고시는 <b>8월 5일까지</b> 이루어질 예정입니다. 2027년 1월 1일 이후에는 계약서를 갱신하지 않았더라도 새 기준 미만으로 지급하면 최저임금법 위반이 되므로, 연말에 미리 시급과 월급을 점검해 두시는 것이 좋습니다.</p>
+    </section>
+
+    <section>
+      <h2>자주 묻는 질문</h2>
+      <details>
+        <summary>2027년 최저시급으로 주 20시간 일하면 월급은 얼마인가요?</summary>
+        <div class="a">주 20시간 근무 시 주휴시간 4시간이 더해져 유급 시간은 주 24시간입니다. 10,700원 × 24시간 × 4.345주로 계산하면 월 약 1,115,796원입니다. 2026년 같은 조건의 약 1,076,170원보다 월 약 39,626원 오릅니다.</div>
+      </details>
+      <details>
+        <summary>주휴수당 포함 환산시급 12,840원은 무슨 의미인가요?</summary>
+        <div class="a">주휴수당 조건을 채우면 실제 시간당 최저 기준은 최저시급의 1.2배가 됩니다. 2027년에는 10,700원 × 1.2 = 12,840원입니다. '시급에 주휴수당 포함'으로 계약했다면 그 시급이 12,840원 미만일 때 최저임금 위반 가능성이 있습니다.</div>
+      </details>
+      <details>
+        <summary>2027년 최저월급의 실수령액은 얼마인가요?</summary>
+        <div class="a">이 글의 금액은 모두 세전 기준입니다. 실수령액은 4대보험료와 소득세를 공제한 뒤 정해지는데, 2027년 건강보험료율 등 공제 기준은 아직 발표 전입니다. 정확한 실수령액은 2027년 요율 발표 후 연봉 실수령액 계산기에서 확인하는 것이 정확합니다.</div>
+      </details>
+    </section>
+
+    <div class="note">본 글은 일반적인 정보 제공을 목적으로 작성된 것으로 법률 자문이 아닙니다. 2027년 최저임금은 최저임금위원회 의결로 결정된 값이며, 최종 고시는 8월 5일 예정입니다. 구체적인 사안은 고용노동부 상담센터(☎1350) 또는 공인노무사와 상담하시기 바랍니다.</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="/">홈</a>
+      <a href="/annual-leave/">연차수당</a>
+      <a href="/weekly-holiday/">주휴수당</a>
+      <a href="/salary/">연봉 실수령액</a>
+      <a href="/severance/">퇴직금</a>
+      <a href="/insurance/">4대보험</a>
+      <a href="/unemployment/">실업급여</a>
+      <a href="/minimum-wage/">최저임금</a>
+      <a href="/guides/">가이드</a>
+      <a href="/privacy/">개인정보처리방침</a>
+      <a href="/about/">사이트 소개</a>
+    </nav>
+    본 사이트의 가이드와 계산기는 관련 법령과 2026년 고시 기준을 반영한 참고용 자료입니다. 개별 사정에 따라 실제와 차이가 있을 수 있으며, 법적 판단이 필요한 경우 고용노동부(☎1350) 또는 공인노무사와 상담하시기 바랍니다.<br>
+    © 2026 월급노트 · 문의: simsj0930@gmail.com
+  </div>
+</footer>
+
+</body>
+</html>
