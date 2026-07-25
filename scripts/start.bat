@@ -15,6 +15,7 @@ if exist logs\HALT (
   type logs\HALT
   echo.
   echo 위 문제가 해결되지 않았다면 다음 실행에서 다시 멈춥니다.
+  echo 멈춘 작업은 완료로 기록되지 않았으므로 처음부터 다시 실행됩니다.
   echo.
   del /q logs\HALT
 )

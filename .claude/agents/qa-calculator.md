@@ -36,13 +36,26 @@ const ss={getItem:()=>YR,setItem(k,v){YR=v}};
 const fn=new Function('document','sessionStorage','window', src+
   '; return {monthlyPaidHours,hourlyFromMonthly,hourlyFromWeekly,weeklyHolidayHours,juhyuPay,'+
   'jobseekerDaily,benefitDays,ageGroupOf,coveragePeriodIndex,YEAR_DATA,RATES_2026,'+
-  'insurancePremiums,basicIncomeTax,estimateNet,laborIncomeDeduction,marginalRate,setYear};');
+  'insurancePremiums,basicIncomeTax,estimateNet,laborIncomeDeduction,marginalRate,setYear,'+
+  'isUnconfirmed};');
 const M=fn(doc,ss,{});
 console.log(M.monthlyPaidHours(40));             // 209
 M.setYear(2027);                                 // 연도 전환 후 재검증
 console.log(M.jobseekerDaily(9000000).daily);    // 68480
+console.log(M.isUnconfirmed('uiMax',2027));      // true — 미발표 항목 판정
 "
 ```
+
+### 미발표 항목 판정 ★
+2027년 `uiMax` 는 2026년과 같은 68,100원이다. **값만 비교하면 이게 "미발표라서 같은
+값"인지 "갱신을 깜빡한 값"인지 구분할 수 없다.** `YEAR_DATA[2027].unconfirmed` 배열
+(`isUnconfirmed(key, year)`)로 판정한다.
+
+| 상황 | 판정 |
+|---|---|
+| 값이 2026년과 같고 `unconfirmed` 에 키가 있음 | PASS — 의도된 차용 |
+| 값이 2026년과 같은데 `unconfirmed` 에 키가 **없음** | **FAIL** — 갱신 누락 의심 |
+| 값이 달라졌는데 `unconfirmed` 에 키가 **남아 있음** | **FAIL** — 확정치를 넣고 배열을 안 지웠다 |
 
 `jobseekerDaily` 처럼 `getYear()` 에 의존하는 함수는 위처럼 `setYear(2027)` 로
 연도를 바꾼 뒤 다시 호출해 2027 케이스를 검증한다.

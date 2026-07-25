@@ -113,6 +113,18 @@ while ($true) {
     & $bat
     $code = $LASTEXITCODE
 
+    # cto 가 HALT 를 남겼다면 exit 0 이어도 성공이 아니다.
+    # lastRuns 에 오늘을 기록하지 않는다 — 기록해 버리면 start.bat 이 HALT 를 해제한 뒤
+    # 그 모드가 '오늘 이미 실행됨'으로 판정돼 건너뛰어진다. morning 이 그렇게 건너뛰어지면
+    # 계산기 검증 없이 content 가 진행된다(검증 게이트가 무력화된다).
+    $halted = Test-Path $HaltFile
+
+    if ($halted) {
+      Write-Log "$mode 모드가 HALT 를 남겼습니다 (exit=$code) — 실행 기록 안 함. 재시작 시 이 모드부터 다시 실행됩니다."
+      # 연속 실패로 세지 않는다. 사람의 판단을 기다리는 것이지 재시도할 실패가 아니다.
+      continue                     # 다음 틱 시작에서 HALT 를 감지해 루프가 멈춘다
+    }
+
     if ($code -eq 0) {
       $state[$mode] = Get-Date -Format 'yyyy-MM-dd'
       $state.fails  = 0
@@ -125,6 +137,10 @@ while ($true) {
       Write-Log "$mode 모드 실패 (exit=$code) — 연속 실패 $($state.fails)/$MaxFails"
       if ($state.fails -ge $MaxFails) {
         Set-Halt "$mode 모드가 연속 $($state.fails)회 실패했습니다 (마지막 exit=$code). logs\$(Get-Date -Format 'yyyy-MM-dd')-$mode.txt 를 확인하세요."
+        # 사유를 HALT 에 적었으므로 카운터의 역할은 끝났다. 0 으로 되돌려
+        # 재시작 직후 단 한 번의 실패로 다시 멈추는 일을 막는다.
+        $state.fails = 0
+        Save-State $state
         continue
       }
     }

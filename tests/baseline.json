@@ -133,8 +133,8 @@
       "source": ["assets/common.js"],
       "year": 2027,
       "input": {},
-      "expect": { "uiMax": 68100, "unconfirmed": true },
-      "note": "2027년 미발표 → 2026년 값 적용 + unconfirmedNote() 주석 표시 확인"
+      "expect": { "uiMax": 68100, "unconfirmed": true, "unconfirmedKeys": ["uiMax", "rates", "incomeTax"] },
+      "note": "2027년 미발표 → 2026년 값 적용. isUnconfirmed('uiMax', 2027) === true 로 검증한다. 값만 비교하면 '미발표라서 같은 값'과 '갱신을 깜빡한 값'을 구분할 수 없다. 상한액 확정치가 발표되면 YEAR_DATA 의 uiMax 를 고치고 unconfirmed 배열에서 'uiMax' 를 지운 뒤 이 기대값도 함께 갱신한다"
     }
   ],
   "ui_checks": [

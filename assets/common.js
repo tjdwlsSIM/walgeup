@@ -4,10 +4,17 @@ const MIN_WAGE_2026 = 10320;                 // 2026년 최저시급 (기존 참
 /* ── 연도별 기준 수치 (헤더 드롭다운으로 전환) ─────────────────────
    2027년: 최저임금·주휴 포함 환산시급·실업급여 1일 하한액은 확정치.
    4대보험 요율·소득세율·실업급여 1일 상한액은 2027년 미발표 →
-   2026년 값을 그대로 사용하고 결과에 그 사실을 주석으로 표시. */
+   2026년 값을 그대로 사용하고 결과에 그 사실을 주석으로 표시.
+
+   unconfirmed 배열이 그 "미발표라서 전년 값을 빌려온 항목"의 목록이다.
+   이 배열이 없으면 2027 uiMax(68,100)가 2026 값과 같은 이유를 코드로 구분할 수 없다
+   — 미발표라서 같은 것인지, 갱신을 깜빡한 것인지. qa-calculator 가 그 둘을 가려낸다.
+   확정치가 발표되면 값을 고치고 이 배열에서 해당 키를 지운다. */
 const YEAR_DATA = {
-  2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100 },
-  2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100 }
+  2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100,
+          unconfirmed: [] },
+  2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100,
+          unconfirmed: ['uiMax', 'rates', 'incomeTax'] }
 };
 const YEAR_DEFAULT = 2026;
 
@@ -26,6 +33,13 @@ function yearData(){ return YEAR_DATA[getYear()]; }
 /* 2027년 선택 시, 미발표라 2026년 값을 쓴 항목 안내(문장 끝에 덧붙임). 2026년이면 빈 문자열 */
 function unconfirmedNote(items){
   return getYear() === 2027 ? ' ' + items + '은 2027년 기준이 아직 발표되지 않아 2026년 값을 적용했습니다.' : '';
+}
+/* 선택 연도에서 해당 항목이 '미발표(전년 값 차용)' 인지 판정.
+   키: 'uiMax'(실업급여 1일 상한) · 'rates'(4대보험 요율) · 'incomeTax'(소득세율)
+   qa-calculator 와 law-monitor 가 "값이 같은 이유"를 판정하는 근거로 쓴다. */
+function isUnconfirmed(key, year){
+  const Y = YEAR_DATA[year || getYear()];
+  return !!(Y && Y.unconfirmed && Y.unconfirmed.indexOf(key) !== -1);
 }
 
 const fmt = n => Math.round(n).toLocaleString('ko-KR');
