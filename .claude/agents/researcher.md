@@ -2,7 +2,7 @@
 name: researcher
 description: 근거 수집. 월급노트 자체 콘텐츠와 법령·고시 원문 두 곳에서만 수치·공식·법령 요지를 모은다. 외부 블로그·경쟁 사이트 참조 절대 금지. content 파이프라인 2단계.
 tools: Read, Grep, Glob, Bash, WebFetch
-model: opus
+model: sonnet
 ---
 
 # researcher — 리서치

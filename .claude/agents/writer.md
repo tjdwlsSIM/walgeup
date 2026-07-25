@@ -2,7 +2,7 @@
 name: writer
 description: 리서치 산출물만 근거로 가이드 글 초안을 쓴다. 리서치에 없는 수치를 만들지 않는다. 회송 시 지적사항만 정확히 수정. content 파이프라인 3단계.
 tools: Read, Write, Edit, Grep, Glob
-model: opus
+model: sonnet
 ---
 
 # writer — 작성

@@ -28,6 +28,20 @@
 
 ★ 최우선 · ☂ 한시적
 
+### 모델 배정 — 틀린 숫자를 걸러내는 곳에만 opus
+
+| 모델 | 에이전트 | 기준 |
+|---|---|---|
+| **opus** (3) | law-monitor · qa-calculator · reviewer-facts | **실패가 조용히 누적되는 곳.** 여기서 놓친 오류는 발행돼서 퍼진다 |
+| **sonnet** (7) | cto · planner · researcher · writer · editor · reviewer-quality · notion-logger | 실패해도 뒤에서 잡힌다. writer 는 두 리뷰어가, researcher 는 reviewer-facts 가 받아낸다 |
+| **haiku** (2) | publisher · adsense-audit | 절차가 전부 명시된 기계적 작업. publisher 는 발행 후 4개 자체 확인이 오류를 잡는다 |
+
+**모델을 내리는 판단 기준은 "이 에이전트가 틀리면 누가 잡는가"다.** 아무도 안
+잡으면 opus 다. writer 가 sonnet 인 이유는 글을 못 써서가 아니라 **회송이 최대
+3회 있기 때문**이고, reviewer-facts 가 opus 인 이유는 **그 뒤에 아무도 없기 때문**이다.
+
+새 에이전트를 추가하면 이 질문에 먼저 답하고 모델을 정한다.
+
 ---
 
 ## 자동 운영 루프 — 사용자가 하는 일은 두 개뿐
@@ -43,11 +57,16 @@ scripts\stop.bat    ← 멈춤
 
 | 모드 | 실행 조건 | 하는 일 |
 |---|---|---|
-| **morning** | 09시 이후, 오늘 미실행 | qa-calculator → law-monitor → 색인 대기열 → 리포트 |
+| **morning** | 09시 이후, 오늘 미실행 | qa-calculator(매일) → law-monitor(**월·수·금만**) → 색인 대기열 → 리포트 |
 | **content** | 월·수·금 15시 이후, 오늘 미실행 | 콘텐츠 파이프라인 1편 생산 |
 | **evening** | 18시 이후, 오늘 미실행 | 사이트 현황 → adsense-audit → notion-logger → 리포트 |
 
 - **한 틱에 한 작업만** 실행한다. morning 의 계산기 검증이 content 보다 먼저 끝나야 한다
+- **law-monitor 는 월·수·금에만 돈다.** 법령·요율은 특정 시기에 몰려 발표되므로 매일
+  웹 검색을 돌릴 이유가 적다. 감시일을 content 발행일과 같은 요일로 맞춘 것이 핵심이다
+  — 09시 morning 이 15시 content 보다 먼저 끝나므로 **글을 쓰는 날은 반드시 그날 아침에
+  법령을 확인한 상태**가 된다. 감지가 최대 이틀 늦어지지만 그 사이 발행되는 글은 없다.
+  건너뛴 날은 리포트에 "확인 안 함"으로 적는다. "변경 없음"과 같은 말이 아니다
 - **밀린 작업은 알아서 따라잡는다.** 컴퓨터가 꺼져 있었어도 켜면 그날 몫을 실행한다
 - 실행 로그는 `logs/YYYY-MM-DD-<모드>.txt`, 루프 자체 로그는 `logs/loop.txt`.
   **git 에 올라가지 않는다**(`.gitignore`)

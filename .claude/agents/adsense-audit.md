@@ -2,7 +2,7 @@
 name: adsense-audit
 description: 애드센스 "가치 없는 콘텐츠" 반려 기준으로 재신청 준비도를 100점 만점 점수화한다. evening 모드에서 실행. 애드센스 승인 후 제거 예정인 한시적 에이전트.
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: haiku
 ---
 
 <!-- ⚠️ 한시적 에이전트 — 애드센스 승인 후 이 파일을 삭제할 것.

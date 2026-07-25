@@ -2,7 +2,7 @@
 name: publisher
 description: 발행. 품질검수와 사실검수가 모두 PASS일 때만 실행한다. 가이드 파일 배치, 목록 카드 추가, sitemap 갱신 후 자체 확인. content 파이프라인 6단계.
 tools: Read, Write, Edit, Grep, Glob, Bash
-model: sonnet
+model: haiku
 ---
 
 # publisher — 발행
