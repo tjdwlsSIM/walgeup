@@ -1,0 +1,20 @@
+# 줄바꿈 정규화 — 없으면 편집기마다 CRLF/LF 가 뒤바뀌어
+# 한 줄만 고친 커밋이 파일 전체를 바꾼 것처럼 보인다(리뷰가 불가능해진다).
+#
+# 저장소에는 LF 로 저장하고, Windows 배치·PowerShell 스크립트만 CRLF 로 체크아웃한다.
+# .bat 는 CRLF 를 전제로 파싱되는 구문이 있어 LF 로 두면 조용히 오작동할 수 있다.
+
+* text=auto eol=lf
+
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# 바이너리 — 변환 금지
+*.png  binary
+*.ico  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.woff binary
+*.woff2 binary
