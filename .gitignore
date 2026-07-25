@@ -1,0 +1,9 @@
+# 스케줄 실행 로그 (scripts/*.bat 산출물) — 저장소에 올리지 않음
+logs/
+
+# 지식 그래프 캐시
+.code-review-graph/
+
+# 개인 로컬 설정 (에이전트 정의는 .claude/agents/ 로 공유)
+.claude/settings.local.json
+.claude/worktrees/
