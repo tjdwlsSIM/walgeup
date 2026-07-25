@@ -109,6 +109,36 @@
       "note": "(40 + 8) × 4.345 = 208.56 → 209"
     },
     {
+      "id": "pension-cap-applied",
+      "name": "국민연금 기준소득월액 상한 적용",
+      "page": "insurance/index.html",
+      "source": ["assets/common.js"],
+      "year": 2026,
+      "input": { "base": 7000000 },
+      "expect": { "pensionBase": 6590000, "pensionCapApplied": "상한", "pensionWorker": 313025 },
+      "note": "상한 6,590,000원(2026-07-01~2027-06-30 적용, 보건복지부 고시) × 4.75% = 313,025. 이 상·하한은 연도가 아니라 7/1~6/30 주기로 바뀐다 — 매년 7월 갱신 누락을 이 케이스가 잡는다"
+    },
+    {
+      "id": "pension-floor-applied",
+      "name": "국민연금 기준소득월액 하한 적용",
+      "page": "insurance/index.html",
+      "source": ["assets/common.js"],
+      "year": 2026,
+      "input": { "base": 300000 },
+      "expect": { "pensionBase": 410000, "pensionCapApplied": "하한", "pensionWorker": 19475 },
+      "note": "하한 410,000원 × 4.75% = 19,475"
+    },
+    {
+      "id": "year-2027-pension-rate",
+      "name": "2027 전환 — 국민연금 요율 (확정치)",
+      "page": "insurance/index.html",
+      "source": ["assets/common.js"],
+      "year": 2027,
+      "input": { "base": 3000000 },
+      "expect": { "pensionWorker": 150000, "pensionRateUnconfirmed": false },
+      "note": "국민연금법 개정으로 2027년 전체 10.0% → 근로자 5.00% 확정. 3,000,000 × 5% = 150,000. 미발표가 아니므로 isUnconfirmed('pensionRate') 는 false 여야 한다 — 건강보험·장기요양·고용보험(healthRate·careRate·empRate)만 미발표다"
+    },
+    {
       "id": "year-2027-minwage",
       "name": "2027 전환 — 최저임금",
       "page": "-",
@@ -133,7 +163,7 @@
       "source": ["assets/common.js"],
       "year": 2027,
       "input": {},
-      "expect": { "uiMax": 68100, "unconfirmed": true, "unconfirmedKeys": ["uiMax", "rates", "incomeTax"] },
+      "expect": { "uiMax": 68100, "unconfirmed": true, "unconfirmedKeys": ["uiMax", "healthRate", "careRate", "empRate", "incomeTax"] },
       "note": "2027년 미발표 → 2026년 값 적용. isUnconfirmed('uiMax', 2027) === true 로 검증한다. 값만 비교하면 '미발표라서 같은 값'과 '갱신을 깜빡한 값'을 구분할 수 없다. 상한액 확정치가 발표되면 YEAR_DATA 의 uiMax 를 고치고 unconfirmed 배열에서 'uiMax' 를 지운 뒤 이 기대값도 함께 갱신한다"
     }
   ],

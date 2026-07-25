@@ -148,7 +148,7 @@
       <h2>공제 항목별 요율 (2026년)</h2>
       <table>
         <tr><th>항목</th><th>근로자 부담</th><th>비고</th></tr>
-        <tr><td>국민연금</td><td>4.75%</td><td>연금개혁으로 전체 9.5%로 인상 · 기준소득월액 상한 637만 원</td></tr>
+        <tr><td>국민연금</td><td>4.75%</td><td>연금개혁으로 전체 9.5%로 인상 · 기준소득월액 상한 659만 원(2026.7~2027.6)</td></tr>
         <tr><td>건강보험</td><td>3.595%</td><td>전체 7.19% 중 절반</td></tr>
         <tr><td>장기요양보험</td><td>0.4724%</td><td>전체 0.9448% 중 절반</td></tr>
         <tr><td>고용보험</td><td>0.9%</td><td>실업급여 계정</td></tr>
@@ -210,7 +210,7 @@ function calcSalary(){
   const dep     = Math.max(Math.round(num('in-dep')) || 1, 1);
   if(!annual){ alert('연봉을 입력해 주세요.'); return; }
 
-  const R = RATES_2026;
+  const R = ratesData();
   const monthly = annual / 12;
   const insBase = Math.max(monthly - taxfree, 0);                    // 비과세 제외
   const pension = Math.round(Math.min(insBase, R.pensionCap) * R.pension);  // 기준소득월액 상한 적용
@@ -243,7 +243,7 @@ function calcSalary(){
   const note = document.getElementById('sal-note');
   note.className = 'note';
   note.textContent = '간이 추정치입니다. 실제 원천징수는 근로소득 간이세액표를 따르며, 연말정산 결과와 회사 급여 규정(상여 지급 방식·비과세 항목 등)에 따라 실수령액이 달라질 수 있습니다.'
-    + unconfirmedNote('4대보험 요율·소득세율');
+    + unconfirmedNote('건강보험·장기요양·고용보험 요율과 소득세율');
 
   setShareParams({ annual, taxfree, dep });
   showResult('res-sal');

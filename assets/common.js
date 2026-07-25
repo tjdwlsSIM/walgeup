@@ -9,12 +9,17 @@ const MIN_WAGE_2026 = 10320;                 // 2026년 최저시급 (기존 참
    unconfirmed 배열이 그 "미발표라서 전년 값을 빌려온 항목"의 목록이다.
    이 배열이 없으면 2027 uiMax(68,100)가 2026 값과 같은 이유를 코드로 구분할 수 없다
    — 미발표라서 같은 것인지, 갱신을 깜빡한 것인지. qa-calculator 가 그 둘을 가려낸다.
-   확정치가 발표되면 값을 고치고 이 배열에서 해당 키를 지운다. */
+   확정치가 발표되면 값을 고치고 이 배열에서 해당 키를 지운다.
+
+   ★ 요율은 보험별로 키를 나눈다. 4대보험을 'rates' 한 덩어리로 묶으면,
+     국민연금처럼 법률에 연도별 요율이 못박혀 확정된 항목까지 "미발표"로
+     선언하게 된다 — 코드가 거짓말을 하는 것이다. */
 const YEAR_DATA = {
   2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100,
           unconfirmed: [] },
   2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100,
-          unconfirmed: ['uiMax', 'rates', 'incomeTax'] }
+          /* pensionRate 는 국민연금법 개정으로 확정(2027년 10.0%) → 목록에 없다 */
+          unconfirmed: ['uiMax', 'healthRate', 'careRate', 'empRate', 'incomeTax'] }
 };
 const YEAR_DEFAULT = 2026;
 
@@ -110,11 +115,26 @@ function showResult(id){
   el.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-/* ── 세후 실수령액 추정 (근로소득) — 2026년 4대보험 요율 + 소득세 한계세율 근사 ──
-   pensionCap/Floor: 국민연금 기준소득월액 상한 637만 / 하한 39만
+/* ── 세후 실수령액 추정 (근로소득) — 4대보험 요율 + 소득세 한계세율 근사 ──
+   pensionCap/Floor: 국민연금 기준소득월액 상한 659만 / 하한 41만
+     ★ 이 상·하한은 연도가 아니라 **매년 7/1~다음해 6/30 주기**로 바뀐다.
+       현재 값의 적용기간: 2026-07-01 ~ 2027-06-30 (보건복지부 고시)
+       변수명이 RATES_2026 이라고 해서 12월까지 유효한 값이 아니다.
+       매년 3월 말 고시 → 7월 적용이므로 그때 갱신해야 한다.
+   pension: 국민연금 근로자 부담분 = 전체 요율의 절반.
+     국민연금법 개정으로 2026년 9.5%(근로자 4.75%) → 2033년 13%까지 매년 0.5%p 인상.
    empEmployerExtra: 고용안정·직업능력개발 사업 보험료(사업주만, 150인 미만 0.25%) */
 const RATES_2026 = { pension:.0475, health:.03595, care:.004724, emp:.009,
-  pensionCap:6370000, pensionFloor:390000, empEmployerExtra:.0025 };
+  pensionCap:6590000, pensionFloor:410000, empEmployerExtra:.0025 };
+
+/* 2027년 요율 — 국민연금만 확정(전체 10.0% → 근로자 5.00%, 국민연금법 개정).
+   건강보험·장기요양·고용보험은 2027년 미발표라 2026년 값을 그대로 쓴다
+   (YEAR_DATA[2027].unconfirmed 의 healthRate·careRate·empRate 가 그 사실을 표시).
+   기준소득월액 상·하한은 2027-06-30 까지 같은 값이 적용되므로 그대로 상속한다. */
+const RATES_2027 = Object.assign({}, RATES_2026, { pension:.05 });
+
+/* 선택 연도의 요율 묶음. 연도 전환 시 국민연금 요율이 함께 바뀌어야 한다. */
+function ratesData(){ return getYear() === 2027 ? RATES_2027 : RATES_2026; }
 function laborIncomeDeduction(g){            // 근로소득공제(연)
   if(g <= 5e6)  return g*.7;
   if(g <= 15e6) return 3.5e6 + (g-5e6)*.4;
@@ -146,7 +166,7 @@ function basicIncomeTax(base){
   return base * 0.45 - 65940000;
 }
 function estimateNet(bonus, monthly){
-  const R = RATES_2026;
+  const R = ratesData();
   const pension = monthly >= R.pensionCap ? 0 : Math.round(bonus*R.pension);
   const health  = Math.round(bonus*R.health);
   const care    = Math.round(bonus*R.care);
@@ -158,13 +178,13 @@ function estimateNet(bonus, monthly){
   return { pension, health, care, emp, tax, deduct, net: bonus - deduct };
 }
 
-/* ── 4대보험 근로자·사업주 부담 계산 (2026년 요율) ─────────────────
+/* ── 4대보험 근로자·사업주 부담 계산 (선택 연도 요율) ─────────────────
    보험료는 비과세를 제외한 보수월액(base) 기준으로 부과.
-   국민연금만 기준소득월액 상·하한(39만~637만)을 적용.
+   국민연금만 기준소득월액 상·하한(41만~659만, 2026-07-01~2027-06-30)을 적용.
    (건강보험도 상한이 있으나 매우 높아 이번 계산에서는 제외)
    반환: 항목별 {w:근로자, e:사업주} + 합계 + 국민연금 캡 적용 표시 */
 function insurancePremiums(base){
-  const R = RATES_2026;
+  const R = ratesData();
   let pBase = base, pCap = '';
   if(pBase > R.pensionCap){ pBase = R.pensionCap; pCap = '상한'; }
   else if(pBase < R.pensionFloor){ pBase = R.pensionFloor; pCap = '하한'; }
@@ -381,7 +401,8 @@ function updateYearUI(){
       if(hdr && hdr.parentNode) hdr.parentNode.insertBefore(bar, hdr.nextSibling);
     }
     bar.textContent = '2027년 기준 적용 중 — 2027년 1월 1일 시행 예정입니다. '
-      + '최저임금·실업급여 하한액은 확정치이며, 4대보험 요율·소득세율·실업급여 상한액은 '
+      + '최저임금·실업급여 하한액·국민연금 요율(10.0%)은 확정치이며, '
+      + '건강보험·장기요양·고용보험 요율과 소득세율·실업급여 상한액은 '
       + '2027년 미발표로 2026년 값이 적용됩니다.';
     bar.hidden = false;
   } else if(bar){
