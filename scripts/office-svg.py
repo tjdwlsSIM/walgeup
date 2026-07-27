@@ -23,7 +23,6 @@ SCHEDULE = {
     "planner":          {"days": "mwf",   "at": 15},
     "researcher":       {"days": "mwf",   "at": 15},
     "writer":           {"days": "mwf",   "at": 15},
-    "editor":           {"days": "mwf",   "at": 15},
     "reviewer-quality": {"days": "mwf",   "at": 15},
     "reviewer-facts":   {"days": "mwf",   "at": 15},
     "publisher":        {"days": "mwf",   "at": 15},
@@ -35,7 +34,7 @@ SCHEDULE = {
 ZONES = [
     ("EXECUTIVE", "경영실",     ["cto"],                                   (0.6, 0.6), 2),
     ("WATCH",     "상시감시팀", ["qa-calculator", "law-monitor"],           (6.2, 0.6), 2),
-    ("STUDIO",    "제작팀",     ["planner", "researcher", "writer", "editor"], (0.6, 4.0), 2),
+    ("STUDIO",    "제작팀",     ["planner", "researcher", "writer"], (0.6, 4.0), 2),
     ("REVIEW",    "품질관리팀", ["reviewer-quality", "reviewer-facts"],     (6.2, 4.0), 2),
     ("PUBLISH",   "발행실",     ["publisher", "notion-logger"],             (0.6, 7.4), 2),
     ("TEMP",      "임시데스크", ["adsense-audit"],                          (6.2, 7.4), 2),
@@ -44,7 +43,7 @@ ZONES = [
 # ── 이번 실행 상태 (notion-logger 가 여기만 갱신) ─ work | idle | stop ──
 STATE = {
     "cto": "work", "qa-calculator": "work", "law-monitor": "stop",
-    "planner": "idle", "researcher": "idle", "writer": "idle", "editor": "idle",
+    "planner": "idle", "researcher": "idle", "writer": "idle",
     "reviewer-quality": "idle", "reviewer-facts": "idle",
     "publisher": "idle", "notion-logger": "work", "adsense-audit": "idle",
 }
@@ -114,8 +113,8 @@ def check_mark(agent, state, now):
 
 
 def furniture_symbols():
-    """12세트가 완전히 같은 도형이다. iso() 가 x·y 에 선형이므로 원점에서 한 번
-    그려 두고 translate 로 옮기면 된다. (인라인 12회 반복이면 그것만 30KB 다)
+    """책상 세트는 전부 같은 도형이다. iso() 가 x·y 에 선형이므로 원점에서 한 번
+    그려 두고 translate 로 옮기면 된다. (인라인 반복이면 그것만 30KB 다)
 
     ★ 의자와 책상을 한 심볼로 묶지 마라. 그리는 순서가
       의자 → 사람 → 책상 이어야 사람이 의자 앞·책상 뒤에 앉은 것으로 보인다.
@@ -245,7 +244,7 @@ def render(now):
              + "".join(person_symbol(c, i) for i, c in enumerate(SHIRTS)) + '</defs>')
     s.append(f'<rect x="{minx:.0f}" y="{miny:.0f}" width="{W:.0f}" height="{H:.0f}" fill="{P["bg"]}"/>')
     s.append(f'<text x="{minx+26:.0f}" y="{miny+44:.0f}" font-size="27" font-weight="800" fill="#213A5C">월급노트 컴퍼니</text>')
-    s.append(f'<text x="{minx+26:.0f}" y="{miny+68:.0f}" font-size="13.5" fill="#6B7688">에이전트 12명 · {now:%Y-%m-%d %H:%M} 기준 스냅샷</text>')
+    s.append(f'<text x="{minx+26:.0f}" y="{miny+68:.0f}" font-size="13.5" fill="#6B7688">에이전트 {len(SCHEDULE)}명 · {now:%Y-%m-%d %H:%M} 기준 스냅샷</text>')
     for _, svg, _ in parts:
         s.append(svg)
     for (tx, ty), ko, key in zone_tags:

@@ -20,7 +20,7 @@ model: haiku
 ## 절차
 
 ### 1. `guides/{폴더명}/index.html` 생성
-editor 가 완성한 HTML 을 배치한다. 내용을 고치지 마라.
+writer 가 완성한 HTML 을 배치한다. 내용을 고치지 마라.
 
 ### 2. `guides/index.html` 목록에 카드 추가
 기존 `.cardlink` 마크업을 복사해 제목·설명·링크만 바꾼다.

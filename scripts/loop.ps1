@@ -23,7 +23,25 @@ $LoopLog     = Join-Path $LogDir 'loop.txt'
 $IntervalSec = 300          # 5분. 할 일이 없는 틱은 API 를 쓰지 않으므로 짧아도 공짜다
 $MaxFails    = 3            # 연속 실패 3회면 HALT. 실패를 무한 재시도하며 쿼터를 태우지 않는다
 
+# 모드별 실행 상한(분). 초과하면 프로세스를 끊고 실패로 센다.
+# 상한이 없으면 claude 가 멈췄을 때 루프가 영원히 서 있는다 — 멈춘 것과
+# 일하는 중인 것을 구분할 방법이 없어 사용자는 그냥 기다리게 된다.
+$TimeoutMin = @{ morning = 25; content = 60; evening = 20 }
+
+$KeepDays    = 30           # 실행 로그 보관 기간. 넘으면 지운다
+
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
+
+# 오래된 실행 로그 정리 — 없으면 무한히 쌓인다.
+# STOP·HALT·loop-state.json·loop.txt 는 건드리지 않는다(상태 파일이다).
+function Clear-OldLogs {
+  Get-ChildItem -Path $LogDir -Filter '*-*.txt' -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -match '^\d{4}-\d{2}-\d{2}-' -and $_.LastWriteTime -lt (Get-Date).AddDays(-$KeepDays) } |
+    ForEach-Object {
+      try { Remove-Item $_.FullName -Force -ErrorAction Stop; Write-Log "오래된 로그 삭제: $($_.Name)" }
+      catch { }
+    }
+}
 
 function Write-Log($msg) {
   $line = "[{0}] {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $msg
@@ -80,6 +98,7 @@ function Get-DueMode($s) {
 
 Write-Log "=== 루프 시작 (간격 ${IntervalSec}초 · 저장소 $Root) ==="
 Write-Log "멈추려면 scripts\stop.bat 을 실행하거나 이 창을 닫으세요."
+Clear-OldLogs
 
 while ($true) {
 
@@ -109,9 +128,25 @@ while ($true) {
       continue
     }
 
-    Write-Log "$mode 모드 실행 — $bat"
-    & $bat
-    $code = $LASTEXITCODE
+    $limit = $TimeoutMin[$mode]
+    Write-Log "$mode 모드 실행 — $bat (상한 ${limit}분)"
+
+    # 상한을 걸어 실행한다. cmd /c 로 감싸는 이유는 배치가 낳은 자식(claude)까지
+    # 한 프로세스 트리로 끊기 위해서다.
+    $proc = Start-Process -FilePath $env:ComSpec -ArgumentList '/c', "`"$bat`"" `
+                          -WorkingDirectory $Root -NoNewWindow -PassThru
+    if (-not $proc.WaitForExit($limit * 60 * 1000)) {
+        Write-Log "$mode 모드 시간 초과(${limit}분) — 프로세스를 종료합니다."
+        try { Stop-Process -Id $proc.Id -Force -ErrorAction Stop }
+        catch { Write-Log "  종료 실패: $($_.Exception.Message)" }
+        # 배치가 남긴 자식 프로세스 정리 (claude 가 살아남으면 다음 틱과 겹친다)
+        Get-CimInstance Win32_Process -Filter "ParentProcessId=$($proc.Id)" -ErrorAction SilentlyContinue |
+            ForEach-Object { try { Stop-Process -Id $_.ProcessId -Force -ErrorAction Stop } catch {} }
+        $code = 124                              # 관례상 timeout 종료 코드
+    }
+    else {
+        $code = $proc.ExitCode
+    }
 
     # cto 가 HALT 를 남겼다면 exit 0 이어도 성공이 아니다.
     # lastRuns 에 오늘을 기록하지 않는다 — 기록해 버리면 start.bat 이 HALT 를 해제한 뒤

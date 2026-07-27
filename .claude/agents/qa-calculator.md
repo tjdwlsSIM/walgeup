@@ -35,7 +35,8 @@ let YR='2026';                                   // 연도 전환은 이 변수�
 const ss={getItem:()=>YR,setItem(k,v){YR=v}};
 const fn=new Function('document','sessionStorage','window', src+
   '; return {monthlyPaidHours,hourlyFromMonthly,hourlyFromWeekly,weeklyHolidayHours,juhyuPay,'+
-  'jobseekerDaily,benefitDays,ageGroupOf,coveragePeriodIndex,YEAR_DATA,RATES_2026,'+
+  'jobseekerDaily,benefitDays,ageGroupOf,coveragePeriodIndex,YEAR_DATA,'+
+  'RATES_2026,RATES_2027,ratesData,yearData,'+
   'insurancePremiums,basicIncomeTax,estimateNet,laborIncomeDeduction,marginalRate,setYear,'+
   'isUnconfirmed};');
 const M=fn(doc,ss,{});

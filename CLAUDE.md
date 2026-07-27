@@ -7,9 +7,9 @@
 
 ---
 
-## 에이전트 조직도 (12개)
+## 에이전트 조직도 (11개)
 
-`.claude/agents/` 에 정의. CTO 가 나머지 11개를 호출한다.
+`.claude/agents/` 에 정의. CTO 가 나머지 10개를 호출한다.
 
 | 에이전트 | 역할 |
 |---|---|
@@ -19,8 +19,7 @@
 | **adsense-audit** ☂ | 애드센스 "가치 없는 콘텐츠" 기준 재신청 준비도 100점 만점 채점 |
 | **planner** | 다음 가이드 글의 주제·앵글·타깃 검색어 기획 (1편만) |
 | **researcher** | 법령 근거·수치·절차를 1차 출처에서 조사 |
-| **writer** | 가이드 글 HTML 초고 작성 |
-| **editor** | 문장·구조·가독성 교정 (사실 검증은 하지 않음) |
+| **writer** | 가이드 글 작성 + 편집 패스 → 발행 가능한 완성 HTML |
 | **reviewer-quality** | 품질·구조·SEO·애드센스 기준 심사 → PASS/FAIL |
 | **reviewer-facts** | 모든 수치·법령을 1차 출처와 대조 검증 → PASS/FAIL |
 | **publisher** | sitemap·목록·역링크 갱신 후 커밋 (푸시는 사용자가) |
@@ -33,7 +32,7 @@
 | 모델 | 에이전트 | 기준 |
 |---|---|---|
 | **opus** (3) | law-monitor · qa-calculator · reviewer-facts | **실패가 조용히 누적되는 곳.** 여기서 놓친 오류는 발행돼서 퍼진다 |
-| **sonnet** (7) | cto · planner · researcher · writer · editor · reviewer-quality · notion-logger | 실패해도 뒤에서 잡힌다. writer 는 두 리뷰어가, researcher 는 reviewer-facts 가 받아낸다 |
+| **sonnet** (6) | cto · planner · researcher · writer · reviewer-quality · notion-logger | 실패해도 뒤에서 잡힌다. writer 는 두 리뷰어가, researcher 는 reviewer-facts 가 받아낸다 |
 | **haiku** (2) | publisher · adsense-audit | 절차가 전부 명시된 기계적 작업. publisher 는 발행 후 4개 자체 확인이 오류를 잡는다 |
 
 **모델을 내리는 판단 기준은 "이 에이전트가 틀리면 누가 잡는가"다.** 아무도 안
@@ -118,10 +117,10 @@ CTO 는 planner 부터 다시 시작하지 않고 **그 초안의 검수부터 �
 ### 파이프라인
 
 ```
-planner → researcher → writer → editor → ┬ reviewer-quality ┐
- 기획      리서치       작성     편집     └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notion-logger
-                          ↑                        │                        발행        기록
-                          └──── 재작성 회송 (최대 3회) ┘
+planner → researcher → writer ─┬ reviewer-quality ┐
+ 기획      리서치      작성·편집 └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notion-logger
+              ↑                          │                        발행        기록
+              └──── 재작성 회송 (최대 3회) ┘
 ```
 
 CTO 는 **작업 시작 시 사이트 현황(가이드 편수·최근 발행일·sitemap 항목 수·색인
@@ -207,7 +206,7 @@ CTO 는 **작업 시작 시 사이트 현황(가이드 편수·최근 발행일�
 아무 의미가 없다. 승인 후 다음을 정리한다.
 
 1. `.claude/agents/adsense-audit.md` 삭제
-2. 이 문서의 조직도를 12개 → 11개로 수정
+2. 이 문서의 조직도를 11개 → 10개로 수정
 3. `.claude/agents/cto.md` 의 evening 모드 2단계 제거
 
 ---

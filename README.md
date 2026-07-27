@@ -122,7 +122,7 @@ python -m http.server 8000
 
 매년 고시 기준이 바뀌면 아래를 수정하세요.
 
-- [assets/common.js](assets/common.js) — `MIN_WAGE_2026`(최저시급), `RATES_2026`(4대보험 요율·국민연금 상한 월소득)
+- [assets/common.js](assets/common.js) — `YEAR_DATA`(연도별 최저임금·실업급여 상하한), `RATES_2026`·`RATES_2027`(4대보험 요율·국민연금 기준소득월액 상하한)
 - 각 계산기 페이지의 상·하한액 등 연도별 상수와 안내 문구
 - `index.html`의 기준표와 각 페이지 제목·설명·`canonical`의 연도 표기
 - 새 가이드를 추가하면 [sitemap.xml](sitemap.xml)에도 URL을 등록 (가이드 목록 페이지네이션은 자동으로 8개씩 분할)

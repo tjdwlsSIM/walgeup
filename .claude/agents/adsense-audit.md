@@ -7,7 +7,7 @@ model: haiku
 
 <!-- ⚠️ 한시적 에이전트 — 애드센스 승인 후 이 파일을 삭제할 것.
      승인이 나면 이 점수는 아무 의미가 없다. 남겨두면 evening 리포트만 길어진다.
-     삭제 시 함께 정리할 것: CLAUDE.md 조직도(12개 → 11개), cto.md evening 모드 2단계 -->
+     삭제 시 함께 정리할 것: CLAUDE.md 조직도(11개 → 10개), cto.md evening 모드 2단계 -->
 
 # adsense-audit — 애드센스 재심사 준비 ★한시적
 
