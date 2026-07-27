@@ -87,8 +87,24 @@ def box(x, y, z, w, d, h, color):
 
 
 def check_mark(agent, state, now):
-    """예정 시간에 일했는가 — done ✔ / missed ✕ / pending · / none"""
+    """머리 위 배지 — 자리는 늘 채워져 있고, 상태는 이 배지 하나로만 말한다.
+
+    done    ✔ 예정 시간에 근무 완료
+    issue   ! 근무했으나 문제를 보고했다 (HALT 유발)
+    missed  ✕ 예정 시간이 지났는데 근무 기록이 없다
+    pending · 아직 예정 시간 전
+    none      오늘은 예정이 없는 요일
+
+    ★ stop 을 missed 로 묶지 마라. law-monitor 는 **일을 했고** 그 결과로 문제를
+      보고한 것이다. '근무 안 함'으로 표시하면 가장 열심히 일한 에이전트를
+      결근 처리하게 된다.
+    """
     s = SCHEDULE[agent]
+    # 보고된 문제는 요일과 무관하게 계속 보인다. 월·수·금 담당이 금요일에 HALT 를
+    # 냈다면 토요일에도 그 사실이 남아 있어야 한다 — 근무일이 아니라고 배지를
+    # 지워 버리면 정지 원인이 그림에서 사라진다.
+    if state == "stop":
+        return "issue"
     scheduled = s["days"] == "daily" or (s["days"] == "mwf" and now.isoweekday() in (1, 3, 5))
     if not scheduled:
         return "none"
@@ -97,43 +113,51 @@ def check_mark(agent, state, now):
     return "pending" if now.hour < s["at"] else "missed"
 
 
+def furniture_symbols():
+    """12세트가 완전히 같은 도형이다. iso() 가 x·y 에 선형이므로 원점에서 한 번
+    그려 두고 translate 로 옮기면 된다. (인라인 12회 반복이면 그것만 30KB 다)
+
+    ★ 의자와 책상을 한 심볼로 묶지 마라. 그리는 순서가
+      의자 → 사람 → 책상 이어야 사람이 의자 앞·책상 뒤에 앉은 것으로 보인다.
+      묶으면 의자가 사람을 덮어 사람이 사라진다."""
+    cx, seat_y = 0.30, -1.25
+    chair = [box(cx, seat_y, 0, 0.62, 0.60, 0.26, P["chair"]),
+             box(cx, seat_y - 0.02, 0.26, 0.62, 0.12, 0.62, shade(P["chair"], 1.18))]
+    mx, my = 0.55, 0.30
+    desk = [box(0, 0, 0, 1.9, 1.05, 0.36, P["desk"]),
+            box(0.06, 0.06, 0, 0.10, 0.93, 0.34, shade(P["desk"], .7)),
+            box(1.74, 0.06, 0, 0.10, 0.93, 0.34, shade(P["desk"], .7)),
+            box(mx + 0.28, my + 0.16, 0.36, 0.18, 0.16, 0.12, shade(P["monitor"], .8)),
+            box(mx, my, 0.48, 0.78, 0.10, 0.52, P["monitor"]),
+            f'<polygon points="{pts([iso(mx,my-.02,1.00), iso(mx+.78,my-.02,1.00), iso(mx+.78,my-.02,.48), iso(mx,my-.02,.48)])}" fill="{P["glow"]}" opacity=".28"/>',
+            box(1.45, 0.45, 0.36, 0.16, 0.16, 0.18, "#E4E1D8")]
+    return '<g id="ch">' + "".join(chair) + '</g><g id="dk">' + "".join(desk) + '</g>'
+
+
+def person_symbol(shirt, sid):
+    """앉은 사람. 셔츠 색만 다르므로 색깔 수(6)만큼만 정의하고 돌려 쓴다."""
+    cx, seat_y = 0.30, -1.25
+    px, py = cx + 0.02, seat_y + 0.26
+    g = [box(px, py, 0.26, 0.58, 0.46, 0.86, shirt),                             # 몸통
+         box(px - 0.16, py + 0.08, 0.62, 0.16, 0.40, 0.16, shade(shirt, .88)),   # 팔
+         box(px + 0.58, py + 0.08, 0.62, 0.16, 0.40, 0.16, shade(shirt, .88)),
+         box(px + 0.13, py + 0.09, 1.12, 0.34, 0.30, 0.14, P["skin"]),           # 목
+         box(px + 0.06, py + 0.04, 1.20, 0.46, 0.40, 0.40, P["skin"]),           # 머리
+         box(px + 0.04, py + 0.02, 1.52, 0.50, 0.44, 0.14, P["hair"]),           # 머리카락
+         box(px + 0.04, py + 0.02, 1.30, 0.50, 0.10, 0.24, P["hair"])]           # 뒷머리
+    return f'<g id="p{sid}">' + "".join(g) + '</g>'
+
+
 def workstation(x, y, agent, state, idx):
-    """책상 1세트. 반환 (depth, svg, label_anchor)
-       배치: 의자·사람이 안쪽(작은 y), 책상이 앞쪽 → 상반신이 책상 위로 보인다"""
-    g = []
-    cx = x + 0.30                                   # 의자·사람 x
-    # 의자 (가장 안쪽)
-    seat_y = y - 1.25
-    g.append(box(cx, seat_y, 0, 0.62, 0.60, 0.26, P["chair"]))
-    g.append(box(cx, seat_y - 0.02, 0.26, 0.62, 0.12, 0.62, shade(P["chair"], 1.18)))
-    # 사람 — 앉은 사람은 책상 폭의 절반쯤 되어야 눈에 들어온다.
-    # 작게 그리면 의자와 구분이 안 돼 '근무 중'이 읽히지 않는다.
-    if state in ("work", "stop"):
-        shirt = "#C8452F" if state == "stop" else SHIRTS[idx % len(SHIRTS)]
-        px, py = cx + 0.02, seat_y + 0.26
-        g.append(box(px, py, 0.26, 0.58, 0.46, 0.86, shirt))                          # 몸통
-        g.append(box(px - 0.16, py + 0.08, 0.62, 0.16, 0.40, 0.16, shade(shirt, .88)))  # 팔
-        g.append(box(px + 0.58, py + 0.08, 0.62, 0.16, 0.40, 0.16, shade(shirt, .88)))
-        g.append(box(px + 0.13, py + 0.09, 1.12, 0.34, 0.30, 0.14, P["skin"]))        # 목
-        g.append(box(px + 0.06, py + 0.04, 1.20, 0.46, 0.40, 0.40, P["skin"]))        # 머리
-        g.append(box(px + 0.04, py + 0.02, 1.52, 0.50, 0.44, 0.14, P["hair"]))        # 머리카락
-        g.append(box(px + 0.04, py + 0.02, 1.30, 0.50, 0.10, 0.24, P["hair"]))        # 뒷머리
-    # 책상
-    g.append(box(x, y, 0, 1.9, 1.05, 0.36, P["desk"]))
-    g.append(box(x + 0.06, y + 0.06, 0, 0.10, 0.93, 0.34, shade(P["desk"], .7)))
-    g.append(box(x + 1.74, y + 0.06, 0, 0.10, 0.93, 0.34, shade(P["desk"], .7)))
-    # 모니터 (책상 위, 사람을 향함 → 뒷면이 보이고 근무 중이면 빛이 샌다)
-    mx, my = x + 0.55, y + 0.30
-    g.append(box(mx + 0.28, my + 0.16, 0.36, 0.18, 0.16, 0.12, shade(P["monitor"], .8)))
-    g.append(box(mx, my, 0.48, 0.78, 0.10, 0.52, P["monitor"]))
-    if state == "work":
-        for i in range(3):                          # 화면 빛 번짐
-            g.append(f'<polygon points="{pts([iso(mx-.10,my-.06,.95-i*.13), iso(mx+.88,my-.06,.95-i*.13), iso(mx+.88,my-.06,.90-i*.13), iso(mx-.10,my-.06,.90-i*.13)])}" fill="{P["glow"]}" opacity="{.55-i*.13:.2f}"/>')
-        g.append(f'<polygon points="{pts([iso(mx,my-.02,1.00), iso(mx+.78,my-.02,1.00), iso(mx+.78,my-.02,.48), iso(mx,my-.02,.48)])}" fill="{P["glow"]}" opacity=".28"/>')
-    # 소품
-    g.append(box(x + 1.45, y + 0.45, 0.36, 0.16, 0.16, 0.18, "#E4E1D8" if state != "work" else "#D9534F"))
-    anchor = iso(cx + 0.30, seat_y + 0.30, 2.45)
-    return (x + y, "".join(g), anchor)
+    """책상 1세트를 배치. 사람은 **모든 자리에 항상 앉힌다** —
+    상태는 머리 위 배지 하나로만 말한다. 사람을 지웠다 그렸다 하면
+    '자리 비움'과 '아직 예정 시간 전'이 같은 그림이 돼 구분되지 않는다."""
+    ox, oy = iso(x, y)
+    t = f'transform="translate({ox:.0f},{oy:.0f})"'
+    sid = idx % len(SHIRTS)
+    svg = (f'<use href="#ch" {t}/><use href="#p{sid}" {t}/><use href="#dk" {t}/>')
+    anchor = iso(x + 0.60, y - 0.95, 2.45)
+    return (x + y, svg, anchor)
 
 
 def build(now):
@@ -204,15 +228,21 @@ def render(now):
             e.append(f'<path d="M{cx-4.2:.1f} {cy+.2:.1f} l3 3.1 l5.4-6.2" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>')
         elif kind == "missed":
             e.append(f'<path d="M{cx-3.4:.1f} {cy-3.4:.1f} l6.8 6.8 M{cx+3.4:.1f} {cy-3.4:.1f} l-6.8 6.8" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>')
-        else:
+        elif kind == "issue":                      # 근무했으나 문제 보고 — 느낌표
+            e.append(f'<path d="M{cx:.1f} {cy-4.6:.1f} l0 5.4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>')
+            e.append(f'<circle cx="{cx:.1f}" cy="{cy+3.4:.1f}" r="1.4" fill="#fff"/>')
+        else:                                       # pending — 아직 예정 시간 전
             e.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="2.6" fill="#fff"/>')
         return "".join(e)
 
-    MARK = {"done": ("done", "#1F9D55"), "missed": ("missed", "#C8452F"),
-            "pending": ("pending", "#8A94A3"), "none": (None, "")}
+    MARK = {"done": ("done", "#1F9D55"), "issue": ("issue", "#E08A1E"),
+            "missed": ("missed", "#C8452F"), "pending": ("pending", "#8A94A3"),
+            "none": (None, "")}
     FONT = "Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', 'Noto Serif CJK KR', sans-serif"
 
     s = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{minx:.0f} {miny:.0f} {W:.0f} {H:.0f}" width="{W:.0f}" height="{H:.0f}" font-family="{FONT}">']
+    s.append('<defs>' + furniture_symbols()
+             + "".join(person_symbol(c, i) for i, c in enumerate(SHIRTS)) + '</defs>')
     s.append(f'<rect x="{minx:.0f}" y="{miny:.0f}" width="{W:.0f}" height="{H:.0f}" fill="{P["bg"]}"/>')
     s.append(f'<text x="{minx+26:.0f}" y="{miny+44:.0f}" font-size="27" font-weight="800" fill="#213A5C">월급노트 컴퍼니</text>')
     s.append(f'<text x="{minx+26:.0f}" y="{miny+68:.0f}" font-size="13.5" fill="#6B7688">에이전트 12명 · {now:%Y-%m-%d %H:%M} 기준 스냅샷</text>')
@@ -238,7 +268,7 @@ def render(now):
         if y < ly - 6:                                   # 끌어올렸으면 원래 자리와 이어 준다
             s.append(f'<line x1="{lx:.0f}" y1="{y+6:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" stroke="#B9B2A3" stroke-width="1.2" stroke-dasharray="2.5 2.5"/>')
             s.append(f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="2" fill="#B9B2A3"/>')
-        op = "1" if state != "idle" else ".95"
+        op = "1"
         s.append(f'<rect x="{lx-w/2:.0f}" y="{y-16:.0f}" width="{w:.0f}" height="22" rx="11" fill="#fff" stroke="#CFC8B9" opacity="{op}"/>')
         s.append(f'<text x="{lx-(11 if sym else 0):.0f}" y="{y:.0f}" font-size="11" font-weight="600" fill="#2C3648" text-anchor="middle">{agent}</text>')
         if sym:
@@ -246,18 +276,17 @@ def render(now):
     # 범례
     y0 = maxy - 74
     s.append(f'<rect x="{minx+22:.0f}" y="{y0:.0f}" width="{W-44:.0f}" height="54" rx="11" fill="#fff" stroke="#E0DACE"/>')
-    rows = [[("seat", "앉아 있음 = 근무 중", "#2E6FD9"), ("empty", "빈 의자 = 자리 비움", "#8A94A3"), ("stop", "빨간 옷 = 문제 보고 후 정지", "#C8452F")],
-            [("done", "예정 시간에 근무함", "#1F9D55"), ("missed", "예정 시간에 근무 안 함", "#C8452F"), ("pending", "아직 예정 시간 전", "#8A94A3")]]
-    for r, row in enumerate(rows):
-        yy = y0 + 18 + r * 21
-        step = (W - 90) / len(row)
-        for i, (kind, t, c) in enumerate(row):
-            x = minx + 52 + i * step
-            if kind in ("done", "missed", "pending"):
-                s.append(badge(x, yy - 4, kind, c))
-            else:
-                s.append(f'<circle cx="{x:.0f}" cy="{yy-4:.0f}" r="6" fill="{c}"/>')
-            s.append(f'<text x="{x+14:.0f}" y="{yy:.0f}" font-size="11.5" fill="#4A5464">{t}</text>')
+    s.append(f'<text x="{minx+52:.0f}" y="{y0+17:.0f}" font-size="11.5" font-weight="700" fill="#2C3648">머리 위 배지 — 설정한 시간에 실제로 일했는가</text>')
+    row = [("done", "예정 시간에 근무함", "#1F9D55"),
+           ("issue", "근무했으나 문제 보고", "#E08A1E"),
+           ("missed", "예정 시간이 지났는데 근무 안 함", "#C8452F"),
+           ("pending", "아직 예정 시간 전", "#8A94A3")]
+    yy = y0 + 40
+    step = (W - 96) / len(row)
+    for i, (kind, t, c) in enumerate(row):
+        x = minx + 56 + i * step
+        s.append(badge(x, yy - 4, kind, c))
+        s.append(f'<text x="{x+14:.0f}" y="{yy:.0f}" font-size="11.5" fill="#4A5464">{t}</text>')
     s.append('</svg>')
     return "\n".join(s)
 
