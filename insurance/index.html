@@ -86,7 +86,7 @@
       <div class="yrsel yrsel-title"><button type="button" class="yr yr-lg" aria-haspopup="menu" aria-expanded="false" onclick="toggleYearMenu(event)"><span class="yr-label">2026년 기준</span><svg class="yr-caret" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2 4.5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="yrmenu" hidden></div></div>
     </div>
     <p>월 급여에서 4대보험으로 얼마가 공제되고, 회사는 얼마를 부담할까요? 세전 월 급여만 입력하면 항목별 근로자·사업주 부담금을 계산해 드립니다.</p>
-    <p class="basis">2026년 요율 — 국민연금 <b>9.5%</b> · 건강보험 <b>7.19%</b> · 장기요양 <b>0.9448%</b> · 고용보험(실업급여) <b>1.8%</b> (각 절반씩 부담)</p>
+    <p class="basis" id="ins-basis">2026년 요율 — 국민연금 <b>9.5%</b> · 건강보험 <b>7.19%</b> · 장기요양 <b>0.9448%</b> · 고용보험(실업급여) <b>1.8%</b> (각 절반씩 부담)</p>
   </div>
 
   <div class="card">
@@ -292,10 +292,25 @@ function calcIns(){
   showResult('res-ins');
 }
 
-/* 연도 전환 시 — 결과가 떠 있으면 재계산(요율은 2026년 값 유지, 미발표 주석만 갱신) */
+/* 산정 기준 문구를 선택 연도의 실제 요율로 다시 쓴다.
+   여기 표시하는 값은 **전체 요율**(근로자+사업주)이므로 ratesData() 값의 2배다.
+   ★ 문구를 상수로 박아 두면 계산은 연도별로 바뀌는데 근거만 2026년에 멈춘다. */
+function renderInsBasis(){
+  const R = ratesData(), p = (v, d) => (v * 200).toFixed(d);   // ×200 = 전체 요율(%)
+  document.getElementById('ins-basis').innerHTML =
+    getYear() + '년 요율 — 국민연금 <b>' + p(R.pension, 1) + '%</b> · 건강보험 <b>' +
+    p(R.health, 2) + '%</b> · 장기요양 <b>' + p(R.care, 4) + '%</b> · 고용보험(실업급여) <b>' +
+    p(R.emp, 1) + '%</b> (각 절반씩 부담)';
+}
+
+/* 연도 전환 시 — 기준 문구를 갱신하고, 결과가 떠 있으면 재계산.
+   국민연금 요율만 연도별로 바뀌고(2026년 전체 9.5% → 2027년 10.0%),
+   건강보험·장기요양·고용보험은 2027년 미발표라 2026년 값을 쓴다. */
 window.onYearChange = function(){
+  renderInsBasis();
   if(document.getElementById('res-ins').classList.contains('show')) calcIns();
 };
+renderInsBasis();
 
 /* 공유된 링크로 접속 시 모드 복원 후 자동 계산 (imode 없는 기존 링크는 월급 모드) */
 document.addEventListener('DOMContentLoaded', ()=>{

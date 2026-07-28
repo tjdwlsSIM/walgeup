@@ -168,6 +168,7 @@
     }
   ],
   "ui_checks": [
+    { "id": "ui-basis-rates", "desc": "요율을 표시하는 .basis 문구가 선택 연도의 실제 요율로 갱신된다 (계산 결과와 근거 문구가 같은 요율을 말해야 한다)", "hint": "salary #sal-basis / insurance #ins-basis 가 ratesData() 로 렌더되는지. 상수로 박혀 있으면 FAIL — 2026-07-28 morning 에서 실제로 걸린 회귀다" },
     { "id": "ui-year-sync", "desc": "연도 전환 시 헤더 버튼과 제목 옆 버튼 상태가 동기화된다", "hint": "updateYearUI()가 .yrsel 전체를 순회하는지" },
     { "id": "ui-placeholder", "desc": "placeholder가 선택 연도의 최저임금 값으로 갱신된다", "hint": "updatePlaceholders() / data-minph 속성" },
     { "id": "ui-basis", "desc": "산정 기준(.basis) 문구가 선택 연도 수치로 갱신된다", "hint": "각 페이지 window.onYearChange" },

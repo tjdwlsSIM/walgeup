@@ -145,7 +145,16 @@ while ($true) {
         $code = 124                              # 관례상 timeout 종료 코드
     }
     else {
+        # ★ 인자 있는 WaitForExit(ms) 만으로는 ExitCode 가 채워지지 않는 경우가 있다.
+        #   비어 있으면 `$code -eq 0` 이 거짓이 돼 **성공한 실행이 실패로 집계**되고,
+        #   3번 쌓이면 멀쩡한데도 HALT 가 걸린다. 인자 없는 WaitForExit() 를 한 번 더
+        #   불러 종료 처리를 끝낸 뒤 읽는다. (2026-07-28 로그의 "exit=" 공백이 이 증상)
+        $proc.WaitForExit()
         $code = $proc.ExitCode
+        if ($null -eq $code) {
+            Write-Log "$mode 종료 코드를 읽지 못했습니다 — 성공으로 간주하지 않고 실패로 셉니다."
+            $code = 1
+        }
     }
 
     # cto 가 HALT 를 남겼다면 exit 0 이어도 성공이 아니다.
