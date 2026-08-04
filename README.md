@@ -57,7 +57,8 @@
 - 공통 로직은 [assets/common.js](assets/common.js)에, 공통 스타일은 [assets/common.css](assets/common.css)에 분리
 - 폰트: Pretendard, Noto Serif KR (CDN)
 - 광고: Google AdSense
-- 정적 호스팅만 있으면 어디서든 동작 (GitHub Pages, Netlify, Vercel, Cloudflare Pages 등)
+- 정적 호스팅만 있으면 어디서든 동작 (Cloudflare Workers, GitHub Pages, Netlify, Vercel 등)
+- 실제 운영은 **Cloudflare Workers (정적 자산 전용)** — 아래 배포 항목 참고
 
 ## 🔍 SEO
 
@@ -99,14 +100,41 @@ walgeup-note/
     └── logo.svg, favicon…      # 아이콘·파비콘
 ```
 
-## 🚀 배포 (GitHub Pages)
+## 🚀 배포 (Cloudflare Workers)
 
-1. 이 저장소를 GitHub에 푸시합니다.
-2. 저장소 **Settings → Pages**로 이동합니다.
-3. **Source**를 `Deploy from a branch`, 브랜치를 `main` / `/ (root)`로 설정합니다.
-4. 잠시 후 게시된 주소에서 접속할 수 있습니다. (본 사이트는 `walgeupnote.com` 커스텀 도메인 사용)
+**GitHub Pages 가 아니다.** 저장소 Settings → Pages 는 `None` 으로 비활성 상태이며,
+실제 서빙은 Cloudflare 가 한다. 여기를 착각하면 "왜 푸시했는데 안 바뀌지" 로 시간을 버린다.
 
-빌드 과정이 없는 정적 사이트라 별도 설정 없이 바로 배포됩니다.
+| 항목 | 값 |
+|---|---|
+| 플랫폼 | Cloudflare Workers (정적 자산 전용 — 빌드 명령 없음) |
+| Worker 이름 | `walgeup-note` |
+| 연결 저장소 | `tjdwlsSIM/walgeup` (푸시하면 자동 배포) |
+| 커스텀 도메인 | `walgeupnote.com` + 라우트 `*.walgeupnote.com/*` |
+| Workers URL | `walgeup-note.tlatjdwls21c.workers.dev` (Production · Public) |
+
+빌드 과정이 없는 정적 사이트라 `main` 에 푸시하면 그대로 올라간다.
+배포 상태는 Cloudflare 대시보드 → Workers & Pages → `walgeup-note` → Deployments 에서 확인한다.
+
+### SEO 관련 필수 설정 — 리디렉션 오탐의 원인이 되는 곳
+
+| 설정 | 위치 | 상태 |
+|---|---|---|
+| **Always Use HTTPS** | SSL/TLS → Edge Certificates | **켜야 한다** (2026-08-05 활성화) |
+
+꺼져 있으면 `http://` 요청이 https 로 올라가지 않는다. 브라우저는 자체 기능으로
+알아서 https 로 바꿔 주기 때문에 **사람 눈에는 멀쩡해 보이지만**, Googlebot 은
+http 응답을 그대로 받아 Search Console 에 `http://walgeupnote.com/...` 항목이
+계속 쌓인다. 브라우저로 테스트해서는 이 문제를 발견할 수 없다.
+
+### `.../index.html` 은 리디렉션되는 것이 정상이다
+
+Cloudflare 는 `/폴더/index.html` 요청을 `/폴더/` 로 301 리디렉션한다. 이는
+canonical 과 일치하는 올바른 동작이다. Search Console 의 **"리디렉션이 포함된
+페이지"** 는 오류가 아니라 옛 주소가 정식 주소로 잘 합쳐졌다는 보고이며,
+**유효성 검사는 통과할 수 없다** — 그 URL 이 존재하는 한 리디렉션은 계속 일어나기
+때문이다. 사이트맵만 재제출하고 그대로 두면 재크롤링되며 목록에서 빠진다.
+(내부 링크·canonical·sitemap 은 모두 `/폴더/` 형식으로 통일되어 있다. 아래 SEO 항목 참고)
 
 ### 로컬에서 실행
 
