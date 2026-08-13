@@ -9,7 +9,19 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
-body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px}
+/* ── 한글 줄바꿈 ─────────────────────────────────────────────
+   keep-all 이 없으면 브라우저가 한글을 음절 단위로 끊어 "하루치 급/여"
+   처럼 단어 한가운데서 줄이 바뀐다. 영어는 공백이 끊는 자리를 알려주지만
+   한글은 알려주지 않기 때문에, 어절을 지키라고 따로 지정해야 한다.
+   대신 긴 URL·계좌번호처럼 끊을 곳이 없는 문자열이 컨테이너를 넘칠 수
+   있어, 그 경우에만 overflow-wrap 이 예외적으로 끊어준다. */
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px;word-break:keep-all;overflow-wrap:break-word}
+
+/* 제목은 줄 길이를 고르게 나눠 마지막 줄에 한두 글자만 남지 않게 한다.
+   미지원 브라우저는 이 속성을 무시할 뿐이라 기존 동작 그대로 표시된다. */
+h1,h2,h3,h4,summary{text-wrap:balance}
+p,li,dd,.a{text-wrap:pretty}
+
 .wrap{max-width:760px;margin:0 auto;padding:0 18px}
 
 /* 헤더 */
@@ -49,8 +61,8 @@ button.yr:hover{background:var(--ok-bg)}
 .yr-lg{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--navy);border:1px solid var(--line);border-radius:4px;padding:0 14px;min-height:40px;letter-spacing:0;line-height:1}
 .yr-lg:hover{border-color:var(--navy);background:var(--ok-bg)}
 .yr-caret{flex:none;color:var(--sub)}
-.hero p{color:var(--sub);margin-top:10px;max-width:56ch;word-break:keep-all}
-.hero .basis{margin-top:14px;font-size:13px;color:var(--sub);word-break:keep-all;line-height:1.8}
+.hero p{color:var(--sub);margin-top:10px;max-width:56ch}
+.hero .basis{margin-top:14px;font-size:13px;color:var(--sub);line-height:1.8}
 .hero .basis b{color:var(--ink);font-weight:600}
 
 /* 카드 */
@@ -159,7 +171,6 @@ button.yr:hover{background:var(--ok-bg)}
 /* 열이 많은 표(4열 비교 등)를 좁은 화면에서 가로 스크롤 처리 */
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0}
 .table-scroll table{margin:0;min-width:560px}
-.table-scroll td,.table-scroll th{word-break:keep-all}
 .formula{font-family:var(--sans);background:var(--doc);border:1px solid var(--line);border-left:3px solid var(--navy);padding:14px 16px;margin:12px 0;font-size:14.5px}
 details{background:var(--doc);border:1px solid var(--line);border-radius:4px;margin-bottom:10px}
 details summary{cursor:pointer;padding:14px 16px;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -188,7 +199,7 @@ details .a{padding:0 16px 16px;color:#38404E;font-size:14.5px}
 .guide-search .gs-clear[hidden]{display:none}
 
 /* 검색 결과 없음 안내 */
-.guide-empty{margin:8px 0 0;padding:22px 18px;text-align:center;color:var(--sub);border:1px solid var(--line);border-radius:4px;background:var(--doc);word-break:keep-all}
+.guide-empty{margin:8px 0 0;padding:22px 18px;text-align:center;color:var(--sub);border:1px solid var(--line);border-radius:4px;background:var(--doc)}
 .guide-empty button{margin-left:8px;min-height:40px;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--navy);background:transparent;border:1px solid var(--navy);border-radius:4px;padding:8px 14px;cursor:pointer}
 .guide-empty button:hover{background:var(--navy);color:#fff}
 .guide-empty button:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
