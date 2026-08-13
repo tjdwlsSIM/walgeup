@@ -96,6 +96,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://walgeupnote.com/guides/weekly-holiday-complete/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://walgeupnote.com/guides/severance-complete/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
