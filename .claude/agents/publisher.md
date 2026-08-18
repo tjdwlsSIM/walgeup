@@ -77,7 +77,7 @@ git commit -m "<글 제목> 가이드 추가"
 - 글 내용 수정 — 발행 단계에서 문장을 고치지 마라. 문제가 있으면 중단하고 보고
 - 검수 재판정 — 네가 보기에 이상해도 두 리뷰어가 PASS 했으면 발행한다.
   대신 이상한 점을 보고에 남겨라
-- 구글·네이버 색인 요청 — 수동 작업이다. notion-logger 가 대기열에 넣는다
+- 구글·네이버 색인 요청 — 수동 작업이다. notifier 가 대기열에 넣는다
 
 ## 산출물
 
@@ -93,5 +93,5 @@ URL: https://walgeupnote.com/guides/<폴더명>/
 
 갱신 파일: guides/<폴더명>/index.html / guides/index.html / sitemap.xml / README.md(N편)
 커밋: <sha> <메시지>  (push 안 함 — 사용자 확인 후)
-다음 단계: notion-logger — 작업 로그 기록 + 색인 요청 대기열 등록
+다음 단계: notifier — 작업 로그 기록 + 색인 요청 대기열 등록
 ```

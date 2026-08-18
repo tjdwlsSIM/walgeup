@@ -18,6 +18,8 @@ if exist logs\HALT (
   echo 멈춘 작업은 완료로 기록되지 않았으므로 처음부터 다시 실행됩니다.
   echo.
   del /q logs\HALT
+  rem 알림 중복 방지 표식도 함께 지운다. 남겨두면 다음 HALT 가 조용히 넘어간다.
+  if exist logs\HALT.notified del /q logs\HALT.notified
 )
 
 if exist logs\STOP (

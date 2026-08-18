@@ -29,8 +29,13 @@ $MaxFails    = 3            # 연속 실패 3회면 HALT. 실패를 무한 재�
 $TimeoutMin = @{ morning = 25; content = 60; evening = 20 }
 
 $KeepDays    = 30           # 실행 로그 보관 기간. 넘으면 지운다
+$IndexBacklog = 3           # 색인 요청 미처리가 이 건수 이상이면 알린다 (CLAUDE.md 기준과 동일)
 
 if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir | Out-Null }
+
+# 텔레그램 알림. 설정이 없으면 Send-Telegram 이 알아서 건너뛴다 —
+# 여기서 분기하지 않는 이유는, 알림 미설정이 루프의 관심사가 아니기 때문이다.
+. (Join-Path $PSScriptRoot 'notify.ps1')
 
 # 오래된 실행 로그 정리 — 없으면 무한히 쌓인다.
 # STOP·HALT·loop-state.json·loop.txt 는 건드리지 않는다(상태 파일이다).
@@ -79,6 +84,8 @@ function Set-Halt($reason) {
   $lines = @($stamp, '', "사유: $reason", '', '해결 후 scripts\start.bat 으로 재시작하세요.')
   Out-File -FilePath $HaltFile -InputObject $lines -Encoding utf8
   Write-Log "HALT 생성 — $reason"
+  Send-Telegram -Title '🛑 월급노트 — HALT (사람의 판단 필요)' `
+                -Body "$reason`n`n해결 후 scripts\start.bat 으로 재시작하세요." | Out-Null
 }
 
 # 지금 시각·요일과 마지막 실행일로 '밀린 작업'을 판정한다.
@@ -96,6 +103,37 @@ function Get-DueMode($s) {
   return $null
 }
 
+# 모드가 성공으로 끝났을 때 보내는 알림.
+#
+# 본문은 실행 로그의 꼬리를 그대로 쓴다. 에이전트에게 "알림용 요약을 따로
+# 만들라"고 시키지 않는 이유는, 그렇게 하면 알림 형식이 프롬프트에 묶여
+# 에이전트를 고칠 때마다 알림이 깨지기 때문이다. 로그는 이미 사람이 읽으라고
+# 쓰인 것이라 그대로 보내면 된다.
+function Send-ModeReport($mode, $runLog) {
+  $tail    = Get-LogTail $runLog 20
+  $pending = Get-PendingIndexCount $Root
+
+  switch ($mode) {
+    'content' {
+      # 발행 여부는 publisher 의 커밋으로 판정한다. 발행이 없었다면
+      # 마지막 커밋이 이전 것 그대로라 제목만 봐도 구분된다.
+      $last = ''
+      try { $last = (& git -C $Root log -1 --format='%h %s' 2>$null) } catch { }
+      $body = if ($last) { "최근 커밋: $last`n`n$tail" } else { $tail }
+      Send-Telegram -Title '📝 월급노트 — 콘텐츠 파이프라인 완료' -Body $body | Out-Null
+    }
+    'morning' { Send-Telegram -Title '☀️ 월급노트 — 아침 점검 완료' -Body $tail -Silent | Out-Null }
+    'evening' { Send-Telegram -Title '🌙 월급노트 — 저녁 정리 완료' -Body $tail -Silent | Out-Null }
+  }
+
+  # 색인 요청은 사람이 직접 해야 하는 유일한 수동 작업이라 밀리면 따로 알린다.
+  # 리포트 본문에 섞으면 묻힌다 — 조용한 알림 안에 든 경고는 경고가 아니다.
+  if ($pending -ge $IndexBacklog) {
+    Send-Telegram -Title "🔔 월급노트 — 색인 요청 ${pending}건 밀림" `
+                  -Body "docs\index-request-queue.md 에 미처리 ${pending}건이 쌓였습니다.`n`nSearch Console / 네이버 서치어드바이저에서 직접 요청한 뒤 체크박스를 [x] 로 바꿔 주세요." | Out-Null
+  }
+}
+
 Write-Log "=== 루프 시작 (간격 ${IntervalSec}초 · 저장소 $Root) ==="
 Write-Log "멈추려면 scripts\stop.bat 을 실행하거나 이 창을 닫으세요."
 Clear-OldLogs
@@ -107,10 +145,19 @@ while ($true) {
     break
   }
 
-  # cto 가 qa 실패·3회 반려 에스컬레이션 시 직접 써 두는 파일도 여기서 걸린다
+  # cto 가 qa 실패·3회 반려 에스컬레이션 시 직접 써 두는 파일도 여기서 걸린다.
+  # 그 경로는 Set-Halt 를 거치지 않으므로 알림도 여기서 따로 보낸다.
+  # 이미 보낸 HALT 를 다시 알리지 않도록 표식 파일로 한 번만 발송한다 —
+  # 루프가 재시작될 때마다 같은 HALT 가 다시 날아오면 알림을 무시하게 된다.
   if (Test-Path $HaltFile) {
+    $haltBody = (Get-Content $HaltFile -Raw)
     Write-Log "HALT 감지 — 사람의 판단이 필요합니다. 내용:"
-    Write-Host (Get-Content $HaltFile -Raw)
+    Write-Host $haltBody
+    $sentMark = "$HaltFile.notified"
+    if (-not (Test-Path $sentMark)) {
+      Send-Telegram -Title '🛑 월급노트 — HALT (사람의 판단 필요)' -Body $haltBody | Out-Null
+      New-Item -ItemType File -Path $sentMark -Force | Out-Null
+    }
     Write-Log "해결 후 scripts\start.bat 으로 재시작하세요."
     break
   }
@@ -173,7 +220,9 @@ while ($true) {
       $state[$mode] = Get-Date -Format 'yyyy-MM-dd'
       $state.fails  = 0
       Save-State $state
+      $runLog = Join-Path $LogDir ("{0}-{1}.txt" -f (Get-Date -Format 'yyyy-MM-dd'), $mode)
       Write-Log "$mode 모드 완료 (exit=0) — 로그: logs\$(Get-Date -Format 'yyyy-MM-dd')-$mode.txt"
+      Send-ModeReport $mode $runLog
     }
     else {
       $state.fails = $state.fails + 1

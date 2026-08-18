@@ -23,7 +23,7 @@
 | **reviewer-quality** | 품질·구조·SEO·애드센스 기준 심사 → PASS/FAIL |
 | **reviewer-facts** | 모든 수치·법령을 1차 출처와 대조 검증 → PASS/FAIL |
 | **publisher** | sitemap·목록·역링크 갱신 후 커밋 (푸시는 사용자가) |
-| **notion-logger** | 작업 로그 기록 + 색인 요청 대기열 등록 |
+| **notifier** | 작업 로그 기록 + 색인 요청 대기열 등록 + 알림 요약 작성 |
 
 ★ 최우선 · ☂ 한시적
 
@@ -32,7 +32,7 @@
 | 모델 | 에이전트 | 기준 |
 |---|---|---|
 | **opus** (3) | law-monitor · qa-calculator · reviewer-facts | **실패가 조용히 누적되는 곳.** 여기서 놓친 오류는 발행돼서 퍼진다 |
-| **sonnet** (6) | cto · planner · researcher · writer · reviewer-quality · notion-logger | 실패해도 뒤에서 잡힌다. writer 는 두 리뷰어가, researcher 는 reviewer-facts 가 받아낸다 |
+| **sonnet** (6) | cto · planner · researcher · writer · reviewer-quality · notifier | 실패해도 뒤에서 잡힌다. writer 는 두 리뷰어가, researcher 는 reviewer-facts 가 받아낸다 |
 | **haiku** (2) | publisher · adsense-audit | 절차가 전부 명시된 기계적 작업. publisher 는 발행 후 4개 자체 확인이 오류를 잡는다 |
 
 **모델을 내리는 판단 기준은 "이 에이전트가 틀리면 누가 잡는가"다.** 아무도 안
@@ -58,7 +58,7 @@ scripts\stop.bat    ← 멈춤
 |---|---|---|
 | **morning** | 09시 이후, 오늘 미실행 | qa-calculator(매일) → law-monitor(**월·수·금만**) → 색인 대기열 → 리포트 |
 | **content** | 월·수·금 15시 이후, 오늘 미실행 | 콘텐츠 파이프라인 1편 생산 |
-| **evening** | 18시 이후, 오늘 미실행 | 사이트 현황 → adsense-audit → notion-logger → 리포트 |
+| **evening** | 18시 이후, 오늘 미실행 | 사이트 현황 → adsense-audit → notifier → 리포트 |
 
 - **한 틱에 한 작업만** 실행한다. morning 의 계산기 검증이 content 보다 먼저 끝나야 한다
 - **law-monitor 는 월·수·금에만 돈다.** 법령·요율은 특정 시기에 몰려 발표되므로 매일
@@ -118,14 +118,14 @@ CTO 는 planner 부터 다시 시작하지 않고 **그 초안의 검수부터 �
 
 ```
 planner → researcher → writer ─┬ reviewer-quality ┐
- 기획      리서치      작성·편집 └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notion-logger
+ 기획      리서치      작성·편집 └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notifier
               ↑                          │                        발행        기록
               └──── 재작성 회송 (최대 3회) ┘
 ```
 
 CTO 는 **작업 시작 시 사이트 현황(가이드 편수·최근 발행일·sitemap 항목 수·색인
 미처리 건수)을 먼저 확인**하고, 각 단계의 산출물을 다음 단계로 전달한다.
-파이프라인 종료 시 — 성공이든 중단이든 — **반드시 notion-logger 를 호출**한다.
+파이프라인 종료 시 — 성공이든 중단이든 — **반드시 notifier 를 호출**한다.
 
 ### 검수 이중화
 
@@ -147,19 +147,38 @@ CTO 는 **작업 시작 시 사이트 현황(가이드 편수·최근 발행일�
 - 에스컬레이션 리포트에는 **회차별 반려 사유 + 반복된 지적의 근본 원인 추정 +
   사용자 판단이 필요한 지점**을 담는다
 - **자동 발행 금지.** 검수를 통과하지 못한 글은 나가지 않는다
-- 중단해도 notion-logger 는 호출한다. 실패한 실행이 통계에서 빠지면 누적 통계가
+- 중단해도 notifier 는 호출한다. 실패한 실행이 통계에서 빠지면 누적 통계가
   거짓말을 한다
 
 ### 작업 로그
 
 - `docs/agent-log.md` — 실행 기록 + **반려 사유 누적 통계**.
   같은 유형이 3회 이상 쌓이면 파이프라인 앞단을 고쳐야 한다는 신호다
-- **파일이 원본, 노션은 사본.** 노션 동기화가 실패해도 작업은 실패가 아니다.
+- **파일이 원본, 텔레그램은 사본.** 알림이 못 나가도 작업은 실패가 아니다.
   기록 하나 때문에 루프가 멈추면 안 된다
-- 노션 통합(`walgeupnote-agent`)은 **API 키만으로는 아무 페이지도 못 본다.**
-  노션에서 페이지 → ··· → 연결에 통합을 추가해야 접근이 생긴다.
-  notion-logger 가 매 실행 시 「월급노트 작업 로그」 페이지를 검색해 찾고,
-  없으면 만든다. 페이지 ID 를 코드에 박지 않는다
+
+### 텔레그램 알림
+
+**보내는 주체는 `scripts/loop.ps1` 이지 에이전트가 아니다.** 종료 코드·타임아웃·
+HALT 는 프로세스를 띄운 쪽만 알고, 에이전트는 자기 실패를 스스로 알릴 수 없다.
+봇 토큰이 프롬프트에 실리지 않는 부수 효과도 크다.
+
+| 알림 | 시점 |
+|---|---|
+| 🛑 HALT | `logs/HALT` 가 생겼을 때. `logs/HALT.notified` 로 중복 발송을 막는다 |
+| 📝 콘텐츠 완료 | content 모드 성공 시. 최근 커밋 제목을 함께 싣는다 |
+| ☀️🌙 아침·저녁 | morning·evening 성공 시. 무음으로 보낸다 |
+| 🔔 색인 밀림 | 미처리 3건 이상. 리포트에 섞지 않고 따로 보낸다 — 조용한 알림 안의 경고는 경고가 아니다 |
+
+본문은 **실행 로그(`logs/YYYY-MM-DD-<모드>.txt`)의 마지막 20줄**을 그대로 싣는다.
+에이전트에게 알림용 요약을 따로 만들게 하지 않는 이유는, 그러면 알림 형식이
+프롬프트에 묶여 에이전트를 고칠 때마다 알림이 깨지기 때문이다.
+**대신 에이전트는 결론을 출력 끝에 둬야 한다** — 중간에 묻히면 알림에 안 실린다.
+
+- 토큰은 `scripts/telegram.local.json` (**gitignore 대상**). 형식은
+  `scripts/telegram.local.json.example` 참고. 환경변수
+  `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID` 가 있으면 그쪽이 우선이다
+- **설정하지 않아도 루프는 정상 동작한다.** 알림만 조용히 꺼진다
 
 ---
 

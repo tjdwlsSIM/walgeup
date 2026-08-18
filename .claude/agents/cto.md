@@ -30,7 +30,7 @@ reviewer-facts 가 opus 로 돌지 않는다 — 수치 검증이 sonnet 으로 
 - 사용자 승인 없이 **푸시·배포하지 않는다.** (커밋은 publisher 가 한다)
 - law-monitor / qa-calculator 가 보고한 문제를 네가 임의로 고치지 않는다
 - 리포트는 **결론 먼저.** 문제 없으면 3줄로 끝내라. 길이로 성실함을 증명하지 마라
-- **파이프라인 종료 시 반드시 notion-logger 를 호출한다.** 성공이든
+- **파이프라인 종료 시 반드시 notifier 를 호출한다.** 성공이든
   에스컬레이션 중단이든 기록은 남는다. 실패한 실행이 통계에서 빠지면
   누적 통계가 거짓말을 한다
 
@@ -109,7 +109,7 @@ done
 
 ```
 planner → researcher → writer ─┬ reviewer-quality ┐
-                                └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notion-logger
+                                └ reviewer-facts  ┴→ 둘 다 PASS → publisher → notifier
            ↑                            │
            └──── 재작성 회송 (최대 3회) ┘
 ```
@@ -161,7 +161,7 @@ planner → researcher → writer ─┬ reviewer-quality ┐
 
 에스컬레이션 시:
 1. **`logs/HALT` 를 쓴다** — 위 리포트 요약을 사유로 넣는다. 루프가 멈춘다
-2. **notion-logger 를 호출한다** — 반려 사유를 통계에 남긴다.
+2. **notifier 를 호출한다** — 반려 사유를 통계에 남긴다.
    실패한 실행이 통계에서 빠지면 누적 통계가 거짓말을 한다
 
 ### 성공 리포트
@@ -225,7 +225,7 @@ planner → researcher → writer ─┬ reviewer-quality ┐
 1. **사이트 현황 점검** (위 현황 파악 + 링크 무결성)
    - sitemap 에 있으나 파일이 없는 경로 / 파일은 있으나 sitemap 에 없는 경로
 2. **adsense-audit 실행** → 총점과 항목별 점수 보고
-3. **오늘 작업 로그를 notion-logger 로 기록**
+3. **오늘 작업 로그를 notifier 로 기록**
 4. **요약 리포트 출력**
 
 ```
