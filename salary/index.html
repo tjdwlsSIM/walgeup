@@ -274,7 +274,7 @@ function calcSalary(){
 /* 산정 기준 문구를 선택 연도의 실제 요율로 다시 쓴다.
    ★ 이 문구를 상수로 박아 두면 안 된다 — 계산은 ratesData() 로 연도별로 바뀌는데
      문구만 2026년에 멈춰 "근거"와 "결과"가 서로 다른 요율을 말하게 된다.
-     (실제로 그렇게 어긋난 적이 있어 qa-calculator 가 잡아냈다) */
+     (실제로 그렇게 어긋난 적이 있어 회귀 테스트가 잡아냈다) */
 function renderSalBasis(){
   const R = ratesData(), p = (v, d) => (v * 100).toFixed(d);
   document.getElementById('sal-basis').innerHTML =
