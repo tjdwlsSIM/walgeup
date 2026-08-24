@@ -6,172 +6,348 @@
       "id": "annual-leave-monthly",
       "name": "연차수당(월급제)",
       "page": "annual-leave/index.html",
-      "source": ["assets/common.js", "annual-leave/index.html"],
+      "source": [
+        "assets/common.js",
+        "annual-leave/index.html"
+      ],
       "year": 2026,
-      "input": { "monthlySalary": 2600000, "weekHours": 40, "unusedDays": 5 },
-      "expect": { "hourlyOrdinary": 12440, "dailyOrdinary": 99522, "total": 497608 },
+      "input": {
+        "monthlySalary": 2600000,
+        "weekHours": 40,
+        "unusedDays": 5
+      },
+      "expect": {
+        "hourlyOrdinary": 12440,
+        "dailyOrdinary": 99522,
+        "total": 497608
+      },
       "note": "2,600,000 ÷ 209 = 12,440 / ×8h = 99,522 / ×5일 = 497,608"
     },
     {
       "id": "annual-leave-net",
       "name": "연차수당 세후",
       "page": "annual-leave/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "bonus": 497608, "monthlySalary": 2600000 },
-      "expect": { "deduct": 130459, "net": 367149 },
+      "input": {
+        "bonus": 497608,
+        "monthlySalary": 2600000
+      },
+      "expect": {
+        "deduct": 130459,
+        "net": 367149
+      },
       "note": "estimateNet(bonus, monthly) — 4대보험 + 소득세 한계세율(지방소득세 10% 포함)"
     },
     {
       "id": "annual-leave-accrued-1y",
       "name": "누적연차 (1년 초과)",
       "page": "annual-leave/index.html",
-      "source": ["annual-leave/index.html"],
+      "source": [
+        "annual-leave/index.html"
+      ],
       "year": 2026,
-      "input": { "hireDate": "2025-01-02", "quitDate": "2026-01-03" },
-      "expect": { "accruedDays": 26 }
+      "input": {
+        "hireDate": "2025-01-02",
+        "quitDate": "2026-01-03"
+      },
+      "expect": {
+        "accruedDays": 26
+      }
     },
     {
       "id": "annual-leave-accrued-3y",
       "name": "누적연차 (3년)",
       "page": "annual-leave/index.html",
-      "source": ["annual-leave/index.html"],
+      "source": [
+        "annual-leave/index.html"
+      ],
       "year": 2026,
-      "input": { "hireDate": "2023-01-02", "quitDate": "2026-01-03" },
-      "expect": { "accruedDays": 57 }
+      "input": {
+        "hireDate": "2023-01-02",
+        "quitDate": "2026-01-03"
+      },
+      "expect": {
+        "accruedDays": 57
+      }
     },
     {
       "id": "severance",
       "name": "퇴직금",
       "page": "severance/index.html",
-      "source": ["assets/common.js", "severance/index.html"],
+      "source": [
+        "assets/common.js",
+        "severance/index.html"
+      ],
       "year": 2026,
-      "input": { "hireDate": "2023-01-01", "quitDate": "2026-01-01", "threeMonthWage": 9000000 },
-      "expect": { "tenureDays": 1096, "dailyAvgWage": 97826, "severance": 8812388 },
+      "input": {
+        "hireDate": "2023-01-01",
+        "quitDate": "2026-01-01",
+        "threeMonthWage": 9000000
+      },
+      "expect": {
+        "tenureDays": 1096,
+        "dailyAvgWage": 97826,
+        "severance": 8812388
+      },
       "note": "9,000,000 ÷ 92 = 97,826 / ×30 × 1096÷365 = 8,812,388"
     },
     {
       "id": "unemployment",
       "name": "실업급여",
       "page": "unemployment/index.html",
-      "source": ["assets/common.js", "unemployment/index.html"],
+      "source": [
+        "assets/common.js",
+        "unemployment/index.html"
+      ],
       "year": 2026,
-      "input": { "threeMonthWage": 9000000, "ageGroup": "u50", "periodIdx": 3 },
-      "expect": { "dailyAvgWage": 98901, "dailyBenefit": 66048, "capped": "하한액 적용", "days": 210, "total": 13870080 },
+      "input": {
+        "threeMonthWage": 9000000,
+        "ageGroup": "u50",
+        "periodIdx": 3
+      },
+      "expect": {
+        "dailyAvgWage": 98901,
+        "dailyBenefit": 66048,
+        "capped": "하한액 적용",
+        "days": 210,
+        "total": 13870080
+      },
       "note": "9,000,000 ÷ 91 = 98,901 / ×60% = 59,341 < 하한 66,048 → 하한 적용 / ×210일"
     },
     {
       "id": "weekly-holiday",
       "name": "주휴수당",
       "page": "weekly-holiday/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "hourly": 10320, "weekHours": 20 },
-      "expect": { "juhyuPay": 41280 },
+      "input": {
+        "hourly": 10320,
+        "weekHours": 20
+      },
+      "expect": {
+        "juhyuPay": 41280
+      },
       "note": "juhyuPay: min(20,40)/40 × 8h × 10,320 = 41,280"
     },
     {
       "id": "salary-net",
       "name": "연봉 실수령액",
       "page": "salary/index.html",
-      "source": ["assets/common.js", "salary/index.html"],
+      "source": [
+        "assets/common.js",
+        "salary/index.html"
+      ],
       "year": 2026,
-      "input": { "annualSalary": 30000000, "nonTaxable": 200000, "dependents": 1 },
-      "expect": { "monthlyNet": 2180263 }
+      "input": {
+        "annualSalary": 30000000,
+        "nonTaxable": 200000,
+        "dependents": 1
+      },
+      "expect": {
+        "monthlyNet": 2180263
+      }
     },
     {
       "id": "minimum-wage-pass",
       "name": "최저임금 역산 — 통과",
       "page": "minimum-wage/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "monthlySalary": 2156880, "weekHours": 40 },
-      "expect": { "hourly": 10320, "verdict": "통과" },
+      "input": {
+        "monthlySalary": 2156880,
+        "weekHours": 40
+      },
+      "expect": {
+        "hourly": 10320,
+        "verdict": "통과"
+      },
       "note": "hourlyFromMonthly: 2,156,880 ÷ 209 = 10,320"
     },
     {
       "id": "minimum-wage-violation",
       "name": "최저임금 역산 — 위반",
       "page": "minimum-wage/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "monthlySalary": 2000000, "weekHours": 40 },
-      "expect": { "verdict": "위반" }
+      "input": {
+        "monthlySalary": 2000000,
+        "weekHours": 40
+      },
+      "expect": {
+        "verdict": "위반"
+      }
     },
     {
       "id": "monthly-paid-hours",
       "name": "월 산정시간",
       "page": "-",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "weekHours": 40 },
-      "expect": { "monthlyPaidHours": 209 },
+      "input": {
+        "weekHours": 40
+      },
+      "expect": {
+        "monthlyPaidHours": 209
+      },
       "note": "(40 + 8) × 4.345 = 208.56 → 209"
     },
     {
       "id": "pension-cap-applied",
       "name": "국민연금 기준소득월액 상한 적용",
       "page": "insurance/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "base": 7000000 },
-      "expect": { "pensionBase": 6590000, "pensionCapApplied": "상한", "pensionWorker": 313025 },
+      "input": {
+        "base": 7000000
+      },
+      "expect": {
+        "pensionBase": 6590000,
+        "pensionCapApplied": "상한",
+        "pensionWorker": 313025
+      },
       "note": "상한 6,590,000원(2026-07-01~2027-06-30 적용, 보건복지부 고시) × 4.75% = 313,025. 이 상·하한은 연도가 아니라 7/1~6/30 주기로 바뀐다 — 매년 7월 갱신 누락을 이 케이스가 잡는다"
     },
     {
       "id": "pension-floor-applied",
       "name": "국민연금 기준소득월액 하한 적용",
       "page": "insurance/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2026,
-      "input": { "base": 300000 },
-      "expect": { "pensionBase": 410000, "pensionCapApplied": "하한", "pensionWorker": 19475 },
+      "input": {
+        "base": 300000
+      },
+      "expect": {
+        "pensionBase": 410000,
+        "pensionCapApplied": "하한",
+        "pensionWorker": 19475
+      },
       "note": "하한 410,000원 × 4.75% = 19,475"
     },
     {
       "id": "year-2027-pension-rate",
       "name": "2027 전환 — 국민연금 요율 (확정치)",
       "page": "insurance/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2027,
-      "input": { "base": 3000000 },
-      "expect": { "pensionWorker": 150000, "pensionRateUnconfirmed": false },
+      "input": {
+        "base": 3000000
+      },
+      "expect": {
+        "pensionWorker": 150000,
+        "pensionRateUnconfirmed": false
+      },
       "note": "국민연금법 개정으로 2027년 전체 10.0% → 근로자 5.00% 확정. 3,000,000 × 5% = 150,000. 미발표가 아니므로 isUnconfirmed('pensionRate') 는 false 여야 한다 — 건강보험·장기요양·고용보험(healthRate·careRate·empRate)만 미발표다"
     },
     {
       "id": "year-2027-minwage",
       "name": "2027 전환 — 최저임금",
       "page": "-",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2027,
       "input": {},
-      "expect": { "minWage": 10700, "minWageWithHoliday": 12840, "minMonthly": 2236300 }
+      "expect": {
+        "minWage": 10700,
+        "minWageWithHoliday": 12840,
+        "minMonthly": 2236300
+      }
     },
     {
       "id": "year-2027-ui-min",
       "name": "2027 전환 — 실업급여 1일 하한",
       "page": "unemployment/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2027,
       "input": {},
-      "expect": { "uiMin": 68480 }
+      "expect": {
+        "uiMin": 68480
+      }
     },
     {
       "id": "year-2027-ui-max-unconfirmed",
       "name": "2027 전환 — 실업급여 1일 상한 (미발표)",
       "page": "unemployment/index.html",
-      "source": ["assets/common.js"],
+      "source": [
+        "assets/common.js"
+      ],
       "year": 2027,
       "input": {},
-      "expect": { "uiMax": 68100, "unconfirmed": true, "unconfirmedKeys": ["uiMax", "healthRate", "careRate", "empRate", "incomeTax"] },
+      "expect": {
+        "uiMax": 68100,
+        "unconfirmed": true,
+        "unconfirmedKeys": [
+          "uiMax",
+          "healthRate",
+          "careRate",
+          "empRate",
+          "incomeTax"
+        ]
+      },
       "note": "2027년 미발표 → 2026년 값 적용. isUnconfirmed('uiMax', 2027) === true 로 검증한다. 값만 비교하면 '미발표라서 같은 값'과 '갱신을 깜빡한 값'을 구분할 수 없다. 상한액 확정치가 발표되면 YEAR_DATA 의 uiMax 를 고치고 unconfirmed 배열에서 'uiMax' 를 지운 뒤 이 기대값도 함께 갱신한다"
+    },
+    {
+      "id": "year-2027-ui-inverted-floor",
+      "name": "2027 전환 — 상·하한 역전 시 법정 하한 보장",
+      "page": "unemployment/index.html",
+      "source": [
+        "assets/common.js"
+      ],
+      "year": 2027,
+      "input": {
+        "threeMonthWage": 15000000
+      },
+      "expect": {
+        "daily": 68480,
+        "capped": "상한 미발표 · 하한액 적용"
+      },
+      "note": "하한액은 최저임금 연동으로 자동 상승하지만 상한액은 별도 정책 결정이라 발표가 늦다. 2027년은 확정 하한 68,480원이 미발표라 빌려온 2026년 상한 68,100원을 넘어 역전됐다. 역전을 방어하지 않으면 월 344만원 이상 소득자에게 법정 하한보다 380원 낮은 금액이 나온다 (소정급여일수 270일 기준 102,600원 과소). 상한액이 하한액보다 낮게 고시되는 일은 없으므로 빌려온 상한이 하한 아래면 쓰지 않는다. 2027년 상한액 확정치가 발표되면 YEAR_DATA 의 uiMax 를 고치고 unconfirmed 에서 'uiMax' 를 지운 뒤, 이 케이스의 기대값도 실제 상한액으로 갱신한다."
     }
   ],
   "ui_checks": [
-    { "id": "ui-basis-rates", "desc": "요율을 표시하는 .basis 문구가 선택 연도의 실제 요율로 갱신된다 (계산 결과와 근거 문구가 같은 요율을 말해야 한다)", "hint": "salary #sal-basis / insurance #ins-basis 가 ratesData() 로 렌더되는지. 상수로 박혀 있으면 FAIL — 2026-07-28 morning 에서 실제로 걸린 회귀다" },
-    { "id": "ui-year-sync", "desc": "연도 전환 시 헤더 버튼과 제목 옆 버튼 상태가 동기화된다", "hint": "updateYearUI()가 .yrsel 전체를 순회하는지" },
-    { "id": "ui-placeholder", "desc": "placeholder가 선택 연도의 최저임금 값으로 갱신된다", "hint": "updatePlaceholders() / data-minph 속성" },
-    { "id": "ui-basis", "desc": "산정 기준(.basis) 문구가 선택 연도 수치로 갱신된다", "hint": "각 페이지 window.onYearChange" },
-    { "id": "ui-2027-unconfirmed", "desc": "2027 선택 시 미발표 항목에 숫자가 들어가지 않고 '미발표'로 표시된다", "hint": "unconfirmedNote() 및 #year-bar 안내" }
+    {
+      "id": "ui-basis-rates",
+      "desc": "요율을 표시하는 .basis 문구가 선택 연도의 실제 요율로 갱신된다 (계산 결과와 근거 문구가 같은 요율을 말해야 한다)",
+      "hint": "salary #sal-basis / insurance #ins-basis 가 ratesData() 로 렌더되는지. 상수로 박혀 있으면 FAIL — 2026-07-28 morning 에서 실제로 걸린 회귀다"
+    },
+    {
+      "id": "ui-year-sync",
+      "desc": "연도 전환 시 헤더 버튼과 제목 옆 버튼 상태가 동기화된다",
+      "hint": "updateYearUI()가 .yrsel 전체를 순회하는지"
+    },
+    {
+      "id": "ui-placeholder",
+      "desc": "placeholder가 선택 연도의 최저임금 값으로 갱신된다",
+      "hint": "updatePlaceholders() / data-minph 속성"
+    },
+    {
+      "id": "ui-basis",
+      "desc": "산정 기준(.basis) 문구가 선택 연도 수치로 갱신된다",
+      "hint": "각 페이지 window.onYearChange"
+    },
+    {
+      "id": "ui-2027-unconfirmed",
+      "desc": "2027 선택 시 미발표 항목에 숫자가 들어가지 않고 '미발표'로 표시된다",
+      "hint": "unconfirmedNote() 및 #year-bar 안내"
+    }
   ]
 }

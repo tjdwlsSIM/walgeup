@@ -265,12 +265,29 @@ const BENEFIT_DAYS = { u50:[120,150,180,210,240], o50:[120,180,210,240,270] };
 const PERIOD_LABELS = ['1년 미만','1년 이상 ~ 3년 미만','3년 이상 ~ 5년 미만','5년 이상 ~ 10년 미만','10년 이상'];
 
 /* 퇴직 전 3개월 임금 총액 → 1일 평균임금·구직급여(평균임금 60%, 상·하한 적용)
-   반환: { avg, daily, capped }  capped: ''|'상한액 적용'|'하한액 적용' */
+   반환: { avg, daily, capped }
+   capped: ''|'상한액 적용'|'하한액 적용'|'상한 미발표 · 하한액 적용'
+
+   ★ 상·하한 역전 방어
+   하한액은 최저임금에 연동돼 매년 자동으로 오르지만(최저시급 × 80% × 8시간),
+   상한액은 별도 정책 결정이라 발표가 늦다. 그래서 상한액이 미발표라 전년 값을
+   빌려온 해에는 **확정 하한액이 빌려온 상한액을 넘어서는 역전**이 생긴다.
+
+     2027년: 하한 68,480원(확정) > 상한 68,100원(2026년 값 차용)
+
+   이때 상한을 그대로 적용하면 법정 하한보다 낮은 금액이 나온다. 상한액이
+   하한액보다 낮게 고시되는 일은 없으므로, 빌려온 상한이 하한 아래로 내려가면
+   그 상한은 쓰지 않는다. 하한을 바닥으로 삼는 것이 항상 안전한 쪽이다. */
 function jobseekerDaily(threeMonthWage){
   const Y = yearData();                             // 선택 연도의 상·하한액
   const avg = threeMonthWage / 91;                  // 3개월 ≈ 91일
   let daily = avg * 0.6, capped = '';
-  if(daily > Y.uiMax){ daily = Y.uiMax; capped = '상한액 적용'; }
+  const inverted = Y.uiMin > Y.uiMax;               // 상한 미발표로 인한 역전
+  const cap = inverted ? Y.uiMin : Y.uiMax;
+  if(daily > cap){
+    daily = cap;
+    capped = inverted ? '상한 미발표 · 하한액 적용' : '상한액 적용';
+  }
   else if(daily < Y.uiMin){ daily = Y.uiMin; capped = '하한액 적용'; }
   return { avg, daily, capped };
 }
