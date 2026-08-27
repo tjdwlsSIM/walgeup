@@ -105,6 +105,18 @@ button.yr:hover{background:var(--ok-bg)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:560px){.grid{grid-template-columns:1fr}}
 .field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px}
+
+/* 체크박스·라디오 한 줄 — 최저임금 체크기와 주휴수당 계산기가 함께 쓴다.
+   ★ 선택자에 `.field label.checkline`(0,2,1)을 반드시 함께 둔다.
+     바로 위 `.field label`(0,1,1)이 `.checkline`(0,1,0)을 이기기 때문이다.
+     그냥 .checkline 만 쓰면 display:flex 가 block 으로 덮이고, 그 순간
+     align-items:center 는 아무 일도 하지 않는다 — 체크박스가 글자 baseline 에
+     놓여 위 12.8px / 아래 19.9px 로 어긋난다(2026-08 실측). font-size·
+     font-weight 도 덮이고 margin-bottom:6px 까지 딸려온다. */
+.checkline,
+.field label.checkline{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:500;margin-bottom:0;padding:12px 13px;border:1px solid var(--line);border-radius:4px;background:#FCFDFE;cursor:pointer}
+/* flex:none — 글자가 길어 줄바꿈될 때 체크박스가 눌려 찌그러지는 것을 막는다 */
+.checkline input{width:17px;height:17px;flex:none;accent-color:var(--navy);cursor:pointer}
 .field .hint{font-weight:400;color:var(--sub);font-size:12px;margin-left:4px}
 .inwrap{position:relative}
 .inwrap input,.inwrap select{width:100%;font-family:var(--sans);font-size:16px;padding:11px 46px 11px 13px;border:1px solid var(--line);border-radius:4px;background:#FCFDFE;color:var(--ink);font-variant-numeric:tabular-nums}
