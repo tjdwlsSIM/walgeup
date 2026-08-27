@@ -5,9 +5,9 @@
 <!-- 연도 갱신 필요 지점: 면책 문구에 2026년 고시 최저임금(10,320원) 서술이 하드코딩됨 — 새 기준 고시 시 함께 갱신 -->
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>연차수당 계산기 | 세후 실수령액까지 바로 계산 — 월급노트</title>
-<meta name="description" content="월급 또는 시급만 입력하면 통상임금 기준 미사용 연차수당과, 세금을 뺀 실제 실수령액까지 한 번에 계산합니다. 퇴직 시 연차 정산과 2026·2027년 기준 전환 지원, 회원가입 불필요.">
-<meta name="keywords" content="연차수당 계산기, 2026 연차수당, 미사용 연차, 통상임금 계산, 퇴직 연차 정산">
+<title>연차수당 계산기 | 퇴직 정산·세후 실수령액까지 — 월급노트</title>
+<meta name="description" content="퇴사할 때 남은 연차는 얼마로 정산될까요? 입사일·퇴사일만 넣으면 발생 연차와 미사용분 수당, 세금을 뺀 실수령액까지 계산합니다. 재직 중 미사용 연차(월급제·시급제)도 지원, 회원가입 불필요.">
+<meta name="keywords" content="퇴직 연차수당 계산기, 연차수당 계산기, 퇴사 연차 정산, 미사용 연차, 통상임금 계산">
 <meta property="og:title" content="연차수당 계산기">
 <meta property="og:description" content="월급·시급 입력으로 미사용 연차수당과 세후 실수령액을 바로 계산해 보세요.">
 <meta property="og:type" content="website">
@@ -494,8 +494,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     calcDays();
   } else if(['m','h','r'].includes(q.get('m'))){
     setMode(q.get('m'));
-    ['salary','week','hourly','day','days','rhire','rquit','rused'].forEach(k => fillInput('in-'+k, q.get(k)));
-    calcPay();
+    const keys = ['salary','week','hourly','day','days','rhire','rquit','rused'];
+    keys.forEach(k => fillInput('in-'+k, q.get(k)));
+    /* 값이 하나라도 있을 때만 계산한다.
+       모드만 지정된 링크(/annual-leave/?m=r — 검색 결과·다른 페이지에서 퇴직 정산
+       탭으로 바로 보내는 용도)로 들어오면 계산할 게 없는데, 그대로 calcPay() 를
+       부르면 '월 통상임금을 입력해 주세요' 경고창이 첫 화면에 뜬다.
+       입력도 하기 전에 혼나는 꼴이라 그냥 탭만 열어 준다. */
+    if(keys.some(k => q.get(k))) calcPay();
   }
 });
 </script>
