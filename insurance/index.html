@@ -206,6 +206,11 @@
     <section>
       <h2>함께 보면 좋은 가이드</h2>
       <div class="cards">
+        <a class="cardlink" href="/guides/health-insurance-2027/">
+          <h3>2027년 건강보험료 동결 — 내 월급에서 얼마나 빠질까</h3>
+          <p>2027 건강보험료율 7.19% 동결 확정, 근로자 부담 3.595%. 요율이 같아도 공제액이 늘어나는 이유를 계산으로 풀었습니다.</p>
+          <span class="go">읽어보기 →</span>
+        </a>
         <a class="cardlink" href="/guides/2026-changes/">
           <h3>2026년 달라지는 노동법·급여 총정리</h3>
           <p>최저임금 10,320원, 국민연금 9.5%, 실업급여 상한 68,100원 — 올해 바뀐 숫자들을 한 번에 확인하세요.</p>
@@ -299,7 +304,7 @@ function calcIns(){
     txt += '산정 기준액이 국민연금 기준소득월액 하한(410,000원) 미만이라 국민연금은 41만원 기준으로 계산되었습니다. ';
   }
   txt += '산재보험은 업종별로 요율이 다르며 전액 사업주 부담이라 이 표에는 포함하지 않았습니다. 실제 보험료는 보수월액 산정 방식과 사업장 규모에 따라 달라질 수 있으며, 소득세는 별도입니다(연봉 실수령액 계산기 참고).';
-  note.textContent = txt + unconfirmedNote('건강보험·장기요양·고용보험 요율');
+  note.textContent = txt + unconfirmedNote('장기요양·고용보험 요율');
 
   setShareParams({
     imode: insMode,
@@ -323,7 +328,8 @@ function renderInsBasis(){
 
 /* 연도 전환 시 — 기준 문구를 갱신하고, 결과가 떠 있으면 재계산.
    국민연금 요율만 연도별로 바뀌고(2026년 전체 9.5% → 2027년 10.0%),
-   건강보험·장기요양·고용보험은 2027년 미발표라 2026년 값을 쓴다. */
+   건강보험은 2027년 7.19% 동결이 확정돼 값이 같으며(2026-09-08 건정심 의결),
+   장기요양·고용보험은 2027년 미발표라 2026년 값을 쓴다. */
 window.onYearChange = function(){
   renderInsBasis();
   if(document.getElementById('res-ins').classList.contains('show')) calcIns();

@@ -23,8 +23,10 @@ const YEAR_DATA = {
   2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100,
           unconfirmed: [] },
   2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100,
-          /* pensionRate 는 국민연금법 개정으로 확정(2027년 10.0%) → 목록에 없다 */
-          unconfirmed: ['uiMax', 'healthRate', 'careRate', 'empRate', 'incomeTax'] }
+          /* pensionRate 는 국민연금법 개정으로 확정(2027년 10.0%) → 목록에 없다
+             healthRate 도 2026-09-08 건강보험정책심의위원회 의결로 확정 → 목록에서 뺐다.
+             2027년 7.19%는 2026년과 값이 같지만 "미발표라서 빌려온 값"이 아니라 **동결 확정치**다 */
+          unconfirmed: ['uiMax', 'careRate', 'empRate', 'incomeTax'] }
 };
 const YEAR_DEFAULT = 2026;
 
@@ -132,9 +134,11 @@ function showResult(id){
 const RATES_2026 = { pension:.0475, health:.03595, care:.004724, emp:.009,
   pensionCap:6590000, pensionFloor:410000, empEmployerExtra:.0025 };
 
-/* 2027년 요율 — 국민연금만 확정(전체 10.0% → 근로자 5.00%, 국민연금법 개정).
-   건강보험·장기요양·고용보험은 2027년 미발표라 2026년 값을 그대로 쓴다
-   (YEAR_DATA[2027].unconfirmed 의 healthRate·careRate·empRate 가 그 사실을 표시).
+/* 2027년 요율 — 국민연금은 확정(전체 10.0% → 근로자 5.00%, 국민연금법 개정),
+   건강보험도 확정(전체 7.19% 동결 → 근로자 3.595%, 2026-09-08 건강보험정책심의위원회 의결).
+   건강보험 값이 2026년과 같은 것은 갱신 누락이 아니라 **동결이 확정**됐기 때문이다.
+   장기요양·고용보험만 2027년 미발표라 2026년 값을 그대로 쓴다
+   (YEAR_DATA[2027].unconfirmed 의 careRate·empRate 가 그 사실을 표시).
    기준소득월액 상·하한은 2027-06-30 까지 같은 값이 적용되므로 그대로 상속한다. */
 const RATES_2027 = Object.assign({}, RATES_2026, { pension:.05 });
 
@@ -422,8 +426,8 @@ function updateYearUI(){
       if(hdr && hdr.parentNode) hdr.parentNode.insertBefore(bar, hdr.nextSibling);
     }
     bar.textContent = '2027년 기준 적용 중 — 2027년 1월 1일 시행 예정입니다. '
-      + '최저임금·실업급여 하한액·국민연금 요율(10.0%)은 확정치이며, '
-      + '건강보험·장기요양·고용보험 요율과 소득세율·실업급여 상한액은 '
+      + '최저임금·실업급여 하한액·국민연금 요율(10.0%)·건강보험 요율(7.19% 동결)은 확정치이며, '
+      + '장기요양·고용보험 요율과 소득세율·실업급여 상한액은 '
       + '2027년 미발표로 2026년 값이 적용됩니다.';
     bar.hidden = false;
   } else if(bar){
