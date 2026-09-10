@@ -28,7 +28,10 @@ walgeup-note/
 ├── 404.html
 ├── sitemap.xml · robots.txt · ads.txt · favicon.ico
 ├── assets/                 # common.css · common.js · 아이콘
-├── tests/baseline.json     # 계산기 회귀테스트 기준값 ★
+├── tests/
+│   ├── baseline.json           # 계산기 회귀테스트 기준값 ★
+│   ├── run.js                  # 계산기 회귀 — baseline.json 을 읽어 구동
+│   └── check-content.js        # FAQ 구조화 데이터·canonical·링크·sitemap 검사
 └── docs/
     └── index-request-queue.md   # 색인 요청 대기열 (수동 처리)
 ```
@@ -61,6 +64,37 @@ walgeup-note/
 - **테스트를 통과시키려고 baseline 을 고치는 것은 테스트를 없애는 것이다.**
   값이 안 맞으면 계산기가 틀렸는지 baseline 이 낡았는지를 먼저 가린다.
 - 법령·요율이 실제로 바뀌어 baseline 을 갱신할 때는 **1차 출처를 커밋 메시지에 남긴다.**
+
+**고치면 검사를 돌린다**
+```bash
+node tests/run.js            # 계산기 회귀 — baseline.json 대조
+node tests/check-content.js  # FAQ 구조화 데이터·canonical·링크·sitemap 정합성
+```
+- 둘 다 통과하면 exit 0, 하나라도 어긋나면 exit 1 이다.
+- `run.js` 는 기대값을 갖고 있지 않다 — `baseline.json` 을 읽어 구동한다.
+  기대값을 코드에 또 적으면 사본이 되고 한쪽만 갱신되며 조용히 어긋난다.
+- 퇴직금·연봉 실수령액 2건은 계산이 DOM 에 묶여 있어 자동 검증되지 않는다.
+  `run.js` 가 "미검증"으로 따로 보고하니, 건드렸으면 브라우저에서 확인한다.
+
+**미발표 수치는 작성 시점을 함께 적는다**
+- "2027년 요율은 아직 발표되지 않았습니다" 는 **쓴 순간에만 참이다.** 발표가 나면
+  글은 그대로인데 문장만 거짓이 된다 — 실제로 `minimum-wage-2027-preview` 가
+  최저임금 확정 두 달 뒤까지 "아직 확정되지 않았습니다" 라고 말하고 있었다.
+- 그래서 뒤에 괄호로 시점을 붙인다:
+  `…아직 발표되지 않았습니다(2026년 7월 22일 작성 시점 기준).`
+- 확정된 뒤에는 바뀐 사실도 함께: `…(2026년 7월 15일 작성 시점 기준 — 이후 10,700원으로 확정됐습니다).`
+- 작성일은 `git log --diff-filter=A --format=%ad --date=short -1 -- <파일>` 로 확인한다.
+- **본문과 FAQ JSON-LD 양쪽에 똑같이 적는다.** 구글이 JSON-LD 답변을 리치결과로
+  노출하는데, 거기에는 화면의 안내 문구가 따라가지 않는다.
+
+**FAQ 구조화 데이터는 페이지가 진실이다**
+- FAQ JSON-LD 는 **페이지에 실제로 보이는 `<details>` 와 일치해야 한다.** 구글이
+  요구하는 조건이고, 없는 Q&A 를 선언하면 리치결과 수동 조치 대상이 될 수 있다.
+- 어긋나면 페이지를 JSON-LD 에 맞추지 말고 **JSON-LD 를 페이지에 맞춘다.**
+  사용자가 보는 것이 페이지이기 때문이다.
+- 대상은 `<h2>자주 묻는 질문</h2>` 아래의 `<details>` 뿐이다. 결과 영역의 접기
+  UI("공제 내역 자세히 보기")는 FAQ 가 아니므로 넣지 않는다.
+- `node tests/check-content.js` 가 이 어긋남을 잡는다.
 
 **SEO — 주소 규칙**
 - 내부 링크·canonical·sitemap 은 모두 **루트 절대경로 + 후행 슬래시**(`/salary/`)로 통일.
