@@ -7,8 +7,9 @@
      하한이 두 주기(1년) 밀린 것도 같은 유형의 사고였다. 사본을 만들지 마라. */
 
 /* ── 연도별 기준 수치 (헤더 드롭다운으로 전환) ─────────────────────
-   2027년: 최저임금·주휴 포함 환산시급·실업급여 1일 하한액은 확정치.
-   4대보험 요율·소득세율·실업급여 1일 상한액은 2027년 미발표 →
+   2027년: 최저임금·주휴 포함 환산시급·실업급여 1일 하한액·국민연금 요율·
+   건강보험 요율(2026-09-08 건강보험정책심의위원회 의결로 7.19% 동결 확정)은 확정치.
+   장기요양·고용보험 요율·소득세율·실업급여 1일 상한액은 2027년 미발표 →
    2026년 값을 그대로 사용하고 결과에 그 사실을 주석으로 표시.
 
    unconfirmed 배열이 그 "미발표라서 전년 값을 빌려온 항목"의 목록이다.
@@ -23,8 +24,10 @@ const YEAR_DATA = {
   2026: { minWage:10320, minMonthly:2156880, minWageWithHoliday:12384, uiMin:66048, uiMax:68100,
           unconfirmed: [] },
   2027: { minWage:10700, minMonthly:2236300, minWageWithHoliday:12840, uiMin:68480, uiMax:68100,
-          /* pensionRate 는 국민연금법 개정으로 확정(2027년 10.0%) → 목록에 없다 */
-          unconfirmed: ['uiMax', 'healthRate', 'careRate', 'empRate', 'incomeTax'] }
+          /* pensionRate 는 국민연금법 개정으로 확정(2027년 10.0%) → 목록에 없다.
+             healthRate 도 2026-09-08 건정심 의결로 7.19% 동결이 확정돼 목록에서 빠졌다
+             — 값은 2026년과 같지만 '미발표라서 같은 것'이 아니라 '동결이 확정된 것'이다 */
+          unconfirmed: ['uiMax', 'careRate', 'empRate', 'incomeTax'] }
 };
 const YEAR_DEFAULT = 2026;
 
@@ -132,11 +135,14 @@ function showResult(id){
 const RATES_2026 = { pension:.0475, health:.03595, care:.004724, emp:.009,
   pensionCap:6590000, pensionFloor:410000, empEmployerExtra:.0025 };
 
-/* 2027년 요율 — 국민연금만 확정(전체 10.0% → 근로자 5.00%, 국민연금법 개정).
-   건강보험·장기요양·고용보험은 2027년 미발표라 2026년 값을 그대로 쓴다
-   (YEAR_DATA[2027].unconfirmed 의 healthRate·careRate·empRate 가 그 사실을 표시).
+/* 2027년 요율 — 국민연금(전체 10.0% → 근로자 5.00%, 국민연금법 개정)과
+   건강보험(전체 7.19% → 근로자 3.595%, 2026-09-08 건강보험정책심의위원회 의결로 동결)이 확정.
+   ★ health 는 2026년과 값이 같아도 상속하지 않고 여기에 명시한다 — 상속해 두면
+     2026년 요율이 바뀔 때 확정된 2027년 값까지 조용히 따라 움직인다.
+   장기요양·고용보험은 2027년 미발표라 2026년 값을 그대로 쓴다
+   (YEAR_DATA[2027].unconfirmed 의 careRate·empRate 가 그 사실을 표시).
    기준소득월액 상·하한은 2027-06-30 까지 같은 값이 적용되므로 그대로 상속한다. */
-const RATES_2027 = Object.assign({}, RATES_2026, { pension:.05 });
+const RATES_2027 = Object.assign({}, RATES_2026, { pension:.05, health:.03595 });
 
 /* 선택 연도의 요율 묶음. 연도 전환 시 국민연금 요율이 함께 바뀌어야 한다. */
 function ratesData(){ return getYear() === 2027 ? RATES_2027 : RATES_2026; }
@@ -422,8 +428,8 @@ function updateYearUI(){
       if(hdr && hdr.parentNode) hdr.parentNode.insertBefore(bar, hdr.nextSibling);
     }
     bar.textContent = '2027년 기준 적용 중 — 2027년 1월 1일 시행 예정입니다. '
-      + '최저임금·실업급여 하한액·국민연금 요율(10.0%)은 확정치이며, '
-      + '건강보험·장기요양·고용보험 요율과 소득세율·실업급여 상한액은 '
+      + '최저임금·실업급여 하한액·국민연금 요율(10.0%)·건강보험 요율(7.19% 동결)은 확정치이며, '
+      + '장기요양·고용보험 요율과 소득세율·실업급여 상한액은 '
       + '2027년 미발표로 2026년 값이 적용됩니다.';
     bar.hidden = false;
   } else if(bar){
