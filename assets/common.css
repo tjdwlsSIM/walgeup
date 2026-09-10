@@ -63,6 +63,10 @@ button.yr:hover{background:var(--ok-bg)}
 .yr-caret{flex:none;color:var(--sub)}
 .hero p{color:var(--sub);margin-top:10px;max-width:56ch}
 .hero .basis{margin-top:14px;font-size:13px;color:var(--sub);line-height:1.8}
+/* 작성 시점 표시. 발표·고시 전에 쓴 글은 시간이 지나면 본문이 낡는다 —
+   글을 지우는 대신 언제 쓴 것인지를 먼저 보이게 해서 독자가 시점을 알게 한다. */
+.hero .dateline{margin-top:12px;font-size:13px;color:var(--sub);line-height:1.7;padding:10px 13px;border-left:3px solid var(--line);background:#FAFBFD}
+.hero .dateline b{color:var(--ink);font-weight:600}
 .hero .basis b{color:var(--ink);font-weight:600}
 
 /* 카드 */
