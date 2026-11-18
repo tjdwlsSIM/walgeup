@@ -468,6 +468,14 @@ function updatePlaceholders(){
   document.querySelectorAll('[data-minhint="wage"]').forEach(el => {
     el.textContent = getYear() + '년 최저시급 ' + fmt(Y.minWage) + '원';
   });
+  /* 결과표 라벨의 근로자 부담 요율: <span data-rate="care">0.4724</span> 를
+     선택 연도의 ratesData() 값으로 갱신. 라벨을 상수로 두면 금액은 2027년 요율로
+     계산되는데 라벨만 2026년 요율을 말하게 된다. */
+  const RATE_DIGITS = { pension:2, health:3, care:4, emp:1 };
+  document.querySelectorAll('[data-rate]').forEach(el => {
+    const k = el.dataset.rate;
+    el.textContent = (ratesData()[k] * 100).toFixed(RATE_DIGITS[k]);
+  });
 }
 
 /* 연도 적용: 저장 → 메뉴 닫기 → UI·예시값 갱신 → 페이지 훅 호출 */
