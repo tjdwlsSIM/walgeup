@@ -102,15 +102,6 @@ node tests/check-content.js  # FAQ 구조화 데이터·canonical·링크·sitem
 - 새 페이지를 만들면 `sitemap.xml` 에 등록하고, 관련 계산기·가이드에서 **역링크를 건다.**
   목록 페이지에서만 링크되는 글은 크롤링 우선순위가 밀려 색인이 안 된다 (2026-08 실측)
 
-**색인 요청은 수동이다**
-- 발행해도 구글·네이버가 알아서 찾아주지 않는다.
-- `docs/index-request-queue.md` 에 항목을 남기고, **Search Console / 서치어드바이저에서
-  사람이 직접 요청**한 뒤 체크박스를 `[x]` 로 바꾼다.
-
-**푸시는 사람이 한다**
-- `git push` 는 `.claude/settings.json` 의 deny 에 있다.
-- 발행 전 사람이 한 번 확인하라는 게이트다.
-
 ---
 
 ## MCP: code-review-graph
