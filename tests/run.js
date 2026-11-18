@@ -82,6 +82,10 @@ const EVAL = {
     healthWorker: R(i.base * M.ratesData().health),
     healthRateUnconfirmed: M.isUnconfirmed('healthRate', 2027)
   }),
+  'year-2027-care-rate': (i) => ({
+    careWorker: R(i.base * M.ratesData().care),
+    careRateUnconfirmed: M.isUnconfirmed('careRate', 2027)
+  }),
   'year-2027-minwage': () => {
     const Y = M.YEAR_DATA[2027];
     return { minWage: Y.minWage, minWageWithHoliday: Y.minWageWithHoliday, minMonthly: Y.minMonthly };
